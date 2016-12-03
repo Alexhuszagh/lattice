@@ -9,6 +9,7 @@
 
 #ifndef _WIN32
 
+#include "cache.hpp"
 #include "exception.hpp"
 #include "timeout.hpp"
 
@@ -108,15 +109,19 @@ protected:
     Address address;
     int sock = 1;
 
+    bool openAddress(const AddressInfo &info);
+
 public:
     Connection();
     Connection(const std::string &host,
-        const std::string &service = "http");
+        const std::string &service = "http",
+        DnsCache *cache = nullptr);
     Connection(const Connection &other) = delete;
     ~Connection();
 
     void open(const std::string &host,
-        const std::string &service = "http");
+        const std::string &service = "http",
+        DnsCache *cache = nullptr);
     void close();
     void setTimeout(const Timeout &timeout);
     void setTimeout(const Timeout &timeout,

@@ -107,6 +107,16 @@ void Session::setCookies(const Cookies &cookies)
 }
 
 
+/** \brief Set the DNS cache.
+ *
+ *  \warning The lifetime of the cache must outlive that of the session.
+ */
+void Session::setCache(DnsCache &cache)
+{
+    this->cache = &cache;
+}
+
+
 /** \brief Set URL for session.
  */
 void Session::setOption(const Url &url)
@@ -152,6 +162,14 @@ void Session::setOption(const Timeout &timeout)
 void Session::setOption(const Cookies &cookies)
 {
     this->cookies = cookies;
+}
+
+
+/** \brief Set the DNS cache.
+ */
+void Session::setOption(DnsCache &cache)
+{
+    this->cache = &cache;
 }
 
 

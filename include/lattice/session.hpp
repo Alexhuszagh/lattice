@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "cache.hpp"
 #include "cookie.hpp"
 #include "header.hpp"
 #include "parameter.hpp"
@@ -33,6 +34,7 @@ protected:
     Timeout timeout;
     Header header;
     Cookies cookies;
+    DnsCache *cache = nullptr;
 
     void setDefaultOptions();
     Response makeRequest(const std::string &data);
@@ -47,6 +49,7 @@ public:
     void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
     void setCookies(const Cookies &cookies);
+    void setCache(DnsCache &cache);
 
     void setOption(const Url &url);
     void setOption(const Parameters &parameters);
@@ -54,6 +57,7 @@ public:
     void setOption(const Header &header);
     void setOption(const Timeout &timeout);
     void setOption(const Cookies &cookies);
+    void setOption(DnsCache &cache);
 
 //    Response delete();
     Response get();

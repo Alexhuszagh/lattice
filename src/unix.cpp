@@ -185,6 +185,23 @@ AddressIterator Address::end() const
 }
 
 
+/** \brief Attempt to open an address.
+ */
+bool Connection::openAddress(const AddressInfo &info)
+{
+    sock = ::socket(info.family, info.socket_type, info.protocol);
+    if (sock < 0) {
+        return false;
+    }
+    if (::connect(sock, &info.address, info.length) >= 0) {
+        return true;
+    }
+
+    ::close(sock);
+    return false;
+}
+
+
 /** \brief Null constructor.
  */
 Connection::Connection()
@@ -194,9 +211,10 @@ Connection::Connection()
 /** \brief Initializer list constructor.
  */
 Connection::Connection(const std::string &host,
-        const std::string &service)
+        const std::string &service,
+        DnsCache *cache)
 {
-    open(host, service);
+    open(host, service, cache);
 }
 
 
@@ -211,18 +229,27 @@ Connection::~Connection()
 /** \brief Open connection to server.
  */
 void Connection::open(const std::string &host,
-    const std::string &service)
+    const std::string &service,
+    DnsCache *cache)
 {
-    address.open(host, service);
-    for (const auto &item: address) {
-        sock = ::socket(item.ai_family, item.ai_socktype, item.ai_protocol);
-        if (sock < 0) {
-            continue;
-        }
-        if (::connect(sock, item.ai_addr, item.ai_addrlen) >= 0) {
+    // try cached results
+    DnsCache::iterator it;
+    if (cache && (it = cache->find(host)) != cache->end()) {
+        if (openAddress(AddressInfo(it->second))) {
             return;
         }
-        ::close(sock);
+    }
+
+    // perform DNS lookup
+    address.open(host, service);
+    for (const AddressInfo info: address) {
+        if (openAddress(info)) {
+            // cache result
+            if (cache) {
+                cache->emplace(host, info);
+            }
+            return;
+        }
     }
 
     // no suitable addresses found

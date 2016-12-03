@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
         {"reviewed", "yes"},
         {"columns", "id,entry name,genes(PREFERRED),sequence"},
     };
-
+    lattice::DnsCache cache;
     lattice::Url url = {"http://www.uniprot.org/uniprot/"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Get(url, parameters, timeout);
+    auto response = lattice::Get(url, parameters, timeout, cache);
 
     // TODO: this is good-ish
     //std::cout << parameters << std::endl;
