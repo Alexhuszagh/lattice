@@ -18,7 +18,7 @@ EXAMPLE_SOURCES = $(shell echo example/*.cpp)
 EXAMPLE_OBJECTS = $(EXAMPLE_SOURCES:.cpp=.o)
 EXAMPLES = $(EXAMPLE_SOURCES:.cpp=)
 INCLUDE = include/
-CXXFLAGS  = -Wall -O3 -fPIC -std=c++11 -I$(INCLUDE)
+CXXFLAGS  = -Wall -O3 -fPIC -std=c++11 -pthread -I$(INCLUDE)
 
 # TARGETS
 # -------

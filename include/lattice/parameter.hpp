@@ -34,13 +34,15 @@ struct Parameter
 
 /** \brief HTTP parameters object.
  */
-class Parameters: public std::string
+struct Parameters: public std::string
 {
-public:
     Parameters();
     Parameters(const std::initializer_list<Parameter>& parameters);
 
     Parameters & add(const Parameter &parameter);
+
+    std::string get() const;
+    const std::string & post() const;
 };
 
 }   /* lattice */

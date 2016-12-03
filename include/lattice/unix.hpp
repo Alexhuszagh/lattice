@@ -122,6 +122,7 @@ public:
     void setTimeout(const Timeout &timeout,
         const bool input);
     void send(const std::string &request);
+    std::string read();
 };
 
 }   /* lattice */

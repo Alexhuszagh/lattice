@@ -12,12 +12,17 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#include <cstdlib>
 #include <cstring>
-#include <iostream>         // TODO: remove
 
 
 namespace lattice
 {
+// CONSTANTS
+// ---------
+
+static const int BUFFER_SIZE = 8092;
+
 // OBJECTS
 // -------
 
@@ -151,6 +156,7 @@ void Address::close()
 {
     if (info) {
         freeaddrinfo(info);
+        info = nullptr;
     }
 }
 
@@ -229,8 +235,10 @@ void Connection::open(const std::string &host,
 void Connection::close()
 {
     address.close();
-    ::close(sock);
-    sock = -1;
+    if (sock >= 0) {
+        ::close(sock);
+        sock = -1;
+    }
 }
 
 
@@ -274,16 +282,31 @@ void Connection::send(const std::string &request)
     if (sent != static_cast<int>(request.size())) {
         throw RequestError(sent, request.size());
     }
-
-    // TODO: this needs to be a decent buffer length...
-    // TODO: need to then read from it...
-    // TODO: remove....
-    // 8192 for the buffer size....
-    char cur;
-    while (read(sock, &cur, 1) > 0 ) {
-        std::cout << cur;
-    }
 }
+
+
+/** \brief Read data from server.
+ */
+std::string Connection::read()
+{
+    // read from connection
+    int result, offset = 0;
+    char *buffer = static_cast<char*>(malloc(BUFFER_SIZE));
+    char *src = buffer + offset;
+    while ((result = ::read(sock, src, BUFFER_SIZE))) {
+        offset += result;
+        buffer = static_cast<char*>(realloc(buffer, BUFFER_SIZE + offset));
+        src = buffer + offset;
+    }
+
+    // create string output
+    std::string output(buffer, offset);
+    free(buffer);
+
+    return output;
+}
+
+
 
 }   /* lattice */
 

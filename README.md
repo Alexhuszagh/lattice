@@ -18,15 +18,17 @@ Lattice aims to be a light-weight, adaptable, and easily embeddable client-side 
 
 ## Features
 
-- Headers
+- Custom Headers
 - URL-encoded parameters
-- GET/POST methods
+- GET/POST methods (TODO: DELETE, etc...)
 - Response adapters
+- Asynchronous requests
 
 ## Dependencies
 
 - C++11 Compiler
 - CMake or GNU Make
+- POSIX or WIN32 threads
 
 ## Contributors
 

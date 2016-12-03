@@ -8,6 +8,9 @@
 
 #pragma once
 
+#include "cookie.hpp"
+#include "header.hpp"
+#include "parameter.hpp"
 #include "response.hpp"
 #include "timeout.hpp"
 #include "url.hpp"
@@ -28,6 +31,11 @@ protected:
     Url url;
     Parameters parameters;
     Timeout timeout;
+    Header header;
+    Cookies cookies;
+
+    void setDefaultOptions();
+    Response makeRequest(const std::string &data);
 
 public:
     Session();
@@ -36,16 +44,20 @@ public:
     void setUrl(const Url &url);
     void setParameters(const Parameters &parameters);
     void setParameters(Parameters &&parameters);
+    void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
+    void setCookies(const Cookies &cookies);
 
     void setOption(const Url &url);
     void setOption(const Parameters &parameters);
     void setOption(Parameters &&parameters);
+    void setOption(const Header &header);
     void setOption(const Timeout &timeout);
+    void setOption(const Cookies &cookies);
 
 //    Response delete();
     Response get();
-//    Response head();
+    Response head();
 //    Response options();
 //    Response patch();
     Response post();
@@ -86,6 +98,18 @@ Response Get(Ts&&... ts)
     setOption(session, FORWARD(ts)...);
 
     return session.get();
+}
+
+
+/** \brief Wrapper for HTTP HEAD request.
+ */
+template <typename... Ts>
+Response Head(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.head();
 }
 
 

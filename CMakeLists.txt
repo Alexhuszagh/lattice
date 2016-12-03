@@ -45,20 +45,16 @@ if(NOT REQUIRED_HEADERS)
     message(FATAL_ERROR "Could not find required headers.")
 endif()
 
+# THREADING
+# ---------
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 # LIBRARY
 # -------
 
-set(LATTICE_SOURCES
-    src/encode.cpp
-    src/exception.cpp
-    src/nt.cpp
-    src/parameter.cpp
-    src/session.cpp
-    src/timeout.cpp
-    src/unix.cpp
-    src/url.cpp
-)
-
+file(GLOB LATTICE_SOURCES src/*.cpp)
 set(LATTICE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LATTICE_INCLUDE_DIRS ${LATTICE_INCLUDE_DIR})
 include_directories(${LATTICE_INCLUDE_DIRS})
@@ -74,15 +70,14 @@ set(LATTICE_LIBRARIES Lattice)
 # EXAMPLES
 # --------
 
-set(LATTICE_EXAMPLES
-    get
-)
+file(GLOB LATTICE_EXAMPLES example/*.cpp)
 
 if(BUILD_EXAMPLES)
-    foreach(example ${LATTICE_EXAMPLES})
+    foreach(source ${LATTICE_EXAMPLES})
+        get_filename_component(example ${source} NAME_WE)
         set(target "Lattice_${example}")
-        add_executable(${target} "example/${example}.cpp")
+        add_executable(${target} "${source}")
         set_target_properties(${target} PROPERTIES OUTPUT_NAME ${example})
-        target_link_libraries(${target} ${LATTICE_LIBRARIES})
-    endforeach(example)
+        target_link_libraries(${target} ${LATTICE_LIBRARIES} Threads::Threads)
+    endforeach(source)
 endif()

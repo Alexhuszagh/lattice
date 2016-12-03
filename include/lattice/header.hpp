@@ -1,0 +1,46 @@
+//  :copyright: (c) 2015 Huu Nguyen.
+//  :copyright: (c) 2016 The Regents of the University of California.
+//  :license: MIT, see LICENSE.md for more details.
+/**
+ *  \addtogroup Lattice
+ *  \brief Custom HTTP header.
+ */
+
+#pragma once
+
+#include <map>
+#include <ostream>
+#include <string>
+
+
+namespace lattice
+{
+// OBJECTS
+// -------
+
+
+/** \brief Case-insensitive comparison for ASCII.
+ */
+struct CaseInsensitiveCompare
+{
+    bool operator()(const std::string &left,
+        const std::string &right) const noexcept;
+};
+
+
+/** \brief Custom headers for the request.
+ */
+class Header: public std::map<std::string, std::string, CaseInsensitiveCompare>
+{
+protected:
+    typedef std::map<std::string, std::string, CaseInsensitiveCompare> Base;
+
+public:
+    using Base::Base;
+
+    friend std::ostream & operator<<(std::ostream &os,
+        const Header &header);
+};
+
+
+}   /* lattice */

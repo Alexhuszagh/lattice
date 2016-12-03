@@ -74,4 +74,24 @@ Parameters & Parameters::add(const Parameter &parameter)
     return *this;
 }
 
+
+/** \brief Format parameters for GET request.
+ */
+std::string Parameters::get() const
+{
+    if (empty()) {
+        return *this;
+    }
+    return "?" + std::string(*this);
+}
+
+
+/** \brief Format parameters for POST request.
+ */
+const std::string & Parameters::post() const
+{
+    return *this;
+}
+
+
 }   /* lattice */

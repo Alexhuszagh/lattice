@@ -3,11 +3,13 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief HTTP response object.
+ *  \brief Cookie support for persistent sessions.
  */
 
 #pragma once
 
+#include <map>
+#include <sstream>
 #include <string>
 
 
@@ -17,21 +19,18 @@ namespace lattice
 // -------
 
 
-/** \brief Generate response from a request.
+/** \brief Cookies to store user data for persistent sessions.
  */
-class Response
+class Cookies: public std::map<std::string, std::string>
 {
 protected:
-    int code;
-    std::string body;
-
-    void parseHeader(const std::string &line);
+    typedef std::map<std::string, std::string> Base;
 
 public:
-    Response();
-    Response(const std::string &data);
-    Response(const Response &other);
-    ~Response();
+    using Base::Base;
+
+    std::string encode() const;
 };
+
 
 }   /* lattice */

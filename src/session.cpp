@@ -17,6 +17,36 @@ namespace lattice
 // -------
 
 
+/** \brief Set default options when making a request.
+ */
+void Session::setDefaultOptions()
+{
+    // emplace will not override user set options
+    header.emplace("Host", url.host());
+    header.emplace("Connection", "close");
+    header.emplace("User-Agent", "lattice/" + VERSION);
+
+    if (!cookies.empty()) {
+        header.emplace("Cookie", cookies.encode());
+    }
+}
+
+
+/** \brief Make request to server.
+ */
+Response Session::makeRequest(const std::string &data)
+{
+    // create connection and send data
+    Connection connection(url.host(), url.service());
+    if (timeout) {
+        connection.setTimeout(timeout);
+    }
+    connection.send(data);
+
+    return Response(connection.read());
+}
+
+
 /** \brief Null constructor.
  */
 Session::Session()
@@ -53,11 +83,27 @@ void Session::setParameters(Parameters &&parameters)
 }
 
 
+/** \brief Set header for session.
+ */
+void Session::setHeader(const Header &header)
+{
+    this->header = header;
+}
+
+
 /** \brief Set timeout for session.
  */
 void Session::setTimeout(const Timeout &timeout)
 {
     this->timeout = timeout;
+}
+
+
+/** \brief Set cookies for session.
+ */
+void Session::setCookies(const Cookies &cookies)
+{
+    this->cookies = cookies;
 }
 
 
@@ -85,6 +131,14 @@ void Session::setOption(Parameters &&parameters)
 }
 
 
+/** \brief Set header for session.
+ */
+void Session::setOption(const Header &header)
+{
+    this->header = header;
+}
+
+
 /** \brief Set timeout for session.
  */
 void Session::setOption(const Timeout &timeout)
@@ -93,28 +147,41 @@ void Session::setOption(const Timeout &timeout)
 }
 
 
+/** \brief Set cookies for session.
+ */
+void Session::setOption(const Cookies &cookies)
+{
+    this->cookies = cookies;
+}
+
+
 /** \brief Get response to HTTP GET request.
  */
 Response Session::get()
 {
     // format request
+    setDefaultOptions();
     std::stringstream stream;
-    stream << "GET " << url.path();
-    if (parameters.size()) {
-        stream << "?" << parameters;
-    }
-    stream << " HTTP/1.1\r\n"
-           << "Host: " << url.host() << "\r\n"
-           << "Connection: close\r\n"
+    stream << "GET " << url.path() << parameters.get() << " HTTP/1.1\r\n"
+           << header
            << "\r\n\r\n";
 
-    Connection connection(url.host(), url.service());
-    if (timeout) {
-        connection.setTimeout(timeout);
-    }
-    connection.send(stream.str());
+    return makeRequest(stream.str());
+}
 
-    return Response();
+
+/** \brief Get response to HTTP HEAD request.
+ */
+Response Session::head()
+{
+    // format request
+    setDefaultOptions();
+    std::stringstream stream;
+    stream << "HEAD " << url.path() << parameters.get() << " HTTP/1.1\r\n"
+           << header
+           << "\r\n\r\n";
+
+    return makeRequest(stream.str());
 }
 
 
@@ -122,8 +189,15 @@ Response Session::get()
  */
 Response Session::post()
 {
-    // TODO: now...
-    return Response();
+    // format request
+    setDefaultOptions();
+    std::stringstream stream;
+    stream << "POST " << url.path() << " HTTP/1.1\r\n"
+           << header
+           << parameters.post()
+           << "\r\n\r\n";
+
+    return makeRequest(stream.str());
 }
 
 }   /* lattice */
