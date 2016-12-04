@@ -21,7 +21,7 @@ namespace lattice
 // CONSTANTS
 // ---------
 
-static const int BUFFER_SIZE = 8092;
+static const size_t BUFFER_SIZE = 8092;
 
 // OBJECTS
 // -------
@@ -312,7 +312,82 @@ void Connection::send(const std::string &request)
 }
 
 
-/** \brief Read data from server.
+/** \brief Read headers data from server.
+ *
+ *  Slowly read from buffer until a double carriage return is found.
+ */
+std::string Connection::headers()
+{
+    std::string string;
+    int result;
+    char src;
+    while ((result = ::read(sock, &src, 1))) {
+        string += src;
+        size_t size = string.size() - 4;
+        if (size > 0 && src == '\n' && string.substr(size) == "\r\n\r\n") {
+            break;
+        }
+    }
+
+    return string;
+}
+
+
+/** \brief Read chunked transfer encoding.
+ *
+ *  Each message is prefixed with a single line denoting how
+ *  long the message is, in hex.
+ */
+std::string Connection::chunked()
+{
+    // initialize alloc
+    std::string hex;
+    int result, offset = 0;
+    char *buffer = static_cast<char*>(malloc(offset));
+    char byte, *src = buffer + offset;
+
+    while ((result = ::read(sock, &byte, 1))) {
+        if (!(byte == '\r' || byte == '\n')) {
+            hex += byte;
+        } else if (hex.size()) {
+            // get carriage return
+            result = ::read(sock, &byte, 1);
+
+            // read our bytes
+            long bytes = std::strtoul(hex.data(), nullptr, 16);
+            buffer = static_cast<char*>(realloc(buffer, bytes + offset));
+            offset += ::read(sock, buffer, bytes);
+            src = buffer + offset;
+
+            // clear our hex buffer for new messages
+            hex.clear();
+        } else {
+            // trailing line
+            break;
+        }
+    }
+
+    // create string output
+    std::string output(buffer, offset);
+    free(buffer);
+
+    return output;
+}
+
+
+/** \brief Read content of fixed length.
+ */
+std::string Connection::body(const long length)
+{
+    std::string string;
+    string.resize(length);
+    ::read(sock, const_cast<char*>(&string[0]), length);
+
+    return string;
+}
+
+
+/** \brief Read non-chunked content of unknown length.
  */
 std::string Connection::read()
 {
@@ -332,7 +407,6 @@ std::string Connection::read()
 
     return output;
 }
-
 
 
 }   /* lattice */

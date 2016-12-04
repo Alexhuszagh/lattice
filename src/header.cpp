@@ -29,6 +29,18 @@ bool CaseInsensitiveCompare::operator()(const std::string &left,
 }
 
 
+/** \brief Check if the connection should be closed.
+ */
+bool Header::closeConnection() const
+{
+    auto it = find("connection");
+    if (it != end()) {
+        return it->second == "close";
+    }
+    return false;
+}
+
+
 /** \brief Print headers to stream.
  */
 std::ostream & operator<<(std::ostream &os,

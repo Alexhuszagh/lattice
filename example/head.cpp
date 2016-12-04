@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple HTTP GET request.
+ *  \brief Simple HTTP HEAD request.
  */
 
 #include "lattice.hpp"
@@ -12,22 +12,15 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
-        {"param1", "value1"},
-        {"param2", "value2"},
-    };
-    lattice::DnsCache cache;
     lattice::Url url = {"http://httpbin.org/get"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Get(url, parameters, timeout, cache);
+    auto response = lattice::Head(url, timeout);
 
     if (response.status() == 200) {
-        std::cout << "Body:\n"
-                  << "------------------\n"
-                  << response.body()
-                  << "------------------\n"
-                  << "Encoding: " << response.encoding() << "\n"
-                  << "------------------\n";
+        std::cout << "Server:\n"
+                  << "-------\n"
+                  << response.headers().at("server") << "\n"
+                  << "-------\n";
     } else {
         std::cout << "Response was not successful, error code: "
                   << response.status()  << std::endl;

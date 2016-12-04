@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple HTTP POST request.
+ *  \brief Simple HTTP OPTIONS request.
  */
 
 #include "lattice.hpp"
@@ -12,18 +12,14 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
-        {"param1", "value1"},
-        {"param2", "value2"},
-    };
-    lattice::Url url = {"http://httpbin.org/post"};
+    lattice::Url url = {"http://httpbin.org/"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Post(url, parameters, timeout);
+    auto response = lattice::Options(url, timeout);
 
     if (response.status() == 200) {
-        std::cout << "Body:\n"
+        std::cout << "Allow:\n"
                   << "------------------\n"
-                  << response.body()
+                  << response.headers().at("allow") << "\n"
                   << "------------------\n"
                   << "Encoding: " << response.encoding() << "\n"
                   << "------------------\n";

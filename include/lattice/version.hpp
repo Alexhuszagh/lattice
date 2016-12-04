@@ -15,9 +15,9 @@ namespace lattice
 // CONSTANTS
 // ---------
 
-constexpr int MAJOR = 0;
-constexpr int MINOR = 1;
-constexpr int PATCH = 0;
+constexpr int MAJOR_VERSION = 0;
+constexpr int MINOR_VERSION = 1;
+constexpr int PATCH_VERSION = 0;
 extern const std::string VERSION;
 
 }   /* lattice */

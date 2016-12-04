@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple HTTP POST request.
+ *  \brief Simple HTTP DELETE requests.
  */
 
 #include "lattice.hpp"
@@ -16,9 +16,10 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    lattice::Url url = {"http://httpbin.org/post"};
+    lattice::DnsCache cache;
+    lattice::Url url = {"http://httpbin.org/delete"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Post(url, parameters, timeout);
+    auto response = lattice::Delete(url, parameters, timeout, cache);
 
     if (response.status() == 200) {
         std::cout << "Body:\n"
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
                   << "------------------\n";
     } else {
         std::cout << "Response was not successful, error code: "
-                  << response.status() << std::endl;
+                  << response.status()  << std::endl;
     }
 
     return 0;

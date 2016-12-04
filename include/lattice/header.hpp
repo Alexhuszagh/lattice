@@ -38,6 +38,8 @@ protected:
 public:
     using Base::Base;
 
+    bool closeConnection() const;
+
     friend std::ostream & operator<<(std::ostream &os,
         const Header &header);
 };

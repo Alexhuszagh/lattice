@@ -17,13 +17,52 @@ namespace lattice
 // -------
 
 
+/** \brief Open connection to URL.
+ */
+void Session::openConnection(Connection &connection) const
+{
+    connection.open(url.host(), url.service());
+    if (timeout) {
+        connection.setTimeout(timeout);
+    }
+}
+
+
+/** \brief Check if the connection needs to be reset.
+ */
+bool Session::resetConnection(const Response &response)
+{
+    auto old = url;
+    resetUrl(response.headers().at("location"));
+    if (old.host() != url.host()) {
+        header["Host"] = url.host();
+        return true;
+    }
+
+    return header.closeConnection() || response.headers().closeConnection();
+}
+
+
+/** \brief Get new URL, from a relative or absolute identifier.
+ */
+void Session::resetUrl(const std::string &string)
+{
+    if (!string.empty() && string.front() == '/') {
+        // relative URL
+        this->url = Url((url.service() + "://" + url.host() + string).data());
+    } else {
+        // absolute url
+        this->url = Url(string.data());
+    }
+}
+
+
 /** \brief Set default options when making a request.
  */
-void Session::setDefaultOptions()
+void Session::setDefaultHeaders()
 {
     // emplace will not override user set options
     header.emplace("Host", url.host());
-    header.emplace("Connection", "close");
     header.emplace("User-Agent", "lattice/" + VERSION);
 
     if (!cookies.empty()) {
@@ -34,16 +73,84 @@ void Session::setDefaultOptions()
 
 /** \brief Make request to server.
  */
-Response Session::makeRequest(const std::string &data)
+Response Session::makeRequest()
 {
     // create connection and send data
-    Connection connection(url.host(), url.service());
-    if (timeout) {
-        connection.setTimeout(timeout);
-    }
-    connection.send(data);
+    Connection connection;
+    openConnection(connection);
 
-    return Response(connection.read());
+    do {
+        // send data and get response
+        connection.send(requestData());
+        Response response(connection);
+        if ((method = response.redirect(method)) != STOP) {
+            if (resetConnection(response)) {
+                // remake the connection
+                connection.close();
+                openConnection(connection);
+            }
+        } else {
+            return response;
+        }
+    } while (redirects--);
+
+    return Response();
+}
+
+
+/** \brief Get data from request.
+ */
+std::string Session::requestData()
+{
+    setDefaultHeaders();
+
+    std::stringstream stream;
+    std::string name;
+
+    switch (method) {
+        case GET:
+            name = "GET";
+            break;
+        case HEAD:
+            name = "HEAD";
+            break;
+        case POST:
+            name = "POST";
+            break;
+        case DELETE:
+            name = "DELETE";
+            break;
+        case OPTIONS:
+            name = "OPTIONS";
+            break;
+        case PATCH:
+            name = "PATCH";
+            break;
+        case PUT:
+            name = "PUT";
+            break;
+        case TRACE:
+            name = "TRACE";
+            break;
+        case CONNECT:
+            name = "CONNECT";
+            break;
+    }
+
+    if (method == POST) {
+        stream << name << " " << url.path() << " HTTP/1.1\r\n"
+               << header
+               << "\r\n"
+               << parameters.post()
+               << "\r\n\r\n";
+    } else {
+        stream << name << " " << url.path() << parameters.get()
+               << " HTTP/1.1\r\n"
+               << header
+               << "\r\n\r\n";
+    }
+
+    return stream.str();
 }
 
 
@@ -107,6 +214,14 @@ void Session::setCookies(const Cookies &cookies)
 }
 
 
+/** \brief Set maximum redirects for request.
+ */
+void Session::setRedirects(const Redirects &redirects)
+{
+    this->redirects = redirects;
+}
+
+
 /** \brief Set the DNS cache.
  *
  *  \warning The lifetime of the cache must outlive that of the session.
@@ -165,6 +280,14 @@ void Session::setOption(const Cookies &cookies)
 }
 
 
+/** \brief Set maximum redirects for request.
+ */
+void Session::setOption(const Redirects &redirects)
+{
+    this->redirects = redirects;
+}
+
+
 /** \brief Set the DNS cache.
  */
 void Session::setOption(DnsCache &cache)
@@ -173,18 +296,23 @@ void Session::setOption(DnsCache &cache)
 }
 
 
+/** \brief Get response to HTTP DELETE request.
+ */
+Response Session::delete_()
+{
+    method = Method::DELETE;
+
+    return makeRequest();
+}
+
+
 /** \brief Get response to HTTP GET request.
  */
 Response Session::get()
 {
-    // format request
-    setDefaultOptions();
-    std::stringstream stream;
-    stream << "GET " << url.path() << parameters.get() << " HTTP/1.1\r\n"
-           << header
-           << "\r\n\r\n";
+    method = Method::GET;
 
-    return makeRequest(stream.str());
+    return makeRequest();
 }
 
 
@@ -192,14 +320,29 @@ Response Session::get()
  */
 Response Session::head()
 {
-    // format request
-    setDefaultOptions();
-    std::stringstream stream;
-    stream << "HEAD " << url.path() << parameters.get() << " HTTP/1.1\r\n"
-           << header
-           << "\r\n\r\n";
+    method = Method::HEAD;
 
-    return makeRequest(stream.str());
+    return makeRequest();
+}
+
+
+/** \brief Get response to HTTP OPTIONS request.
+ */
+Response Session::options()
+{
+    method = Method::OPTIONS;
+
+    return makeRequest();
+}
+
+
+/** \brief Get response to HTTP PATCH request.
+ */
+Response Session::patch()
+{
+    method = Method::PATCH;
+
+    return makeRequest();
 }
 
 
@@ -207,15 +350,39 @@ Response Session::head()
  */
 Response Session::post()
 {
-    // format request
-    setDefaultOptions();
-    std::stringstream stream;
-    stream << "POST " << url.path() << " HTTP/1.1\r\n"
-           << header
-           << parameters.post()
-           << "\r\n\r\n";
+    method = Method::POST;
 
-    return makeRequest(stream.str());
+    return makeRequest();
+}
+
+
+/** \brief Get response to HTTP PUT request.
+ */
+Response Session::put()
+{
+    method = Method::PUT;
+
+    return makeRequest();
+}
+
+
+/** \brief Get response to HTTP TRACE request.
+ */
+Response Session::trace()
+{
+    method = Method::TRACE;
+
+    return makeRequest();
+}
+
+
+/** \brief Get response to HTTP CONNECT request.
+ */
+Response Session::connect()
+{
+    method = Method::CONNECT;
+
+    return makeRequest();
 }
 
 }   /* lattice */

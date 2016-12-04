@@ -13,18 +13,34 @@
 
 int main(int argc, char *argv[])
 {
-    std::vector<lattice::Url> urls = {
-        {"http://www.uniprot.org/uniprot/P46406.fasta"},
-        {"http://www.uniprot.org/uniprot/P02769.fasta"},
+    lattice::Parameters parameters = {
+        {"param1", "value1"},
+        {"param2", "value2"},
     };
+    lattice::DnsCache cache;
+    lattice::Url get = {"http://httpbin.org/get"};
+    lattice::Url post = {"http://httpbin.org/post"};
 
     lattice::Pool pool;
     lattice::Timeout timeout(1000);
-    for (auto &&url: urls) {
-        pool.get(url, timeout);
-    }
+    pool.get(get, cache, timeout, parameters);
+    pool.head(get, cache, timeout, parameters);
+    pool.post(post, cache, timeout, parameters);
+
     auto responses = pool.perform();
-    // TODO: need to do something with this...
+    for (const auto &response: responses) {
+        if (response.status() == 200) {
+            std::cout << "Body:\n"
+                      << "------------------\n"
+                      << response.body()
+                      << "------------------\n"
+                      << "Encoding: " << response.encoding() << "\n"
+                      << "------------------\n";
+        } else {
+            std::cout << "Response was not successful, error code: "
+                      << response.status() << std::endl;
+        }
+    }
 
     return 0;
 }

@@ -119,6 +119,7 @@ public:
     Connection(const Connection &other) = delete;
     ~Connection();
 
+    // REQUESTS
     void open(const std::string &host,
         const std::string &service = "http",
         DnsCache *cache = nullptr);
@@ -127,6 +128,11 @@ public:
     void setTimeout(const Timeout &timeout,
         const bool input);
     void send(const std::string &request);
+
+    // RESPONSE
+    std::string headers();
+    std::string chunked();
+    std::string body(const long length);
     std::string read();
 };
 

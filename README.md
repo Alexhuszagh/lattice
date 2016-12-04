@@ -7,6 +7,7 @@ A light-weight, dependency-free, cross-platform library for client-side network 
 
 - [Motivation](#motivation)
 - [Features](#features)
+- [Lattice Is Not...](#lattice-is-not...)
 - [Dependencies](#dependencies)
 - [Contributors](#contributors)
 - [Contributor Guidelines](#contributor-guidelines)
@@ -20,9 +21,13 @@ Lattice aims to be a light-weight, adaptable, and easily embeddable client-side 
 
 - Custom Headers
 - URL-encoded parameters
-- GET/POST methods (TODO: DELETE, etc...)
-- Response adapters
-- Asynchronous requests
+- GET/POST/DELETE/TRACE methods 
+- Response type detection
+- Pseudo-asynchronous requests
+
+## Lattice is Not...
+
+All batteries included. Lattice will identify compressed data streams, JSON, XML and other data types, but it will not decode or parse them. It is lightweight, making minimal assumptions of the requirements of the user.
 
 ## Dependencies
 

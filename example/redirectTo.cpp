@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple HTTP POST request.
+ *  \brief Follow absolute redirects from GET request.
  */
 
 #include "lattice.hpp"
@@ -13,12 +13,12 @@
 int main(int argc, char *argv[])
 {
     lattice::Parameters parameters = {
-        {"param1", "value1"},
-        {"param2", "value2"},
+        {"url", "http://httpbin.org/get"},
     };
-    lattice::Url url = {"http://httpbin.org/post"};
+    lattice::Url url = {"http://httpbin.org/redirect-to"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Post(url, parameters, timeout);
+    lattice::Redirects redirects(5);
+    auto response = lattice::Get(url, timeout, redirects, parameters);
 
     if (response.status() == 200) {
         std::cout << "Body:\n"
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
                   << "------------------\n";
     } else {
         std::cout << "Response was not successful, error code: "
-                  << response.status() << std::endl;
+                  << response.status();
     }
 
     return 0;

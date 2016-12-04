@@ -11,7 +11,9 @@
 #include "cache.hpp"
 #include "cookie.hpp"
 #include "header.hpp"
+#include "method.hpp"
 #include "parameter.hpp"
+#include "redirect.hpp"
 #include "response.hpp"
 #include "timeout.hpp"
 #include "url.hpp"
@@ -34,10 +36,16 @@ protected:
     Timeout timeout;
     Header header;
     Cookies cookies;
+    Redirects redirects;
+    Method method;
     DnsCache *cache = nullptr;
 
-    void setDefaultOptions();
-    Response makeRequest(const std::string &data);
+    void openConnection(Connection &connection) const;
+    bool resetConnection(const Response &response);
+    void resetUrl(const std::string &string);
+    void setDefaultHeaders();
+    std::string requestData();
+    Response makeRequest();
 
 public:
     Session();
@@ -49,6 +57,7 @@ public:
     void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
     void setCookies(const Cookies &cookies);
+    void setRedirects(const Redirects &redirects);
     void setCache(DnsCache &cache);
 
     void setOption(const Url &url);
@@ -57,15 +66,18 @@ public:
     void setOption(const Header &header);
     void setOption(const Timeout &timeout);
     void setOption(const Cookies &cookies);
+    void setOption(const Redirects &redirects);
     void setOption(DnsCache &cache);
 
-//    Response delete();
+    Response delete_();
     Response get();
     Response head();
-//    Response options();
-//    Response patch();
+    Response options();
+    Response patch();
     Response post();
-//    Response put();
+    Response put();
+    Response trace();
+    Response connect();
 };
 
 
@@ -93,6 +105,18 @@ void setOption(Session& session,
 }
 
 
+/** \brief Wrapper for HTTP DELETE request.
+ */
+template <typename... Ts>
+Response Delete(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.delete_();
+}
+
+
 /** \brief Wrapper for HTTP GET request.
  */
 template <typename... Ts>
@@ -117,6 +141,30 @@ Response Head(Ts&&... ts)
 }
 
 
+/** \brief Wrapper for HTTP OPTIONS request.
+ */
+template <typename... Ts>
+Response Options(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.options();
+}
+
+
+/** \brief Wrapper for HTTP PATCH request.
+ */
+template <typename... Ts>
+Response Patch(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.patch();
+}
+
+
 /** \brief Wrapper for HTTP GET request.
  */
 template <typename... Ts>
@@ -127,5 +175,42 @@ Response Post(Ts&&... ts)
 
     return session.post();
 }
+
+
+/** \brief Wrapper for HTTP PUT request.
+ */
+template <typename... Ts>
+Response Put(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.put();
+}
+
+
+/** \brief Wrapper for HTTP TRACE request.
+ */
+template <typename... Ts>
+Response Trace(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.trace();
+}
+
+
+/** \brief Wrapper for HTTP CONNECT request.
+ */
+template <typename... Ts>
+Response Connect(Ts&&... ts)
+{
+    Session session;
+    setOption(session, FORWARD(ts)...);
+
+    return session.connect();
+}
+
 
 }   /* lattice */

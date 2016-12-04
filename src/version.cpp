@@ -13,6 +13,6 @@ namespace lattice
 // CONSTANTS
 // ---------
 
-const std::string VERSION = std::to_string(MAJOR) + "." + std::to_string(MINOR) + "." + std::to_string(PATCH);
+const std::string VERSION = std::to_string(MAJOR_VERSION) + "." + std::to_string(MINOR_VERSION) + "." + std::to_string(PATCH_VERSION);
 
 }   /* lattice */
