@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 option(BUILD_EXAMPLES "Build example files" ON)
 option(BUILD_STATIC "Build static library" ON)
+option(WITH_OPENSSL "Build with OpenSSL" OFF)
 
 if(UNIX AND ${BUILD_STATIC})
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -55,6 +56,13 @@ if(NOT REQUIRED_HEADERS)
     message(FATAL_ERROR "Could not find required headers.")
 endif()
 
+# OPENSSL
+# -------
+
+if(WITH_OPENSSL)
+    find_package(OpenSSL "1.0")
+endif()
+
 # THREADING
 # ---------
 
@@ -71,16 +79,14 @@ elseif(WIN32)
     list(APPEND LATTICE_SOURCES src/adapters/windows.cpp)
 endif()
 
-# TODO: need to add SSL support
 if(OPENSSL_FOUND)
-    list(APPEND LATTICE_SOURCES src/adapters/openssl.cpp)
-elseif(LIBRESSL_FOUND)
-    list(APPEND LATTICE_SOURCES src/adapters/libressl.cpp)
+    add_definitions(-DHAVE_OPENSSL -DHAVE_SSL)
+    set(HAVE_SSL TRUE)
 endif()
 
 set(LATTICE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LATTICE_INCLUDE_DIRS ${LATTICE_INCLUDE_DIR})
-include_directories(${LATTICE_INCLUDE_DIRS})
+include_directories(${LATTICE_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
 
 if(BUILD_STATIC)
     add_library(Lattice STATIC ${LATTICE_SOURCES})
@@ -89,7 +95,7 @@ else()
 endif()
 
 set_target_properties(Lattice PROPERTIES OUTPUT_NAME lattice)
-set(LATTICE_LIBRARIES Lattice Threads::Threads)
+set(LATTICE_LIBRARIES Lattice Threads::Threads ${OPENSSL_LIBRARIES})
 if(MSVC)
     list(APPEND LATTICE_LIBRARIES ws2_32.lib)
 elseif(MINGW)
@@ -100,6 +106,13 @@ endif()
 # --------
 
 file(GLOB LATTICE_EXAMPLES example/*.cpp)
+file(GLOB LATTICE_SSL_EXAMPLES example/ssl/*.cpp)
+if(HAVE_SSL)
+    list(APPEND LATTICE_EXAMPLES ${LATTICE_SSL_EXAMPLES})
+    file(COPY example/ssl/client.key
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/client.key
+    )
+endif()
 
 if(BUILD_EXAMPLES)
     foreach(source ${LATTICE_EXAMPLES})

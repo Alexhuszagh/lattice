@@ -11,6 +11,7 @@
 #include "certificate.hpp"
 #include "dns.hpp"
 #include "exception.hpp"
+#include "method.hpp"
 #include "timeout.hpp"
 
 #include <cstdlib>
@@ -101,6 +102,7 @@ public:
     void close();
     void setTimeout(const Timeout &timeout);
     void setCertificateFile(const CertificateFile &certificate);
+    void setSslProtocol(const SslProtocol ssl);
     void setCache(const DnsCache &cache);
     void send(const std::string &data);
 
@@ -132,6 +134,8 @@ Connection<Adapter>::~Connection()
 }
 
 
+/** \brief Open connection.
+ */
 template <typename Adapter>
 void Connection<Adapter>::open(const Url &url)
 {
@@ -143,6 +147,8 @@ void Connection<Adapter>::open(const Url &url)
 }
 
 
+/** \brief Close connection.
+ */
 template <typename Adapter>
 void Connection<Adapter>::close()
 {
@@ -150,6 +156,8 @@ void Connection<Adapter>::close()
 }
 
 
+/** \brief Set timeout for socket requests.
+ */
 template <typename Adapter>
 void Connection<Adapter>::setTimeout(const Timeout &timeout)
 {
@@ -157,6 +165,8 @@ void Connection<Adapter>::setTimeout(const Timeout &timeout)
 }
 
 
+/** \brief Set certificate file for SSL/TLS.
+ */
 template <typename Adapter>
 void Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
 {
@@ -164,6 +174,17 @@ void Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
 }
 
 
+/** \brief Set SSL protocol.
+ */
+template <typename Adapter>
+void Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
+{
+    adapter.setSslProtocol(ssl);
+}
+
+
+/** \brief Set DNS cache.
+ */
 template <typename Adapter>
 void Connection<Adapter>::setCache(const DnsCache &cache)
 {
@@ -171,6 +192,8 @@ void Connection<Adapter>::setCache(const DnsCache &cache)
 }
 
 
+/** \brief Send data through socket.
+ */
 template <typename Adapter>
 void Connection<Adapter>::send(const std::string &data)
 {

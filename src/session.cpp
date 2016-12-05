@@ -84,26 +84,6 @@ std::string Session::request()
 }
 
 
-/** \brief Make request to server.
- */
-Response Session::exec()
-{
-    if (url.service() == "http") {
-        Connection<HttpAdapter> connection;
-        return exec(connection);
-    } else if (url.service() == "https") {
-        #ifdef HAVE_SSL
-            Connection<SslAdapter> connection;
-            return exec(connection);
-        #else
-            throw MissingSslError();
-        #endif
-    }
-
-    return Response();
-}
-
-
 /** \brief Null constructor.
  */
 Session::Session()
@@ -114,6 +94,14 @@ Session::Session()
  */
 Session::~Session()
 {}
+
+
+/** \brief Set HTTP method.
+ */
+void Session::setMethod(const Method method)
+{
+    this->method = method;
+}
 
 
 /** \brief Set URL for session.
@@ -183,11 +171,27 @@ void Session::setCertificateFile(const CertificateFile &certificate)
 }
 
 
+/** \brief Set protocol for SSL encryption.
+ */
+void Session::setSslProtocol(const SslProtocol ssl)
+{
+    this->ssl = ssl;
+}
+
+
 /** \brief Set the DNS cache.
  */
 void Session::setCache(const DnsCache &cache)
 {
     this->cache = cache;
+}
+
+
+/** \brief Set HTTP method.
+ */
+void Session::setOption(const Method method)
+{
+    this->method = method;
 }
 
 
@@ -258,101 +262,19 @@ void Session::setOption(const CertificateFile &certificate)
 }
 
 
+/** \brief Set protocol for SSL encryption.
+ */
+void Session::setOption(const SslProtocol ssl)
+{
+    this->ssl = ssl;
+}
+
+
 /** \brief Set the DNS cache.
  */
 void Session::setOption(const DnsCache &cache)
 {
     this->cache = cache;
-}
-
-
-/** \brief Get response to HTTP DELETE request.
- */
-Response Session::delete_()
-{
-    method = Method::DELETE;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP GET request.
- */
-Response Session::get()
-{
-    method = Method::GET;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP HEAD request.
- */
-Response Session::head()
-{
-    method = Method::HEAD;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP OPTIONS request.
- */
-Response Session::options()
-{
-    method = Method::OPTIONS;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP PATCH request.
- */
-Response Session::patch()
-{
-    method = Method::PATCH;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP POST request.
- */
-Response Session::post()
-{
-    method = Method::POST;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP PUT request.
- */
-Response Session::put()
-{
-    method = Method::PUT;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP TRACE request.
- */
-Response Session::trace()
-{
-    method = Method::TRACE;
-
-    return exec();
-}
-
-
-/** \brief Get response to HTTP CONNECT request.
- */
-Response Session::connect()
-{
-    method = Method::CONNECT;
-
-    return exec();
 }
 
 }   /* lattice */

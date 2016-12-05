@@ -11,6 +11,7 @@
 
 #include "lattice/certificate.hpp"
 #include "lattice/dns.hpp"
+#include "lattice/method.hpp"
 #include "lattice/timeout.hpp"
 #include "lattice/url.hpp"
 
@@ -46,6 +47,10 @@ public:
     // OPTIONS
     void setTimeout(const Timeout &timeout);
     void setCertificateFile(const CertificateFile &certificate);
+    void setSslProtocol(const SslProtocol ssl);
+
+    // DATA
+    const int fd() const;
 };
 
 

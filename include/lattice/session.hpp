@@ -8,7 +8,9 @@
 
 #pragma once
 
+#include "adapter.hpp"
 #include "certificate.hpp"
+#include "connection.hpp"
 #include "cookie.hpp"
 #include "dns.hpp"
 #include "header.hpp"
@@ -39,11 +41,11 @@ protected:
     Cookies cookies;
     Redirects redirects;
     CertificateFile certificate;
-    Method method;
+    Method method = static_cast<Method>(0);
+    SslProtocol ssl = static_cast<SslProtocol>(0);
     DnsCache cache = nullptr;
 
     std::string request();
-    Response exec();
 
     template <typename Connection>
     Response exec(Connection &connection);
@@ -59,6 +61,7 @@ public:
     Session();
     ~Session();
 
+    void setMethod(const Method method);
     void setUrl(const Url &url);
     void setParameters(const Parameters &parameters);
     void setParameters(Parameters &&parameters);
@@ -67,8 +70,10 @@ public:
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
     void setCertificateFile(const CertificateFile &certificate);
+    void setSslProtocol(const SslProtocol ssl);
     void setCache(const DnsCache &cache);
 
+    void setOption(const Method method);
     void setOption(const Url &url);
     void setOption(const Parameters &parameters);
     void setOption(Parameters &&parameters);
@@ -77,17 +82,10 @@ public:
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
     void setOption(const CertificateFile &certificate);
+    void setOption(const SslProtocol ssl);
     void setOption(const DnsCache &cache);
 
-    Response delete_();
-    Response get();
-    Response head();
-    Response options();
-    Response patch();
-    Response post();
-    Response put();
-    Response trace();
-    Response connect();
+    Response exec();
 };
 
 
@@ -125,9 +123,9 @@ template <typename... Ts>
 Response Delete(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, DELETE, FORWARD(ts)...);
 
-    return session.delete_();
+    return session.exec();
 }
 
 
@@ -137,9 +135,9 @@ template <typename... Ts>
 Response Get(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, GET, FORWARD(ts)...);
 
-    return session.get();
+    return session.exec();
 }
 
 
@@ -149,9 +147,9 @@ template <typename... Ts>
 Response Head(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, HEAD, FORWARD(ts)...);
 
-    return session.head();
+    return session.exec();
 }
 
 
@@ -161,9 +159,9 @@ template <typename... Ts>
 Response Options(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, OPTIONS, FORWARD(ts)...);
 
-    return session.options();
+    return session.exec();
 }
 
 
@@ -173,9 +171,9 @@ template <typename... Ts>
 Response Patch(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, PATCH, FORWARD(ts)...);
 
-    return session.patch();
+    return session.exec();
 }
 
 
@@ -185,9 +183,9 @@ template <typename... Ts>
 Response Post(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, POST, FORWARD(ts)...);
 
-    return session.post();
+    return session.exec();
 }
 
 
@@ -197,9 +195,9 @@ template <typename... Ts>
 Response Put(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, PUT, FORWARD(ts)...);
 
-    return session.put();
+    return session.exec();
 }
 
 
@@ -209,9 +207,9 @@ template <typename... Ts>
 Response Trace(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, TRACE, FORWARD(ts)...);
 
-    return session.trace();
+    return session.exec();
 }
 
 
@@ -221,14 +219,32 @@ template <typename... Ts>
 Response Connect(Ts&&... ts)
 {
     Session session;
-    setOption(session, FORWARD(ts)...);
+    setOption(session, CONNECT, FORWARD(ts)...);
 
-    return session.connect();
+    return session.exec();
 }
 
 
 // IMPLEMENTATION
 // --------------
+
+
+/** \brief Make request to server.
+ *
+ *  For API reasons, this must occur in the header.
+ */
+inline Response Session::exec()
+{
+    if (url.service() == "http") {
+        Connection<HttpAdapter> connection;
+        return exec(connection);
+    } else if (url.service() == "https") {
+        Connection<SslAdapter> connection;
+        return exec(connection);
+    }
+
+    return Response();
+}
 
 
 /** \brief Execute request to server.
@@ -261,6 +277,9 @@ void Session::open(Connection &connection) const
     if (!certificate.empty()) {
         connection.setCertificateFile(certificate);
     }
+    if (FROM_ENUM(ssl)) {
+        connection.setSslProtocol(ssl);
+    }
     if (cache) {
         connection.setCache(cache);
     }
@@ -285,6 +304,8 @@ void Session::reset(Connection &connection,
 
     Url newurl(response.headers().at("location").data());
     if (newurl.absolute()) {
+        // reconnect if the service or host changes
+        reconnect |= url.service() != newurl.service();
         reconnect |= url.host() != newurl.host();
         url = newurl;
     } else {

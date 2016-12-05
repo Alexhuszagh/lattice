@@ -22,7 +22,7 @@ namespace lattice
 // ---------
 
 static WSADATA SOCK_DATA;
-static bool INITIALIZED = false;
+static bool WSA_INITIALIZED = false;
 
 // OBJECTS
 // -------
@@ -35,14 +35,14 @@ static bool INITIALIZED = false;
 Win32SocketAdapter::Win32SocketAdapter()
 {
     std::lock_guard<std::mutex> lock(MUTEX);
-    if (!INITIALIZED) {
+    if (!WSA_INITIALIZED) {
         if (WSAStartup(MAKEWORD(2,2), &SOCK_DATA) != 0){
             throw WinSockStartupError();
         }
         std::atexit([]() {
             WSACleanup();
         });
-        INITIALIZED = true;
+        WSA_INITIALIZED = true;
     }
 }
 
@@ -126,8 +126,27 @@ void Win32SocketAdapter::setCertificateFile(const CertificateFile &certificate)
 {
     std::lock_guard<std::mutex> lock(MUTEX);
     std::cerr << "Warning: HTTP requests do not support certificates."
-              << "Do NOT send sensitive data without TLS."
+              << "Do NOT send sensitive data without SSL/TLS."
               << std::endl;
+}
+
+
+/** \brief Set SSL protocol.
+ */
+void Win32SocketAdapter::setSslProtocol(const SslProtocol ssl)
+{
+    std::lock_guard<std::mutex> lock(MUTEX);
+    std::cerr << "Warning: HTTP requests do not support SSL/TLS."
+              << "Do NOT send sensitive data without SSL/TLS."
+              << std::endl;
+}
+
+
+/** \brief Get socket descriptor.
+ */
+const SOCKET Win32SocketAdapter::fd() const
+{
+    return sock;
 }
 
 

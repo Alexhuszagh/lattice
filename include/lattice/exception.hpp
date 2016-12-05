@@ -119,6 +119,19 @@ class RelativeUrlError: public std::exception
 };
 
 
+/** \brief Error when SSL handshake fails.
+ */
+class SslHandshakeError: public std::exception
+{
+    /** \brief Display message from SSL handshake error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Unable to establish SSL handshake.\n";
+    }
+};
+
+
 /** \brief Error when HTTPS connection is requested but no library used.
  */
 class MissingSslError: public std::exception

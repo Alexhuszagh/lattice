@@ -10,11 +10,6 @@
 
 namespace lattice
 {
-// CONSTANTS
-// ---------
-
-std::mutex MUTEX;
-
 // OBJECTS
 // -------
 

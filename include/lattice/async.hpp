@@ -7,22 +7,17 @@
 
 #pragma once
 
+#include "mutex.hpp"
 #include "response.hpp"
 #include "session.hpp"
 
 #include <future>
-#include <mutex>
 #include <thread>
 #include <vector>
 
 
 namespace lattice
 {
-// CONSTANTS
-// ---------
-
-extern std::mutex MUTEX;
-
 // OBJECTS
 // -------
 
@@ -69,7 +64,8 @@ void Pool::get(Ts&&... ts)
     setOption(session, FORWARD(ts)...);
 
     futures.emplace_back(std::async([](Session &&session) {
-        return session.get();
+        session.setMethod(GET);
+        return session.exec();
     }, std::move(session)));
 }
 
@@ -83,7 +79,8 @@ void Pool::head(Ts&&... ts)
     setOption(session, FORWARD(ts)...);
 
     futures.emplace_back(std::async([](Session &&session) {
-        return session.head();
+        session.setMethod(HEAD);
+        return session.exec();
     }, std::move(session)));
 }
 
@@ -97,7 +94,8 @@ void Pool::post(Ts&&... ts)
     setOption(session, FORWARD(ts)...);
 
     futures.emplace_back(std::async([](Session &&session) {
-        return session.post();
+        session.setMethod(POST);
+        return session.exec();
     }, std::move(session)));
 }
 

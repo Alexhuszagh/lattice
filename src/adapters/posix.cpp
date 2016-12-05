@@ -79,7 +79,7 @@ size_t PosixSocketAdapter::write(const char *buf,
 size_t PosixSocketAdapter::read(char *buf,
     size_t count)
 {
-    return ::read(sock, buf, count);
+    return ::recv(sock, buf, count, 0);
 }
 
 
@@ -113,8 +113,27 @@ void PosixSocketAdapter::setCertificateFile(const CertificateFile &certificate)
 {
     std::lock_guard<std::mutex> lock(MUTEX);
     std::cerr << "Warning: HTTP requests do not support certificates."
-              << "Do NOT send sensitive data without TLS."
+              << "Do NOT send sensitive data without SSL/TLS."
               << std::endl;
+}
+
+
+/** \brief Set SSL protocol.
+ */
+void PosixSocketAdapter::setSslProtocol(const SslProtocol ssl)
+{
+    std::lock_guard<std::mutex> lock(MUTEX);
+    std::cerr << "Warning: HTTP requests do not support SSL/TLS."
+              << "Do NOT send sensitive data without SSL/TLS."
+              << std::endl;
+}
+
+
+/** \brief Get socket descriptor.
+ */
+const int PosixSocketAdapter::fd() const
+{
+    return sock;
 }
 
 

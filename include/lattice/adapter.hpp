@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "adapter/openssl.hpp"
+#include "adapter/nossl.hpp"
 #include "adapter/posix.hpp"
 #include "adapter/windows.hpp"
 
@@ -24,12 +26,10 @@ namespace lattice
 #endif
 
 // HTTPS ADAPTERS
-#ifdef HAVE_SSL
-#   if defined(HAVE_OPENSSL)
-        typedef OpenSslAdapter<HttpAdapter> SslAdapter;
-#   elif defined(HAVE_LIBRESSL)
-        typedef LibreSslAdapter<HttpAdapter> SslAdapter;
-#   endif
+#if defined(HAVE_SSL) && defined(HAVE_OPENSSL)
+    typedef OpenSslAdapter<HttpAdapter> SslAdapter;
+#else
+    typedef NoSslAdapter<HttpAdapter> SslAdapter;
 #endif
 
 
