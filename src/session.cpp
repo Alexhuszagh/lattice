@@ -17,95 +17,25 @@ namespace lattice
 // -------
 
 
-/** \brief Open connection to URL.
- */
-void Session::openConnection(Connection &connection) const
-{
-    connection.open(url.host(), url.service());
-    if (timeout) {
-        connection.setTimeout(timeout);
-    }
-}
-
-
-/** \brief Check if the connection needs to be reset.
- */
-bool Session::resetConnection(const Response &response)
-{
-    auto old = url;
-    resetUrl(response.headers().at("location"));
-    if (old.host() != url.host()) {
-        header["Host"] = url.host();
-        return true;
-    }
-
-    return header.closeConnection() || response.headers().closeConnection();
-}
-
-
-/** \brief Get new URL, from a relative or absolute identifier.
- */
-void Session::resetUrl(const std::string &string)
-{
-    if (!string.empty() && string.front() == '/') {
-        // relative URL
-        this->url = Url((url.service() + "://" + url.host() + string).data());
-    } else {
-        // absolute url
-        this->url = Url(string.data());
-    }
-}
-
-
-/** \brief Set default options when making a request.
- */
-void Session::setDefaultHeaders()
-{
-    // emplace will not override user set options
-    header.emplace("Host", url.host());
-    header.emplace("User-Agent", "lattice/" + VERSION);
-
-    if (!cookies.empty()) {
-        header.emplace("Cookie", cookies.encode());
-    }
-}
-
-
-/** \brief Make request to server.
- */
-Response Session::makeRequest()
-{
-    // create connection and send data
-    Connection connection;
-    openConnection(connection);
-
-    do {
-        // send data and get response
-        connection.send(requestData());
-        Response response(connection);
-        if ((method = response.redirect(method)) != STOP) {
-            if (resetConnection(response)) {
-                // remake the connection
-                connection.close();
-                openConnection(connection);
-            }
-        } else {
-            return response;
-        }
-    } while (redirects--);
-
-    return Response();
-}
-
-
 /** \brief Get data from request.
  */
-std::string Session::requestData()
+std::string Session::request()
 {
-    setDefaultHeaders();
-
     std::stringstream stream;
     std::string name;
+    std::string headers = header.string();
+    if (!header.host()) {
+        // specify a default host
+        headers += "Host: " + url.host() + "\r\n";
+    }
+    if (!header.userAgent()) {
+        // specify a default user agent
+        headers += "User-Agent: lattice/" + VERSION + "\r\n";
+    }
+    if (!cookies.empty()) {
+        // add cookies to header
+        headers += "Cookie: " + cookies.encode() + "\r\n";
+    }
 
     switch (method) {
         case GET:
@@ -139,18 +69,38 @@ std::string Session::requestData()
 
     if (method == POST) {
         stream << name << " " << url.path() << " HTTP/1.1\r\n"
-               << header
+               << headers
                << "\r\n"
                << parameters.post()
                << "\r\n\r\n";
     } else {
         stream << name << " " << url.path() << parameters.get()
                << " HTTP/1.1\r\n"
-               << header
+               << headers
                << "\r\n\r\n";
     }
 
     return stream.str();
+}
+
+
+/** \brief Make request to server.
+ */
+Response Session::exec()
+{
+    if (url.service() == "http") {
+        Connection<HttpAdapter> connection;
+        return exec(connection);
+    } else if (url.service() == "https") {
+        #ifdef HAVE_SSL
+            Connection<SslAdapter> connection;
+            return exec(connection);
+        #else
+            throw MissingSslError();
+        #endif
+    }
+
+    return Response();
 }
 
 
@@ -170,6 +120,9 @@ Session::~Session()
  */
 void Session::setUrl(const Url &url)
 {
+    if (url.relative()) {
+        throw RelativeUrlError();
+    }
     this->url = url;
 }
 
@@ -222,13 +175,19 @@ void Session::setRedirects(const Redirects &redirects)
 }
 
 
-/** \brief Set the DNS cache.
- *
- *  \warning The lifetime of the cache must outlive that of the session.
+/** \brief Set certificate file for SSL encryption.
  */
-void Session::setCache(DnsCache &cache)
+void Session::setCertificateFile(const CertificateFile &certificate)
 {
-    this->cache = &cache;
+    this->certificate = certificate;
+}
+
+
+/** \brief Set the DNS cache.
+ */
+void Session::setCache(const DnsCache &cache)
+{
+    this->cache = cache;
 }
 
 
@@ -236,6 +195,9 @@ void Session::setCache(DnsCache &cache)
  */
 void Session::setOption(const Url &url)
 {
+    if (url.relative()) {
+        throw RelativeUrlError();
+    }
     this->url = url;
 }
 
@@ -288,11 +250,19 @@ void Session::setOption(const Redirects &redirects)
 }
 
 
+/** \brief Set certificate file for SSL encryption.
+ */
+void Session::setOption(const CertificateFile &certificate)
+{
+    this->certificate = certificate;
+}
+
+
 /** \brief Set the DNS cache.
  */
-void Session::setOption(DnsCache &cache)
+void Session::setOption(const DnsCache &cache)
 {
-    this->cache = &cache;
+    this->cache = cache;
 }
 
 
@@ -302,7 +272,7 @@ Response Session::delete_()
 {
     method = Method::DELETE;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -312,7 +282,7 @@ Response Session::get()
 {
     method = Method::GET;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -322,7 +292,7 @@ Response Session::head()
 {
     method = Method::HEAD;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -332,7 +302,7 @@ Response Session::options()
 {
     method = Method::OPTIONS;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -342,7 +312,7 @@ Response Session::patch()
 {
     method = Method::PATCH;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -352,7 +322,7 @@ Response Session::post()
 {
     method = Method::POST;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -362,7 +332,7 @@ Response Session::put()
 {
     method = Method::PUT;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -372,7 +342,7 @@ Response Session::trace()
 {
     method = Method::TRACE;
 
-    return makeRequest();
+    return exec();
 }
 
 
@@ -382,7 +352,8 @@ Response Session::connect()
 {
     method = Method::CONNECT;
 
-    return makeRequest();
+    return exec();
 }
 
 }   /* lattice */
+

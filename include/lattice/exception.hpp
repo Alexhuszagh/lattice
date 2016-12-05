@@ -5,6 +5,8 @@
  *  \brief Socket and connection exceptions.
  */
 
+#pragma once
+
 #include <sstream>
 #include <stdexcept>
 
@@ -13,6 +15,19 @@ namespace lattice
 {
 // OBJECTS
 // -------
+
+
+/** \brief Unable to start the WinSock API
+ */
+class WinSockStartupError
+{
+    /** \brief Display message from Windows socket startup error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Unable to startup the Windows socket API.\n";
+    }
+};
 
 
 /** \brief Error in in getting an address from the host/service.
@@ -27,7 +42,16 @@ public:
     AddressError(const std::string &host,
         const std::string &service);
 
-    virtual const char * what() const throw() = 0;
+    /** \brief Display message from address lookup error.
+     */
+    virtual const char * what() const throw()
+    {
+        std::stringstream stream;
+        stream << "Unable to get address from getaddrinfo("
+               << host.data() << ", " << service.data() << ").\n";
+
+        return stream.str().data();
+    }
 };
 
 
@@ -39,7 +63,7 @@ struct ConnectionError: public std::exception
      */
     virtual const char * what() const throw()
     {
-        return "Unable to establish connection\n";
+        return "Unable to establish connection.\n";
     }
 };
 
@@ -62,7 +86,7 @@ public:
     {
         std::stringstream stream;
         stream << "Unable to get make request: sent "
-               << sent << " of " << total << " bytes\n";
+               << sent << " of " << total << " bytes.\n";
 
         return stream.str().data();
     }
@@ -77,8 +101,35 @@ struct SocketOptionError: public std::exception
      */
     virtual const char * what() const throw()
     {
-        return "Unable to set socket option via setsockopt()\n";
+        return "Unable to set socket option via setsockopt().\n";
     }
 };
+
+
+/** \brief Relative URL set for main connection.
+ */
+class RelativeUrlError: public std::exception
+{
+    /** \brief Display message from relative URL error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Relative URL set: host and service unknown.\n";
+    }
+};
+
+
+/** \brief Error when HTTPS connection is requested but no library used.
+ */
+class MissingSslError: public std::exception
+{
+    /** \brief Display message from SSL error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "HTTPS connection requested, but not SSL library found.\n";
+    }
+};
+
 
 }   /* lattice */

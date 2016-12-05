@@ -14,14 +14,10 @@
 #include "redirect.hpp"
 #include "transfer.hpp"
 #include "url.hpp"
-#ifdef _WIN32
-#   include "nt.hpp"
-#else
-#   include "unix.hpp"
-#endif
 
 #include <string>
 #include <tuple>
+#include <type_traits>
 
 
 namespace lattice
@@ -129,6 +125,9 @@ class Response
 protected:
     typedef std::tuple<ContentType, std::string> MimeType;
 
+    template <typename T>
+    using IsNotSame = typename std::enable_if<!std::is_same<T, Response>::value>::type;
+
     StatusCode code;
     Header header;
     Cookies cookie;
@@ -143,13 +142,15 @@ protected:
     void parseContentType(std::string &string);
     void parseType(const std::string &string);
     void parseHeader(const std::string &line);
-    void parseHeaders(Connection &connection);
+    void parseHeaders(const std::string &lines);
 
 public:
     Response();
-    Response(Connection &connection);
     Response(const Response &other);
     ~Response();
+
+    template <typename Connection, typename = IsNotSame<Connection>>
+    Response(Connection &connection);
 
     // DATA
     const int status() const;
@@ -200,5 +201,40 @@ public:
     Method redirect(Method method) const;
     bool permanentRedirect() const;
 };
+
+
+// IMPLEMENTATION
+// --------------
+
+
+/** \brief Initializer constructor.
+ *
+ *  Initializes the response, first parsing the headers and parsing
+ *  them based on RFC 2616 [Section 4.4][reference].
+ *
+ *  If the transfer encoding is set, and not identity, assume the data
+ *  is chunked, unless the connection was closed.
+ *
+ *  [reference] https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4
+ */
+template <typename Connection, typename>
+Response::Response(Connection &connection)
+{
+    parseHeaders(connection.headers());
+    if (!!transfer && !(transfer & IDENTITY)) {
+        // connection has the transfer set and is not identity
+        if (header.closeConnection()) {
+            data = connection.read();
+        } else {
+            data = connection.chunked();
+        }
+    } else if (header.find("content-length") != header.end()) {
+        data = connection.body(std::stol(header.at("content-length")));
+    } else {
+        // no content-length or chunked storage, just read
+        data = connection.read();
+    }
+}
+
 
 }   /* lattice */

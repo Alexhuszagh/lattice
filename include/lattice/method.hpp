@@ -7,6 +7,11 @@
 
 #pragma once
 
+#ifdef DELETE
+#   undef DELETE
+#endif
+
+
 namespace lattice
 {
 // OBJECTS

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    lattice::DnsCache cache;
+    auto cache = lattice::CreateDnsCache();
     lattice::Url url = {"http://httpbin.org/delete"};
     lattice::Timeout timeout(1000);
     auto response = lattice::Delete(url, parameters, timeout, cache);

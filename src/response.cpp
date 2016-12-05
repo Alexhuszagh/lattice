@@ -160,9 +160,9 @@ void Response::parseHeader(const std::string &line)
 
 /** \brief Extract headers from the HTTP response.
  */
-void Response::parseHeaders(Connection &connection)
+void Response::parseHeaders(const std::string &lines)
 {
-    std::istringstream stream(connection.headers());
+    std::istringstream stream(lines);
     std::string line;
     while (::lattice::getline(stream, line)) {
         if (!line.empty()) {
@@ -177,35 +177,6 @@ void Response::parseHeaders(Connection &connection)
 Response::Response():
     code(static_cast<StatusCode>(0))
 {}
-
-
-/** \brief Initializer constructor.
- *
- *  Initializes the response, first parsing the headers and parsing
- *  them based on RFC 2616 [Section 4.4][reference].
- *
- *  If the transfer encoding is set, and not identity, assume the data
- *  is chunked, unless the connection was closed.
- *
- *  [reference] https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4
- */
-Response::Response(Connection &connection)
-{
-    parseHeaders(connection);
-    if (!!transfer && !(transfer & IDENTITY)) {
-        // connection has the transfer set and is not identity
-        if (header.closeConnection()) {
-            data = connection.read();
-        } else {
-            data = connection.chunked();
-        }
-    } else if (header.find("content-length") != header.end()) {
-        data = connection.body(std::stol(header.at("content-length")));
-    } else {
-        // no content-length or chunked storage, just read
-        data = connection.read();
-    }
-}
 
 
 /** \brief Copy constructor.
@@ -617,3 +588,4 @@ bool Response::permanentRedirect() const
 
 
 }   /* lattice */
+

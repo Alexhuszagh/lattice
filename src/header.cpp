@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <sstream>
 
 
 namespace lattice
@@ -26,6 +27,39 @@ bool CaseInsensitiveCompare::operator()(const std::string &left,
     return std::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end(), [](unsigned char l, unsigned char r) {
             return std::tolower(l) < std::tolower(r);
     });
+}
+
+
+/** \brief Print headers to string.
+ */
+std::string Header::string() const
+{
+    std::stringstream stream;
+    for (const auto &pair: *this) {
+        if (pair.second.empty()) {
+            stream << pair.first << ";\r\n";
+        } else {
+            stream << pair.first << ": " << pair.second << "\r\n";
+        }
+    }
+
+    return stream.str();
+}
+
+
+/** \brief Check if the header specifies a host.
+ */
+bool Header::host() const
+{
+    return find("host") != end();
+}
+
+
+/** \brief Check if the header specifies a User-Agent.
+ */
+bool Header::userAgent() const
+{
+    return find("user-agent") != end();
 }
 
 
@@ -46,13 +80,7 @@ bool Header::closeConnection() const
 std::ostream & operator<<(std::ostream &os,
     const Header &header)
 {
-    for (const auto &pair: header) {
-        if (pair.second.empty()) {
-            os << pair.first << ";\r\n";
-        } else {
-            os << pair.first << ": " << pair.second << "\r\n";
-        }
-    }
+    os << header.string();
 
     return os;
 }

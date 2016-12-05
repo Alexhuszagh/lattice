@@ -11,12 +11,18 @@
 #include "session.hpp"
 
 #include <future>
+#include <mutex>
 #include <thread>
 #include <vector>
 
 
 namespace lattice
 {
+// CONSTANTS
+// ---------
+
+extern std::mutex MUTEX;
+
 // OBJECTS
 // -------
 

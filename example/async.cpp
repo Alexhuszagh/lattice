@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    lattice::DnsCache cache;
+    auto cache = lattice::CreateDnsCache();
     lattice::Url get = {"http://httpbin.org/get"};
     lattice::Url post = {"http://httpbin.org/post"};
 

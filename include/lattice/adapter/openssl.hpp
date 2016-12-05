@@ -2,15 +2,5 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Windows NT networking protocols.
+ *  \brief OpenSSL socket adapter.
  */
-
-#ifdef _WIN32
-
-
-namespace lattice
-{
-}   /* lattice */
-
-
-#endif              // WIN32

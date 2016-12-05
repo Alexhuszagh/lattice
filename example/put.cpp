@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple HTTP GET request.
+ *  \brief Simple HTTP PUT request.
  */
 
 #include "lattice.hpp"
@@ -16,10 +16,9 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    auto cache = lattice::CreateDnsCache();
-    lattice::Url url = {"http://httpbin.org/get"};
+    lattice::Url url = {"http://httpbin.org/put"};
     lattice::Timeout timeout(1000);
-    auto response = lattice::Get(url, parameters, timeout, cache);
+    auto response = lattice::Put(url, parameters, timeout);
 
     if (response.status() == 200) {
         std::cout << "Body:\n"
@@ -30,7 +29,7 @@ int main(int argc, char *argv[])
                   << "------------------\n";
     } else {
         std::cout << "Response was not successful, error code: "
-                  << response.status()  << std::endl;
+                  << response.status() << std::endl;
     }
 
     return 0;

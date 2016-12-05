@@ -21,7 +21,10 @@ Lattice aims to be a light-weight, adaptable, and easily embeddable client-side 
 
 - Custom Headers
 - URL-encoded parameters
-- GET/POST/DELETE/TRACE methods 
+- Cookies
+- Custom DNS caching
+- Follow redirects
+- GET/HEAD/POST/PATCH/PUT/OPTIONS/DELETE/TRACE methods 
 - Response type detection
 - Pseudo-asynchronous requests
 
@@ -32,7 +35,7 @@ All batteries included. Lattice will identify compressed data streams, JSON, XML
 ## Dependencies
 
 - C++11 Compiler
-- CMake or GNU Make
+- CMake
 - POSIX or WIN32 threads
 
 ## Contributors

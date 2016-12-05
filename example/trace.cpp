@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::DnsCache cache;
+    auto cache = lattice::CreateDnsCache();
     lattice::Url url = {"http://httpbin.org/"};
     lattice::Timeout timeout(1000);
     auto response = lattice::Trace(url, timeout, cache);

@@ -8,8 +8,9 @@
 
 #pragma once
 
-#include "cache.hpp"
+#include "certificate.hpp"
 #include "cookie.hpp"
+#include "dns.hpp"
 #include "header.hpp"
 #include "method.hpp"
 #include "parameter.hpp"
@@ -37,15 +38,22 @@ protected:
     Header header;
     Cookies cookies;
     Redirects redirects;
+    CertificateFile certificate;
     Method method;
-    DnsCache *cache = nullptr;
+    DnsCache cache = nullptr;
 
-    void openConnection(Connection &connection) const;
-    bool resetConnection(const Response &response);
-    void resetUrl(const std::string &string);
-    void setDefaultHeaders();
-    std::string requestData();
-    Response makeRequest();
+    std::string request();
+    Response exec();
+
+    template <typename Connection>
+    Response exec(Connection &connection);
+
+    template <typename Connection>
+    void open(Connection &connection) const;
+
+    template <typename Connection>
+    void reset(Connection &connection,
+        const Response &response);
 
 public:
     Session();
@@ -58,7 +66,8 @@ public:
     void setTimeout(const Timeout &timeout);
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
-    void setCache(DnsCache &cache);
+    void setCertificateFile(const CertificateFile &certificate);
+    void setCache(const DnsCache &cache);
 
     void setOption(const Url &url);
     void setOption(const Parameters &parameters);
@@ -67,7 +76,8 @@ public:
     void setOption(const Timeout &timeout);
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
-    void setOption(DnsCache &cache);
+    void setOption(const CertificateFile &certificate);
+    void setOption(const DnsCache &cache);
 
     Response delete_();
     Response get();
@@ -79,6 +89,10 @@ public:
     Response trace();
     Response connect();
 };
+
+
+// FUNCTIONS
+// ---------
 
 
 /** \brief Set option for HTTP session.
@@ -210,6 +224,78 @@ Response Connect(Ts&&... ts)
     setOption(session, FORWARD(ts)...);
 
     return session.connect();
+}
+
+
+// IMPLEMENTATION
+// --------------
+
+
+/** \brief Execute request to server.
+ */
+template <typename Connection>
+Response Session::exec(Connection &connection)
+{
+    open(connection);
+    Response response;
+    do {
+        connection.send(request());
+        response = Response(connection);
+        if ((method = response.redirect(method)) != STOP) {
+            reset(connection, response);
+        } else {
+            break;
+        }
+    } while (redirects--);
+
+    return response;
+}
+
+
+/** \brief Open connection to server.
+ */
+template <typename Connection>
+void Session::open(Connection &connection) const
+{
+    // set options
+    if (!certificate.empty()) {
+        connection.setCertificateFile(certificate);
+    }
+    if (cache) {
+        connection.setCache(cache);
+    }
+
+    // open and set timeout
+    connection.open(url);
+    if (timeout) {
+        connection.setTimeout(timeout);
+    }
+}
+
+
+/** \brief Reset parameters and connection to server.
+ */
+template <typename Connection>
+void Session::reset(Connection &connection,
+    const Response &response)
+{
+    // check if we need to reset connection
+    bool reconnect = header.closeConnection();
+    reconnect |= response.headers().closeConnection();
+
+    Url newurl(response.headers().at("location").data());
+    if (newurl.absolute()) {
+        reconnect |= url.host() != newurl.host();
+        url = newurl;
+    } else {
+        url.setPath(newurl.path());
+    }
+
+    // reset connection
+    if (reconnect) {
+        connection.close();
+        open(connection);
+    }
 }
 
 

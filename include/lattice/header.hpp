@@ -38,6 +38,9 @@ protected:
 public:
     using Base::Base;
 
+    std::string string() const;
+    bool host() const;
+    bool userAgent() const;
     bool closeConnection() const;
 
     friend std::ostream & operator<<(std::ostream &os,
