@@ -5,10 +5,10 @@
  *  \brief Create no-opt adapter.
  */
 
-#include "lattice/certificate.hpp"
 #include "lattice/dns.hpp"
 #include "lattice/exception.hpp"
 #include "lattice/method.hpp"
+#include "lattice/ssl.hpp"
 #include "lattice/timeout.hpp"
 #include "lattice/url.hpp"
 

@@ -9,9 +9,8 @@
 
 #pragma once
 
-#include "lattice/certificate.hpp"
 #include "lattice/dns.hpp"
-#include "lattice/method.hpp"
+#include "lattice/ssl.hpp"
 #include "lattice/timeout.hpp"
 #include "lattice/url.hpp"
 
@@ -37,7 +36,8 @@ public:
     ~PosixSocketAdapter();
 
     // REQUESTS
-    bool open(const addrinfo &info);
+    bool open(const addrinfo &info,
+        const std::string &/*host*/);
     bool close();
     size_t write(const char *buf,
         size_t len);
@@ -47,7 +47,9 @@ public:
     // OPTIONS
     void setTimeout(const Timeout &timeout);
     void setCertificateFile(const CertificateFile &certificate);
+    void setRevocationLists(const RevocationLists &revoke);
     void setSslProtocol(const SslProtocol ssl);
+    void setVerifyPeer(const VerifyPeer &peer);
 
     // DATA
     const int fd() const;

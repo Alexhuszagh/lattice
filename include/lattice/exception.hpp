@@ -145,4 +145,36 @@ class MissingSslError: public std::exception
 };
 
 
+/** \brief Error creating SSL context.
+ */
+class SSlContextError: public std::exception
+{
+    /** \brief Display message from SSL error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Unable to initialize SSL context.\n";
+    }
+};
+
+
+
+/** \brief Error loading certificates from file.
+ */
+class CertificateLoadingError: public std::exception
+{
+    /** \brief Display message from SSL error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Unable to load certificates from file.\n";
+    }
+};
+
+
+/** \brief Warn user about user encryption methods without SSL/TLS support.
+ */
+void encryptionWarning();
+
+
 }   /* lattice */

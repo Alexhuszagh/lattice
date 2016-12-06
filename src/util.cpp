@@ -99,4 +99,56 @@ std::string join(const std::vector<std::string> &items,
 }
 
 
+/** \brief Replace substring in string.
+ *
+ *  Replace up to `max` instances of `sub` with`repl` in the target
+ *  string. By default, max is set to -1, or infinite occurences.
+ */
+void replace(std::string &string,
+    const std::string &sub,
+    const std::string &repl,
+    int max)
+{
+    size_t start = 0;
+
+    while(max && (start = string.find(sub, start)) != std::string::npos) {
+        string.replace(start, sub.size(), repl);
+        start += repl.size();
+        --max;
+    }
+}
+
+
+/** Escape printable, non-Unicode, non-alphanumeric characters.
+ *
+ *  Escapes all ASCII non-alphanumeric characters, assuming
+ *  UTF-8 source encoding.
+ */
+std::string escapeUrl(const std::string src)
+{
+    std::string dst;
+    dst.reserve(src.size() * 2 + 1);
+
+    for (const char c: src) {
+        // skip wildcard
+        if ((c >= 0 && c <= 41) ||      // Null - )
+            (c >= 43 && c <= 47) ||     // + - @
+            (c >= 58 && c <= 64) ||     // : - @
+            (c >= 91 && c <= 96) ||     // [ - `]
+            (c >= 123 && c <= 126)) {   // ( - ~
+            dst.push_back('\\');
+        } else if (c == '*') {
+            dst.push_back('.');
+        }
+        dst.push_back(c);
+    }
+
+    // now need to deal with special wildcards
+    replace(dst, ".*\\.", ".*\\.?", 1);
+
+    dst.shrink_to_fit();
+    return dst;
+}
+
+
 }   /* lattice */

@@ -9,7 +9,6 @@
 #pragma once
 
 #include "adapter.hpp"
-#include "certificate.hpp"
 #include "connection.hpp"
 #include "cookie.hpp"
 #include "dns.hpp"
@@ -18,6 +17,7 @@
 #include "parameter.hpp"
 #include "redirect.hpp"
 #include "response.hpp"
+#include "ssl.hpp"
 #include "timeout.hpp"
 #include "url.hpp"
 #include "util.hpp"
@@ -41,8 +41,10 @@ protected:
     Cookies cookies;
     Redirects redirects;
     CertificateFile certificate;
+    RevocationLists revoke;
     Method method = static_cast<Method>(0);
     SslProtocol ssl = static_cast<SslProtocol>(0);
+    VerifyPeer verifypeer;
     DnsCache cache = nullptr;
 
     std::string request();
@@ -70,7 +72,10 @@ public:
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
     void setCertificateFile(const CertificateFile &certificate);
+    void setRevocationLists(const RevocationLists &revoke);
     void setSslProtocol(const SslProtocol ssl);
+    void setVerifyPeer(const VerifyPeer &peer);
+    void setVerifyPeer(VerifyPeer &&peer);
     void setCache(const DnsCache &cache);
 
     void setOption(const Method method);
@@ -82,7 +87,10 @@ public:
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
     void setOption(const CertificateFile &certificate);
+    void setOption(const RevocationLists &revoke);
     void setOption(const SslProtocol ssl);
+    void setOption(const VerifyPeer &peer);
+    void setOption(VerifyPeer &&peer);
     void setOption(const DnsCache &cache);
 
     Response exec();
@@ -274,8 +282,12 @@ template <typename Connection>
 void Session::open(Connection &connection) const
 {
     // set options
+    connection.setVerifyPeer(verifypeer);
     if (!certificate.empty()) {
         connection.setCertificateFile(certificate);
+    }
+    if (!revoke.empty()) {
+        connection.setRevocationLists(revoke);
     }
     if (FROM_ENUM(ssl)) {
         connection.setSslProtocol(ssl);

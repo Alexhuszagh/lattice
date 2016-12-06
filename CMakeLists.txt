@@ -69,6 +69,14 @@ endif()
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+# SSL
+# ---
+
+if(OPENSSL_FOUND)
+    add_definitions(-DHAVE_OPENSSL)
+endif()
+set(HAVE_SSL ${OPENSSL_FOUND})
+
 # LIBRARY
 # -------
 
@@ -77,11 +85,6 @@ if(UNIX)
     list(APPEND LATTICE_SOURCES src/adapters/posix.cpp)
 elseif(WIN32)
     list(APPEND LATTICE_SOURCES src/adapters/windows.cpp)
-endif()
-
-if(OPENSSL_FOUND)
-    add_definitions(-DHAVE_OPENSSL -DHAVE_SSL)
-    set(HAVE_SSL TRUE)
 endif()
 
 set(LATTICE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -109,8 +112,8 @@ file(GLOB LATTICE_EXAMPLES example/*.cpp)
 file(GLOB LATTICE_SSL_EXAMPLES example/ssl/*.cpp)
 if(HAVE_SSL)
     list(APPEND LATTICE_EXAMPLES ${LATTICE_SSL_EXAMPLES})
-    file(COPY example/ssl/client.key
-        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/client.key
+    file(COPY example/ssl/client.crt
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
     )
 endif()
 

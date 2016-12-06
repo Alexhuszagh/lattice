@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple GET request with TLS.
+ *  \brief Simple GET request with internationalized domain names.
  */
 
 #include "lattice.hpp"
@@ -12,15 +12,10 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
-        {"param1", "value1"},
-        {"param2", "value2"},
-    };
-    auto cache = lattice::CreateDnsCache();
-    lattice::Url url = {"https://httpbin.org/get"};
+    lattice::Url url = {"http://xn--rksmrgs-5wao1o.josefsson.org"};
+    // TODO: need to custom convert to and from the IDN
     lattice::Timeout timeout(1000);
-    lattice::CertificateFile certificate("client.crt");
-    auto response = lattice::Get(url, parameters, timeout, cache, certificate);
+    auto response = lattice::Get(url, timeout);
 
     if (response.status() == 200) {
         std::cout << "Body:\n"

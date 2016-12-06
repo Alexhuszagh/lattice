@@ -13,7 +13,6 @@
 #include <windows.h>
 
 #include <cstdlib>
-#include <iostream>
 
 
 namespace lattice
@@ -55,7 +54,8 @@ Win32SocketAdapter::~Win32SocketAdapter()
 
 /** \brief Open socket.
  */
-bool Win32SocketAdapter::open(const addrinfo &info)
+bool Win32SocketAdapter::open(const addrinfo &info,
+    const std::string & /*host*/)
 {
     sock = ::socket(info.ai_family, info.ai_socktype, info.ai_protocol);
     if (sock == INVALID_SOCKET) {
@@ -124,10 +124,15 @@ void Win32SocketAdapter::setTimeout(const Timeout &timeout)
  */
 void Win32SocketAdapter::setCertificateFile(const CertificateFile &certificate)
 {
-    std::lock_guard<std::mutex> lock(MUTEX);
-    std::cerr << "Warning: HTTP requests do not support certificates."
-              << "Do NOT send sensitive data without SSL/TLS."
-              << std::endl;
+    encryptionWarning();
+}
+
+
+/** \brief Set file to manually revoke certificates.
+ */
+void Win32SocketAdapter::setRevocationLists(const RevocationLists &revoke)
+{
+    encryptionWarning();
 }
 
 
@@ -135,11 +140,14 @@ void Win32SocketAdapter::setCertificateFile(const CertificateFile &certificate)
  */
 void Win32SocketAdapter::setSslProtocol(const SslProtocol ssl)
 {
-    std::lock_guard<std::mutex> lock(MUTEX);
-    std::cerr << "Warning: HTTP requests do not support SSL/TLS."
-              << "Do NOT send sensitive data without SSL/TLS."
-              << std::endl;
+    encryptionWarning();
 }
+
+
+/** \brief Change peer certificate validation (noop).
+ */
+void Win32SocketAdapter::setVerifyPeer(const VerifyPeer &peer)
+{}
 
 
 /** \brief Get socket descriptor.

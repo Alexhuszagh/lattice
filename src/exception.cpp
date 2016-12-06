@@ -7,6 +7,8 @@
 
 #include "lattice.hpp"
 
+#include <iostream>
+
 
 namespace lattice
 {
@@ -30,5 +32,17 @@ RequestError::RequestError(const int sent,
     sent(sent),
     total(total)
 {}
+
+
+/** \brief Warn user about user encryption methods without SSL/TLS support.
+ */
+void encryptionWarning()
+{
+    std::lock_guard<std::mutex> lock(MUTEX);
+    std::cerr << "Warning: HTTP requests do not support SSL/TLS."
+              << "Do NOT send sensitive data without SSL/TLS."
+              << std::endl;
+}
+
 
 }   /* lattice */

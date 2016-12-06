@@ -8,10 +8,10 @@
 #pragma once
 
 #include "adapter.hpp"
-#include "certificate.hpp"
 #include "dns.hpp"
 #include "exception.hpp"
 #include "method.hpp"
+#include "ssl.hpp"
 #include "timeout.hpp"
 
 #include <cstdlib>
@@ -39,7 +39,7 @@ void openConnection(Adapter &adapter,
 {
     // perform DNS lookup
     for (auto &&info: DnsLookup(host, service)) {
-        if (adapter.open(info)) {
+        if (adapter.open(info, host)) {
             return;
         }
     }
@@ -60,14 +60,14 @@ void openConnection(Adapter &adapter,
     // try cached results
     Cache::iterator it;
     if ((it = cache.find(host)) != cache.end()) {
-        if (adapter.open(addrinfo(it->second))) {
+        if (adapter.open(addrinfo(it->second), host)) {
             return;
         }
     }
 
     // perform DNS lookup
     for (auto &&info: DnsLookup(host, service)) {
-        if (adapter.open(info)) {
+        if (adapter.open(info, host)) {
             cache.emplace(host, info);
             return;
         }
@@ -102,7 +102,9 @@ public:
     void close();
     void setTimeout(const Timeout &timeout);
     void setCertificateFile(const CertificateFile &certificate);
+    void setRevocationLists(const RevocationLists &revoke);
     void setSslProtocol(const SslProtocol ssl);
+    void setVerifyPeer(const VerifyPeer &peer);
     void setCache(const DnsCache &cache);
     void send(const std::string &data);
 
@@ -174,12 +176,30 @@ void Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
 }
 
 
+/** \brief Set file to manually revoke certificates.
+ */
+template <typename Adapter>
+void Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
+{
+    adapter.setRevocationLists(revoke);
+}
+
+
 /** \brief Set SSL protocol.
  */
 template <typename Adapter>
 void Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
 {
     adapter.setSslProtocol(ssl);
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+template <typename Adapter>
+void Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
+{
+    adapter.setVerifyPeer(peer);
 }
 
 

@@ -35,17 +35,4 @@ enum Method
 };
 
 
-/** SSL encryption protocl.
- */
-enum SslProtocol
-{
-    TLS     = 0,
-    SSL_V23 = 1,
-    TLS_V12 = 2,
-    TLS_V11 = 3,
-    TLS_V1  = 4,
-    SSL_V3  = 5,
-};
-
-
 }   /* lattice */

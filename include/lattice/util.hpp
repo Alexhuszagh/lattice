@@ -167,4 +167,28 @@ inline void tolower(std::string &string)
 }
 
 
+/** \brief Replace substring in string.
+ *
+ *  Replace up to `max` instances of `sub` with`repl` in the target
+ *  string. By default, max is set to -1, or infinite occurences.
+ *
+ *  \param string           String to replace (in-place)
+ *  \param sub              Characters to remove with repl in string
+ *  \param repl             Characters to add in place of sub in string
+ *  \param max              Maximum number of occurences to replace
+ */
+void replace(std::string &string,
+    const std::string &sub,
+    const std::string &repl,
+    int max = -1);
+
+
+/** Escape printable, non-Unicode, non-alphanumeric characters.
+ *
+ *  Escapes all ASCII non-alphanumeric characters, assuming
+ *  UTF-8 source encoding.
+ */
+std::string escapeUrl(const std::string src);
+
+
 }   /* lattice */

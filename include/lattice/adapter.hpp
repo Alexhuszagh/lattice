@@ -15,6 +15,14 @@
 
 namespace lattice
 {
+// MACROS
+// ------
+
+
+#if defined(HAVE_OPENSSL)
+#   define HAVE_SSL
+#endif
+
 // OBJECTS
 // -------
 

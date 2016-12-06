@@ -171,11 +171,35 @@ void Session::setCertificateFile(const CertificateFile &certificate)
 }
 
 
+/** \brief Set file to manually revoke certificates.
+ */
+void Session::setRevocationLists(const RevocationLists &revoke)
+{
+    this->revoke = revoke;
+}
+
+
 /** \brief Set protocol for SSL encryption.
  */
 void Session::setSslProtocol(const SslProtocol ssl)
 {
     this->ssl = ssl;
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+void Session::setVerifyPeer(const VerifyPeer &peer)
+{
+    this->verifypeer = verifypeer;
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+void Session::setVerifyPeer(VerifyPeer &&peer)
+{
+    this->verifypeer = verifypeer;
 }
 
 
@@ -262,11 +286,35 @@ void Session::setOption(const CertificateFile &certificate)
 }
 
 
+/** \brief Set file to manually revoke certificates.
+ */
+void Session::setOption(const RevocationLists &revoke)
+{
+    this->revoke = revoke;
+}
+
+
 /** \brief Set protocol for SSL encryption.
  */
 void Session::setOption(const SslProtocol ssl)
 {
     this->ssl = ssl;
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+void Session::setOption(const VerifyPeer &peer)
+{
+    this->verifypeer = verifypeer;
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+void Session::setOption(VerifyPeer &&peer)
+{
+    this->verifypeer = verifypeer;
 }
 
 

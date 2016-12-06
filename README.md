@@ -9,8 +9,10 @@ A light-weight, dependency-free, cross-platform library for client-side network 
 - [Features](#features)
 - [Lattice Is Not...](#lattice-is-not...)
 - [Dependencies](#dependencies)
+- [Building](#building)
+- [TODO](#todo)
 - [Contributors](#contributors)
-- [Contributor Guidelines](#contributor-guidelines)
+- [Credits](#credits)
 - [License](#license)
 
 ## Motivation
@@ -22,11 +24,16 @@ Lattice aims to be a light-weight, adaptable, and easily embeddable client-side 
 - Custom Headers
 - URL-encoded parameters
 - Cookies
-- Custom DNS caching
-- Follow redirects
+- DNS caching
+- Redirection following
 - GET/HEAD/POST/PATCH/PUT/OPTIONS/DELETE/TRACE methods 
 - Response type detection
 - Pseudo-asynchronous requests
+
+**HTTPS Only**
+
+- SSL/TLS adapters for sockets
+- Domain Name and certification validation
 
 ## Lattice is Not...
 
@@ -36,7 +43,29 @@ All batteries included. Lattice will identify compressed data streams, JSON, XML
 
 - C++11 Compiler
 - CMake
-- POSIX or WIN32 threads
+- Native threads (POSIX or Win32)
+- (Optional) OpenSSL
+
+SSL/TLS support is header-only, the library itself has no SSL dependencies.
+
+## Building
+
+Simply clone, configure with CMake, and build.
+
+```
+git clone https://github.com/Alexhuszagh/lattice.git
+cd lattice/build
+cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
+make -j 5                       # "msbuild Lattice.sln" for MSVC
+```
+
+## TODO
+
+- Multipart
+- Authorization
+- Body
+- Options
+- Payload
 
 ## Contributors
 
@@ -44,9 +73,7 @@ All batteries included. Lattice will identify compressed data streams, JSON, XML
 
 Lattice uses code directly adapted from [CPR](https://github.com/whoshuu/cpr) and therefore credits those [authors](AUTHORS), and can be considered a fork in some form. Contributors to CPR are not affiliated with Lattice. 
 
-## Contributor Guidelines
-
-Contributors should follow the same coding conventions present in the source code, and must agree to either an MIT or Boost license.
+The OpenSSL adapter was reimplemented from libssl annotations in the cURL project, and therefore is a derivative work.
 
 ## License
 

@@ -7,7 +7,6 @@
 
 #include "lattice/adapter.hpp"
 #include "lattice/async.hpp"
-#include "lattice/certificate.hpp"
 #include "lattice/connection.hpp"
 #include "lattice/cookie.hpp"
 #include "lattice/dns.hpp"
@@ -19,6 +18,7 @@
 #include "lattice/redirect.hpp"
 #include "lattice/response.hpp"
 #include "lattice/session.hpp"
+#include "lattice/ssl.hpp"
 #include "lattice/timeout.hpp"
 #include "lattice/transfer.hpp"
 #include "lattice/url.hpp"

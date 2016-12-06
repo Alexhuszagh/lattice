@@ -37,7 +37,8 @@ PosixSocketAdapter::~PosixSocketAdapter()
 
 /** \brief Open socket.
  */
-bool PosixSocketAdapter::open(const addrinfo &info)
+bool PosixSocketAdapter::open(const addrinfo &info,
+    const std::string & /*host*/)
 {
     sock = ::socket(info.ai_family, info.ai_socktype, info.ai_protocol);
     if (sock < 0) {
@@ -111,10 +112,15 @@ void PosixSocketAdapter::setTimeout(const Timeout &timeout)
  */
 void PosixSocketAdapter::setCertificateFile(const CertificateFile &certificate)
 {
-    std::lock_guard<std::mutex> lock(MUTEX);
-    std::cerr << "Warning: HTTP requests do not support certificates."
-              << "Do NOT send sensitive data without SSL/TLS."
-              << std::endl;
+    encryptionWarning();
+}
+
+
+/** \brief Set file to manually revoke certificates.
+ */
+void PosixSocketAdapter::setRevocationLists(const RevocationLists &revoke)
+{
+    encryptionWarning();
 }
 
 
@@ -122,11 +128,14 @@ void PosixSocketAdapter::setCertificateFile(const CertificateFile &certificate)
  */
 void PosixSocketAdapter::setSslProtocol(const SslProtocol ssl)
 {
-    std::lock_guard<std::mutex> lock(MUTEX);
-    std::cerr << "Warning: HTTP requests do not support SSL/TLS."
-              << "Do NOT send sensitive data without SSL/TLS."
-              << std::endl;
+    encryptionWarning();
 }
+
+
+/** \brief Change peer certificate validation (noop).
+ */
+void PosixSocketAdapter::setVerifyPeer(const VerifyPeer &peer)
+{}
 
 
 /** \brief Get socket descriptor.

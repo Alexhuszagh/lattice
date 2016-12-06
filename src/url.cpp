@@ -39,6 +39,9 @@ std::string Url::host() const noexcept
         return substr(0, find_first_of('/'));
     }
     size_t end = find_first_of('/', start+4);
+    if (end == std::string::npos) {
+        substr(start+3);
+    }
     return substr(start+3, end-start-3);
 }
 
@@ -51,11 +54,15 @@ std::string Url::path() const noexcept
         return *this;
     }
 
-    size_t start = find_first_of("://");
-    if (start == std::string::npos) {
+    size_t separator = find_first_of("://");
+    if (separator == std::string::npos) {
         return substr(find_first_of('/'));
     }
-    return substr(find_first_of('/', start+4));
+    size_t start = find_first_of('/', separator+4);
+    if (start == std::string::npos) {
+        return "/";
+    }
+    return substr(start);
 }
 
 
