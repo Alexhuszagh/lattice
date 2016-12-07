@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
     lattice::Redirects redirects(5);
     auto response = lattice::Get(url, timeout, redirects);
 
-    if (response.status() == 200) {
+    if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
                   << response.body()

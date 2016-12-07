@@ -8,8 +8,8 @@
 #pragma once
 
 #include "mutex.hpp"
+#include "request.hpp"
 #include "response.hpp"
-#include "session.hpp"
 
 #include <future>
 #include <thread>
@@ -45,7 +45,19 @@ public:
     void head(Ts&&... ts);
 
     template <typename... Ts>
+    void options(Ts&&... ts);
+
+    template <typename... Ts>
+    void patch(Ts&&... ts);
+
+    template <typename... Ts>
     void post(Ts&&... ts);
+
+    template <typename... Ts>
+    void put(Ts&&... ts);
+
+    template <typename... Ts>
+    void trace(Ts&&... ts);
 
     std::vector<Response> perform();
 };
@@ -60,13 +72,13 @@ public:
 template <typename... Ts>
 void Pool::get(Ts&&... ts)
 {
-    Session session;
-    setOption(session, FORWARD(ts)...);
+    Request request;
+    setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Session &&session) {
-        session.setMethod(GET);
-        return session.exec();
-    }, std::move(session)));
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(GET);
+        return request.exec();
+    }, std::move(request)));
 }
 
 
@@ -75,13 +87,43 @@ void Pool::get(Ts&&... ts)
 template <typename... Ts>
 void Pool::head(Ts&&... ts)
 {
-    Session session;
-    setOption(session, FORWARD(ts)...);
+    Request request;
+    setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Session &&session) {
-        session.setMethod(HEAD);
-        return session.exec();
-    }, std::move(session)));
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(HEAD);
+        return request.exec();
+    }, std::move(request)));
+}
+
+
+/** \brief Initialize thread with OPTIONS request.
+ */
+template <typename... Ts>
+void Pool::options(Ts&&... ts)
+{
+    Request request;
+    setOption(request, FORWARD(ts)...);
+
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(OPTIONS);
+        return request.exec();
+    }, std::move(request)));
+}
+
+
+/** \brief Initialize thread with PATCH request.
+ */
+template <typename... Ts>
+void Pool::patch(Ts&&... ts)
+{
+    Request request;
+    setOption(request, FORWARD(ts)...);
+
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(PATCH);
+        return request.exec();
+    }, std::move(request)));
 }
 
 
@@ -90,13 +132,43 @@ void Pool::head(Ts&&... ts)
 template <typename... Ts>
 void Pool::post(Ts&&... ts)
 {
-    Session session;
-    setOption(session, FORWARD(ts)...);
+    Request request;
+    setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Session &&session) {
-        session.setMethod(POST);
-        return session.exec();
-    }, std::move(session)));
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(POST);
+        return request.exec();
+    }, std::move(request)));
+}
+
+
+/** \brief Initialize thread with PUT request.
+ */
+template <typename... Ts>
+void Pool::put(Ts&&... ts)
+{
+    Request request;
+    setOption(request, FORWARD(ts)...);
+
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(PUT);
+        return request.exec();
+    }, std::move(request)));
+}
+
+
+/** \brief Initialize thread with TRACE request.
+ */
+template <typename... Ts>
+void Pool::trace(Ts&&... ts)
+{
+    Request request;
+    setOption(request, FORWARD(ts)...);
+
+    futures.emplace_back(std::async([](Request &&request) {
+        request.setMethod(TRACE);
+        return request.exec();
+    }, std::move(request)));
 }
 
 

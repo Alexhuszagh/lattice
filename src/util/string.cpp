@@ -1,9 +1,8 @@
-//  :copyright: (c) 2015 Huu Nguyen.
 //  :copyright: (c) 2016 The Regents of the University of California.
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Generic lattice utilities.
+ *  \brief String utilities.
  */
 
 #include "lattice.hpp"
@@ -27,6 +26,8 @@ bool startswith(const std::string &string,
 
 
 /** \brief Modified getline which trims carriage returns.
+ *
+ *  Normalizes getline implementations among POSIX and Windows.
  */
 std::istream & getline(std::istream &stream,
     std::string &string)
@@ -37,6 +38,34 @@ std::istream & getline(std::istream &stream,
     }
 
     return stream;
+}
+
+
+/** \brief Trim characters from left-end of string.
+ */
+void ltrim(std::string &string,
+    const std::string &characters)
+{
+    string.erase(0, string.find_first_not_of(characters));
+}
+
+
+/** \brief Trim characters from right-end of string.
+ */
+void rtrim(std::string &string,
+    const std::string &characters)
+{
+    string.erase(string.find_last_not_of(characters) + 1);
+}
+
+
+/** \brief Trim characters from both ends of string.
+ */
+void trim(std::string &string,
+    const std::string &characters)
+{
+    ltrim(string, characters);
+    rtrim(string, characters);
 }
 
 
@@ -69,9 +98,6 @@ std::vector<std::string> split(const std::string &string,
 
 
 /** \brief Join string from begin and end iterator pairs.
- *
- *  \param items            Vector of items to join
- *  \param delimiter        Iterator at last element to add
  */
 std::string join(const std::vector<std::string> &items,
     const std::string &delimiter)
@@ -96,6 +122,14 @@ std::string join(const std::vector<std::string> &items,
     }
     joined.shrink_to_fit();
     return joined;
+}
+
+
+/** \brief Transform the string to lower-case.
+ */
+void tolower(std::string &string)
+{
+    std::transform(string.begin(), string.end(), string.begin(), ::tolower);
 }
 
 

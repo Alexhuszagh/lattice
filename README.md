@@ -12,6 +12,7 @@ A light-weight, dependency-free, cross-platform library for client-side network 
 - [Building](#building)
 - [TODO](#todo)
 - [Contributors](#contributors)
+- [Contributor Guidelines](#contributors-guidelines)
 - [Credits](#credits)
 - [License](#license)
 
@@ -29,6 +30,7 @@ Lattice aims to be a light-weight, adaptable, and easily embeddable client-side 
 - GET/HEAD/POST/PATCH/PUT/OPTIONS/DELETE/TRACE methods 
 - Response type detection
 - Pseudo-asynchronous requests
+- International domain names and Unicode parameters
 
 **HTTPS Only**
 
@@ -62,7 +64,6 @@ make -j 5                       # "msbuild Lattice.sln" for MSVC
 ## TODO
 
 - Multipart
-- Authorization
 - Body
 - Options
 - Payload
@@ -74,6 +75,14 @@ make -j 5                       # "msbuild Lattice.sln" for MSVC
 Lattice uses code directly adapted from [CPR](https://github.com/whoshuu/cpr) and therefore credits those [authors](AUTHORS), and can be considered a fork in some form. Contributors to CPR are not affiliated with Lattice. 
 
 The OpenSSL adapter was reimplemented from libssl annotations in the cURL project, and therefore is a derivative work.
+
+## Contributor Guidelines
+
+All useful pull requests will be merged, provided that they do not add external dependencies and follow these guidelines.
+
+1. Preprocessor macros should be used sparingly.
+2. Code syntax should not depend on the preprocess.
+3. Your code must be readable.
 
 ## License
 

@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Follow absolute redirects from GET request.
+ *  \brief Simple GET request with basic auth.
  */
 
 #include "lattice.hpp"
@@ -12,14 +12,12 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
-        {"url", "http://httpbin.org/get"},
-    };
-    lattice::Url url = {"http://httpbin.org/redirect-to"};
+    lattice::Authentication auth = {"user", "passwd"};
+    lattice::Url url = {"http://httpbin.org/basic-auth/user/passwd"};
     lattice::Timeout timeout(1000);
-    lattice::Redirects redirects(5);
-    auto response = lattice::Get(url, timeout, redirects, parameters);
 
+    // set cookies
+    auto response = lattice::Get(url, auth, timeout);
     if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
@@ -28,8 +26,8 @@ int main(int argc, char *argv[])
                   << "Encoding: " << response.encoding() << "\n"
                   << "------------------\n";
     } else {
-        std::cout << "Response was not successful, error code: "
-                  << response.status();
+      std::cout << "Could not set the cookies, error code: "
+                << response.status()  << std::endl;
     }
 
     return 0;

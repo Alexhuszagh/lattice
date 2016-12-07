@@ -9,6 +9,7 @@
 
 #ifdef _WIN32
 
+#include "abstract.hpp"
 #include "lattice/dns.hpp"
 #include "lattice/method.hpp"
 #include "lattice/ssl.hpp"
@@ -26,7 +27,7 @@ namespace lattice
 
 /** \brief Adapter for Win32 sockets.
  */
-class Win32SocketAdapter
+class Win32SocketAdapter: public AbstractAdapter
 {
 protected:
     SOCKET sock = INVALID_SOCKET;
@@ -37,20 +38,20 @@ public:
     ~Win32SocketAdapter();
 
     // REQUESTS
-    bool open(const addrinfo &info,
+    virtual bool open(const addrinfo &info,
         const std::string &/*host*/);
-    bool close();
-    size_t write(const char *buf,
+    virtual bool close();
+    virtual size_t write(const char *buf,
         size_t len);
-    size_t read(char *buf,
+    virtual size_t read(char *buf,
         size_t count);
 
     // OPTIONS
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol ssl);
-    void setVerifyPeer(const VerifyPeer &peer);
+    virtual void setTimeout(const Timeout &timeout);
+    virtual void setCertificateFile(const CertificateFile &certificate);
+    virtual void setRevocationLists(const RevocationLists &revoke);
+    virtual void setSslProtocol(const SslProtocol ssl);
+    virtual void setVerifyPeer(const VerifyPeer &peer);
 
     // DATA
     const SOCKET fd() const;

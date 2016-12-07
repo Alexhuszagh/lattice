@@ -29,6 +29,7 @@ public:
     using Base::Base;
 
     std::string encode() const;
+    explicit operator bool() const;
 };
 
 

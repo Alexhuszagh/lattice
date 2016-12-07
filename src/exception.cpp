@@ -34,6 +34,11 @@ RequestError::RequestError(const int sent,
 {}
 
 
+NetworkSchemeError::NetworkSchemeError(const std::string &service):
+    service(service)
+{}
+
+
 /** \brief Warn user about user encryption methods without SSL/TLS support.
  */
 void encryptionWarning()

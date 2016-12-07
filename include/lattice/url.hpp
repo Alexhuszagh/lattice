@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <initializer_list>
 #include <string>
 
 
@@ -24,7 +25,13 @@ protected:
     typedef std::string Base;
 
 public:
-    using Base::Base;
+    Url();
+    Url(const char *cstring);
+    Url(const char *array,
+        size_t size);
+    Url(const std::string &string);
+    Url(std::initializer_list<char> &&list);
+    Url(const Url &url);
 
     // GETTERS
     std::string service() const noexcept;

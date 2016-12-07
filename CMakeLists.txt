@@ -81,6 +81,8 @@ set(HAVE_SSL ${OPENSSL_FOUND})
 # -------
 
 file(GLOB LATTICE_SOURCES src/*.cpp)
+file(GLOB LATTICE_UTIL_SOURCES src/util/*.cpp)
+list(APPEND LATTICE_SOURCES ${LATTICE_UTIL_SOURCES})
 if(UNIX)
     list(APPEND LATTICE_SOURCES src/adapters/posix.cpp)
 elseif(WIN32)

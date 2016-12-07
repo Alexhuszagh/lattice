@@ -8,6 +8,7 @@
 
 #ifdef HAVE_OPENSSL
 
+#include "abstract.hpp"
 #include "lattice/dns.hpp"
 #include "lattice/exception.hpp"
 #include "lattice/method.hpp"
@@ -55,7 +56,7 @@ static X509_STORE *STORE = nullptr;
 /** \brief Socket adapter for OpenSSL.
  */
 template <typename HttpAdapter>
-class OpenSslAdapter
+class OpenSslAdapter: public AbstractAdapter
 {
 protected:
     typedef OpenSslAdapter<HttpAdapter> This;
@@ -82,20 +83,20 @@ public:
     ~OpenSslAdapter();
 
     // REQUESTS
-    bool open(const addrinfo &info,
+    virtual bool open(const addrinfo &info,
         const std::string &host);
-    void close();
-    size_t write(const char *buf,
+    virtual void close();
+    virtual size_t write(const char *buf,
         size_t len);
-    size_t read(char *buf,
+    virtual size_t read(char *buf,
         size_t count);
 
     // OPTIONS
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol protocol);
-    void setVerifyPeer(const VerifyPeer &peer);
+    virtual void setTimeout(const Timeout &timeout);
+    virtual void setCertificateFile(const CertificateFile &certificate);
+    virtual void setRevocationLists(const RevocationLists &revoke);
+    virtual void setSslProtocol(const SslProtocol protocol);
+    virtual void setVerifyPeer(const VerifyPeer &peer);
 };
 
 
@@ -411,8 +412,6 @@ void OpenSslAdapter<HttpAdapter>::setSslProtocol(const SslProtocol protocol)
 
 
 /** \brief Change peer certificate validation.
- *
- *  \warning Does not disable URL validation.
  */
 template <typename HttpAdapter>
 void OpenSslAdapter<HttpAdapter>::setVerifyPeer(const VerifyPeer &peer)

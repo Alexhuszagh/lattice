@@ -48,7 +48,7 @@ public:
     {
         std::stringstream stream;
         stream << "Unable to get address from getaddrinfo("
-               << host.data() << ", " << service.data() << ").\n";
+               << host << ", " << service << ").\n";
 
         return stream.str().data();
     }
@@ -114,7 +114,7 @@ class RelativeUrlError: public std::exception
      */
     virtual const char * what() const throw()
     {
-        return "Relative URL set: host and service unknown.\n";
+        return "Cannot establish connection with relative URL.\n";
     }
 };
 
@@ -168,6 +168,41 @@ class CertificateLoadingError: public std::exception
     virtual const char * what() const throw()
     {
         return "Unable to load certificates from file.\n";
+    }
+};
+
+
+/** \brief Using an unsupported network sheme.
+ */
+class NetworkSchemeError: public std::exception
+{
+protected:
+    std::string service;
+
+public:
+    NetworkSchemeError(const std::string &service);
+
+    /** \brief Display message from SSL error.
+     */
+    virtual const char * what() const throw()
+    {
+        std::stringstream stream;
+        stream << "Network scheme \"" << service << "\" is not supported.\n";
+
+        return stream.str().data();
+    }
+};
+
+
+/** \brief Asked to read negative bytes from stream.
+ */
+class NegativeReadError: public std::exception
+{
+    /** \brief Display negative bytes error.
+     */
+    virtual const char * what() const throw()
+    {
+        return "Asked to read negative bytes, exiting...\n";
     }
 };
 

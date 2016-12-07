@@ -5,12 +5,9 @@
  *  \brief Create no-opt adapter.
  */
 
-#include "lattice/dns.hpp"
+#include "abstract.hpp"
 #include "lattice/exception.hpp"
-#include "lattice/method.hpp"
 #include "lattice/ssl.hpp"
-#include "lattice/timeout.hpp"
-#include "lattice/url.hpp"
 
 
 namespace lattice
@@ -22,7 +19,7 @@ namespace lattice
 /** \brief No-opt SSL socket adapter.
  */
 template <typename HttpAdapter>
-class NoSslAdapter
+class NoSslAdapter: public AbstractAdapter
 {
 protected:
     typedef NoSslAdapter<HttpAdapter> This;
@@ -33,17 +30,20 @@ public:
     ~NoSslAdapter();
 
     // REQUESTS
-    bool open(const addrinfo &info);
-    void close();
-    size_t write(const char *buf,
+    virtual bool open(const addrinfo &info,
+        const std::string &host);
+    virtual void close();
+    virtual size_t write(const char *buf,
         size_t len);
-    size_t read(char *buf,
+    virtual size_t read(char *buf,
         size_t count);
 
     // OPTIONS
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setSslProtocol(const SslProtocol protocol);
+    virtual void setTimeout(const Timeout &timeout);
+    virtual void setCertificateFile(const CertificateFile &certificate);
+    virtual void setRevocationLists(const RevocationLists &revoke);
+    virtual void setSslProtocol(const SslProtocol protocol);
+    virtual void setVerifyPeer(const VerifyPeer &peer);
 };
 
 
@@ -72,7 +72,8 @@ NoSslAdapter<HttpAdapter>::~NoSslAdapter()
 /** \brief Open socket.
  */
 template <typename HttpAdapter>
-bool NoSslAdapter<HttpAdapter>::open(const addrinfo &info)
+bool NoSslAdapter<HttpAdapter>::open(const addrinfo &info,
+    const std::string &host)
 {
     throw MissingSslError();
     return false;
@@ -128,10 +129,28 @@ void NoSslAdapter<HttpAdapter>::setCertificateFile(const CertificateFile &certif
 }
 
 
+/** \brief Set file to manually revoke certificates.
+ */
+template <typename HttpAdapter>
+void NoSslAdapter<HttpAdapter>::setRevocationLists(const RevocationLists &revoke)
+{
+    throw MissingSslError();
+}
+
+
 /** \brief Set SSL protocol.
  */
 template <typename HttpAdapter>
 void NoSslAdapter<HttpAdapter>::setSslProtocol(const SslProtocol protocol)
+{
+    throw MissingSslError();
+}
+
+
+/** \brief Change peer certificate validation.
+ */
+template <typename HttpAdapter>
+void NoSslAdapter<HttpAdapter>::setVerifyPeer(const VerifyPeer &peer)
 {
     throw MissingSslError();
 }

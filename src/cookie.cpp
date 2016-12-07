@@ -45,4 +45,12 @@ std::string Cookies::encode() const
 }
 
 
+/** \brief Check if cookies are set.
+ */
+Cookies::operator bool() const
+{
+    return !empty();
+}
+
+
 }   /* lattice */

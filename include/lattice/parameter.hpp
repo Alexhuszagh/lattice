@@ -22,13 +22,13 @@ namespace lattice
  */
 struct Parameter
 {
+    std::string key;
+    std::string value;
+
     Parameter();
     Parameter(std::string &&key,
         std::string &&value);
     Parameter(const Parameter &other);
-
-    std::string key;
-    std::string value;
 };
 
 

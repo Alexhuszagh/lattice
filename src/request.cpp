@@ -3,7 +3,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Network session.
+ *  \brief HTTP/HTTPS request.
  */
 
 #include "lattice.hpp"
@@ -17,14 +17,14 @@ namespace lattice
 // -------
 
 
-/** \brief Get data from request.
+/** \brief Get raw bytestream from request.
  */
-std::string Session::request()
+std::string Request::bytes()
 {
     std::stringstream stream;
     std::string name;
     std::string headers = header.string();
-    if (!header.host()) {
+    if (!header.host() && !url.empty() && url.absolute()) {
         // specify a default host
         headers += "Host: " + url.host() + "\r\n";
     }
@@ -32,9 +32,9 @@ std::string Session::request()
         // specify a default user agent
         headers += "User-Agent: lattice/" + VERSION + "\r\n";
     }
-    if (!cookies.empty()) {
-        // add cookies to header
-        headers += "Cookie: " + cookies.encode() + "\r\n";
+    if (isUnicode(parameters) && method == POST) {
+        // parameters must be UTF-8, are added to body
+        headers += "Content-Type: text/plain; charset=utf-8\r\n";
     }
 
     switch (method) {
@@ -86,19 +86,19 @@ std::string Session::request()
 
 /** \brief Null constructor.
  */
-Session::Session()
+Request::Request()
 {}
 
 
 /** \brief Destructor.
  */
-Session::~Session()
+Request::~Request()
 {}
 
 
 /** \brief Set HTTP method.
  */
-void Session::setMethod(const Method method)
+void Request::setMethod(const Method method)
 {
     this->method = method;
 }
@@ -106,7 +106,7 @@ void Session::setMethod(const Method method)
 
 /** \brief Set URL for session.
  */
-void Session::setUrl(const Url &url)
+void Request::setUrl(const Url &url)
 {
     if (url.relative()) {
         throw RelativeUrlError();
@@ -117,7 +117,7 @@ void Session::setUrl(const Url &url)
 
 /** \brief Set parameters for session.
  */
-void Session::setParameters(const Parameters &parameters)
+void Request::setParameters(const Parameters &parameters)
 {
     this->parameters = parameters;
 }
@@ -125,7 +125,7 @@ void Session::setParameters(const Parameters &parameters)
 
 /** \brief Set parameters for session.
  */
-void Session::setParameters(Parameters &&parameters)
+void Request::setParameters(Parameters &&parameters)
 {
     this->parameters = std::move(parameters);
 }
@@ -133,7 +133,7 @@ void Session::setParameters(Parameters &&parameters)
 
 /** \brief Set header for session.
  */
-void Session::setHeader(const Header &header)
+void Request::setHeader(const Header &header)
 {
     this->header = header;
 }
@@ -141,23 +141,31 @@ void Session::setHeader(const Header &header)
 
 /** \brief Set timeout for session.
  */
-void Session::setTimeout(const Timeout &timeout)
+void Request::setTimeout(const Timeout &timeout)
 {
     this->timeout = timeout;
 }
 
 
+/** \brief Set basic auth for session.
+ */
+void Request::setAuth(const Authentication &auth)
+{
+    header["Authorization"] = "Basic " + b64Encode(auth.string());
+}
+
+
 /** \brief Set cookies for session.
  */
-void Session::setCookies(const Cookies &cookies)
+void Request::setCookies(const Cookies &cookies)
 {
-    this->cookies = cookies;
+    header["Cookie"] = cookies.encode();
 }
 
 
 /** \brief Set maximum redirects for request.
  */
-void Session::setRedirects(const Redirects &redirects)
+void Request::setRedirects(const Redirects &redirects)
 {
     this->redirects = redirects;
 }
@@ -165,7 +173,7 @@ void Session::setRedirects(const Redirects &redirects)
 
 /** \brief Set certificate file for SSL encryption.
  */
-void Session::setCertificateFile(const CertificateFile &certificate)
+void Request::setCertificateFile(const CertificateFile &certificate)
 {
     this->certificate = certificate;
 }
@@ -173,7 +181,7 @@ void Session::setCertificateFile(const CertificateFile &certificate)
 
 /** \brief Set file to manually revoke certificates.
  */
-void Session::setRevocationLists(const RevocationLists &revoke)
+void Request::setRevocationLists(const RevocationLists &revoke)
 {
     this->revoke = revoke;
 }
@@ -181,7 +189,7 @@ void Session::setRevocationLists(const RevocationLists &revoke)
 
 /** \brief Set protocol for SSL encryption.
  */
-void Session::setSslProtocol(const SslProtocol ssl)
+void Request::setSslProtocol(const SslProtocol ssl)
 {
     this->ssl = ssl;
 }
@@ -189,7 +197,7 @@ void Session::setSslProtocol(const SslProtocol ssl)
 
 /** \brief Change peer certificate validation.
  */
-void Session::setVerifyPeer(const VerifyPeer &peer)
+void Request::setVerifyPeer(const VerifyPeer &peer)
 {
     this->verifypeer = verifypeer;
 }
@@ -197,7 +205,7 @@ void Session::setVerifyPeer(const VerifyPeer &peer)
 
 /** \brief Change peer certificate validation.
  */
-void Session::setVerifyPeer(VerifyPeer &&peer)
+void Request::setVerifyPeer(VerifyPeer &&peer)
 {
     this->verifypeer = verifypeer;
 }
@@ -205,7 +213,7 @@ void Session::setVerifyPeer(VerifyPeer &&peer)
 
 /** \brief Set the DNS cache.
  */
-void Session::setCache(const DnsCache &cache)
+void Request::setCache(const DnsCache &cache)
 {
     this->cache = cache;
 }
@@ -213,15 +221,18 @@ void Session::setCache(const DnsCache &cache)
 
 /** \brief Set HTTP method.
  */
-void Session::setOption(const Method method)
+void Request::setOption(const Method method)
 {
     this->method = method;
 }
 
 
 /** \brief Set URL for session.
+ *
+ *  \warning HTTP1.1 **requires** a host for the session, so the URL
+ *  must be absolute.
  */
-void Session::setOption(const Url &url)
+void Request::setOption(const Url &url)
 {
     if (url.relative()) {
         throw RelativeUrlError();
@@ -232,7 +243,7 @@ void Session::setOption(const Url &url)
 
 /** \brief Set parameters for session.
  */
-void Session::setOption(const Parameters &parameters)
+void Request::setOption(const Parameters &parameters)
 {
     this->parameters = parameters;
 }
@@ -240,7 +251,7 @@ void Session::setOption(const Parameters &parameters)
 
 /** \brief Set parameters for session.
  */
-void Session::setOption(Parameters &&parameters)
+void Request::setOption(Parameters &&parameters)
 {
     this->parameters = std::move(parameters);
 }
@@ -248,7 +259,7 @@ void Session::setOption(Parameters &&parameters)
 
 /** \brief Set header for session.
  */
-void Session::setOption(const Header &header)
+void Request::setOption(const Header &header)
 {
     this->header = header;
 }
@@ -256,23 +267,31 @@ void Session::setOption(const Header &header)
 
 /** \brief Set timeout for session.
  */
-void Session::setOption(const Timeout &timeout)
+void Request::setOption(const Timeout &timeout)
 {
     this->timeout = timeout;
 }
 
 
+/** \brief Set basic auth for session.
+ */
+void Request::setOption(const Authentication &auth)
+{
+    header["Authorization"] = "Basic " + b64Encode(auth.string());
+}
+
+
 /** \brief Set cookies for session.
  */
-void Session::setOption(const Cookies &cookies)
+void Request::setOption(const Cookies &cookies)
 {
-    this->cookies = cookies;
+    header["Cookie"] = cookies.encode();
 }
 
 
 /** \brief Set maximum redirects for request.
  */
-void Session::setOption(const Redirects &redirects)
+void Request::setOption(const Redirects &redirects)
 {
     this->redirects = redirects;
 }
@@ -280,7 +299,7 @@ void Session::setOption(const Redirects &redirects)
 
 /** \brief Set certificate file for SSL encryption.
  */
-void Session::setOption(const CertificateFile &certificate)
+void Request::setOption(const CertificateFile &certificate)
 {
     this->certificate = certificate;
 }
@@ -288,7 +307,7 @@ void Session::setOption(const CertificateFile &certificate)
 
 /** \brief Set file to manually revoke certificates.
  */
-void Session::setOption(const RevocationLists &revoke)
+void Request::setOption(const RevocationLists &revoke)
 {
     this->revoke = revoke;
 }
@@ -296,7 +315,7 @@ void Session::setOption(const RevocationLists &revoke)
 
 /** \brief Set protocol for SSL encryption.
  */
-void Session::setOption(const SslProtocol ssl)
+void Request::setOption(const SslProtocol ssl)
 {
     this->ssl = ssl;
 }
@@ -304,7 +323,7 @@ void Session::setOption(const SslProtocol ssl)
 
 /** \brief Change peer certificate validation.
  */
-void Session::setOption(const VerifyPeer &peer)
+void Request::setOption(const VerifyPeer &peer)
 {
     this->verifypeer = verifypeer;
 }
@@ -312,7 +331,7 @@ void Session::setOption(const VerifyPeer &peer)
 
 /** \brief Change peer certificate validation.
  */
-void Session::setOption(VerifyPeer &&peer)
+void Request::setOption(VerifyPeer &&peer)
 {
     this->verifypeer = verifypeer;
 }
@@ -320,7 +339,7 @@ void Session::setOption(VerifyPeer &&peer)
 
 /** \brief Set the DNS cache.
  */
-void Session::setOption(const DnsCache &cache)
+void Request::setOption(const DnsCache &cache)
 {
     this->cache = cache;
 }

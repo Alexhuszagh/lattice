@@ -12,8 +12,86 @@
 
 namespace lattice
 {
+// FUNCTIONS
+// ---------
+
+
+/** \brief Check if URL is relative.
+ */
+inline bool isRelative(const std::string &string) noexcept
+{
+    return string.empty() || string.front() == '/';
+}
+
+
+/** \brief Get Punycode-encoded URLK.
+ */
+void punyEncodedUrl(Url &url)
+{
+    if (url.absolute()) {
+        auto names = split(url.host(), ".");
+        for (auto &name: names) {
+            if (isUnicode(name)) {
+                name = "xn--" + UTF8_TO_PUNYCODE(name);
+            }
+        }
+        url.setHost(join(names, "."));
+    }
+}
+
+
 // OBJECTS
 // -------
+
+
+/** \brief Null constructor.
+ */
+Url::Url()
+{}
+
+
+/** \brief Initialize from null-terminated C-string.
+ */
+Url::Url(const char *cstring):
+    std::string(cstring)
+{
+    punyEncodedUrl(*this);
+}
+
+
+/** \brief Initialize from char array.
+ */
+Url::Url(const char *array,
+        size_t size):
+    std::string(array, size)
+{
+    punyEncodedUrl(*this);
+}
+
+
+/** \brief Copy constructor.
+ */
+Url::Url(const std::string &string):
+    std::string(string)
+{
+    punyEncodedUrl(*this);
+}
+
+
+/** \brief Initializer list constructor.
+ */
+Url::Url(std::initializer_list<char> &&list):
+    std::string(FORWARD(list))
+{
+    punyEncodedUrl(*this);
+}
+
+
+/** \brief Copy constructor.
+ */
+Url::Url(const Url &url):
+    std::string(static_cast<std::string>(url))
+{}
 
 
 /** \brief Get service from  URL.
@@ -164,7 +242,7 @@ void Url::setFile(const std::string &file)
  */
 bool Url::relative() const noexcept
 {
-    return size() && front() == '/';
+    return isRelative(*this);
 }
 
 
@@ -174,5 +252,6 @@ bool Url::absolute() const noexcept
 {
     return !relative();
 }
+
 
 }   /* lattice */

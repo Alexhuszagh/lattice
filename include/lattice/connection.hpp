@@ -295,8 +295,12 @@ template <typename Adapter>
 std::string Connection<Adapter>::body(const long length)
 {
     std::string string;
-    string.resize(length);
-    adapter.read(const_cast<char*>(&string[0]), length);
+    if (length > 0) {
+        string.resize(length);
+        adapter.read(const_cast<char*>(&string[0]), length);
+    } else if (length) {
+        throw NegativeReadError();
+    }
 
     return string;
 }
@@ -323,6 +327,13 @@ std::string Connection<Adapter>::read()
 
     return output;
 }
+
+
+// TYPES
+// -----
+
+typedef Connection<HttpAdapter> HttpConnection;
+typedef Connection<SslAdapter> HttpsConnection;
 
 
 }   /* lattice */

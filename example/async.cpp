@@ -8,7 +8,6 @@
 #include "lattice.hpp"
 
 #include <iostream>
-#include <vector>
 
 
 int main(int argc, char *argv[])
@@ -29,7 +28,7 @@ int main(int argc, char *argv[])
 
     auto responses = pool.perform();
     for (const auto &response: responses) {
-        if (response.status() == 200) {
+        if (response.ok()) {
             std::cout << "Body:\n"
                       << "------------------\n"
                       << response.body()

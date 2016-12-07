@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "abstract.hpp"
 #include "lattice/dns.hpp"
 #include "lattice/ssl.hpp"
 #include "lattice/timeout.hpp"
@@ -25,7 +26,7 @@ namespace lattice
 
 /** \brief Adapter for POSIX sockets.
  */
-class PosixSocketAdapter
+class PosixSocketAdapter: public AbstractAdapter
 {
 protected:
     int sock = -1;
@@ -36,20 +37,20 @@ public:
     ~PosixSocketAdapter();
 
     // REQUESTS
-    bool open(const addrinfo &info,
+    virtual bool open(const addrinfo &info,
         const std::string &/*host*/);
-    bool close();
-    size_t write(const char *buf,
+    virtual void close();
+    virtual size_t write(const char *buf,
         size_t len);
-    size_t read(char *buf,
+    virtual size_t read(char *buf,
         size_t count);
 
     // OPTIONS
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol ssl);
-    void setVerifyPeer(const VerifyPeer &peer);
+    virtual void setTimeout(const Timeout &timeout);
+    virtual void setCertificateFile(const CertificateFile &certificate);
+    virtual void setRevocationLists(const RevocationLists &revoke);
+    virtual void setSslProtocol(const SslProtocol ssl);
+    virtual void setVerifyPeer(const VerifyPeer &peer);
 
     // DATA
     const int fd() const;

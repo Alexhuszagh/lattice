@@ -55,14 +55,12 @@ bool PosixSocketAdapter::open(const addrinfo &info,
 
 /** \brief Close socket.
  */
-bool PosixSocketAdapter::close()
+void PosixSocketAdapter::close()
 {
     if (sock >= 0) {
         ::close(sock);
         sock = -1;
-        return true;
     }
-    return false;
 }
 
 

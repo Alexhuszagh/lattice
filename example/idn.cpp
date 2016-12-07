@@ -7,17 +7,23 @@
 
 #include "lattice.hpp"
 
+#include <cassert>
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Url url = {"http://xn--rksmrgs-5wao1o.josefsson.org"};
-    // TODO: need to custom convert to and from the IDN
+    // "http://räksmörgås.josefsson.org/"
+    lattice::Url url = {
+        104, 116, 116, 112, 58, 47, 47, 114, -61, -92,
+        107, 115, 109, -61, -74, 114, 103, -61, -91,
+        115, 46, 106, 111, 115, 101, 102, 115, 115, 111,
+        110, 46, 111, 114, 103, 47
+    };;
     lattice::Timeout timeout(1000);
     auto response = lattice::Get(url, timeout);
 
-    if (response.status() == 200) {
+    if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
                   << response.body()

@@ -3,12 +3,13 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief HTTP session.
+ *  \brief HTTP/HTTPS request.
  */
 
 #pragma once
 
 #include "adapter.hpp"
+#include "auth.hpp"
 #include "connection.hpp"
 #include "cookie.hpp"
 #include "dns.hpp"
@@ -29,16 +30,15 @@ namespace lattice
 // -------
 
 
-/** \brief HTTP session object.
+/** \brief HTTP request object.
  */
-class Session
+class Request
 {
 protected:
     Url url;
     Parameters parameters;
-    Timeout timeout;
     Header header;
-    Cookies cookies;
+    Timeout timeout;
     Redirects redirects;
     CertificateFile certificate;
     RevocationLists revoke;
@@ -47,28 +47,18 @@ protected:
     VerifyPeer verifypeer;
     DnsCache cache = nullptr;
 
-    std::string request();
-
-    template <typename Connection>
-    Response exec(Connection &connection);
-
-    template <typename Connection>
-    void open(Connection &connection) const;
-
-    template <typename Connection>
-    void reset(Connection &connection,
-        const Response &response);
-
 public:
-    Session();
-    ~Session();
+    Request();
+    ~Request();
 
+    // EXPLICIT OPTIONS
     void setMethod(const Method method);
     void setUrl(const Url &url);
     void setParameters(const Parameters &parameters);
     void setParameters(Parameters &&parameters);
     void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
+    void setAuth(const Authentication &auth);
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
     void setCertificateFile(const CertificateFile &certificate);
@@ -78,12 +68,14 @@ public:
     void setVerifyPeer(VerifyPeer &&peer);
     void setCache(const DnsCache &cache);
 
+    // FORWARDING OPTIONS
     void setOption(const Method method);
     void setOption(const Url &url);
     void setOption(const Parameters &parameters);
     void setOption(Parameters &&parameters);
     void setOption(const Header &header);
     void setOption(const Timeout &timeout);
+    void setOption(const Authentication &auth);
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
     void setOption(const CertificateFile &certificate);
@@ -93,7 +85,19 @@ public:
     void setOption(VerifyPeer &&peer);
     void setOption(const DnsCache &cache);
 
+    // CONNECTIONS
     Response exec();
+    std::string bytes();
+
+    template <typename Connection>
+    void open(Connection &connection) const;
+
+    template <typename Connection>
+    void reset(Connection &connection,
+        const Response &response);
+
+    template <typename Connection>
+    Response exec(Connection &connection);
 };
 
 
@@ -101,27 +105,27 @@ public:
 // ---------
 
 
-/** \brief Set option for HTTP session.
+/** \brief Set option for HTTP request.
  */
 template <typename T>
-void setOption(Session& session, T&& t)
+void setOption(Request& request, T&& t)
 {
-    session.setOption(FORWARD(t));
+    request.setOption(FORWARD(t));
 }
 
 
-/** \brief Set options for HTTP session.
+/** \brief Set options for HTTP request.
  */
 template <
     typename T,
     typename... Ts
 >
-void setOption(Session& session,
-    T&& t,
+void setOption(Request& request,
+    T &&t,
     Ts&&... ts)
 {
-    setOption(session, FORWARD(t));
-    setOption(session, FORWARD(ts)...);
+    setOption(request, FORWARD(t));
+    setOption(request, FORWARD(ts)...);
 }
 
 
@@ -130,10 +134,10 @@ void setOption(Session& session,
 template <typename... Ts>
 Response Delete(Ts&&... ts)
 {
-    Session session;
-    setOption(session, DELETE, FORWARD(ts)...);
+    Request request;
+    setOption(request, DELETE, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -142,10 +146,10 @@ Response Delete(Ts&&... ts)
 template <typename... Ts>
 Response Get(Ts&&... ts)
 {
-    Session session;
-    setOption(session, GET, FORWARD(ts)...);
+    Request request;
+    setOption(request, GET, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -154,10 +158,10 @@ Response Get(Ts&&... ts)
 template <typename... Ts>
 Response Head(Ts&&... ts)
 {
-    Session session;
-    setOption(session, HEAD, FORWARD(ts)...);
+    Request request;
+    setOption(request, HEAD, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -166,10 +170,10 @@ Response Head(Ts&&... ts)
 template <typename... Ts>
 Response Options(Ts&&... ts)
 {
-    Session session;
-    setOption(session, OPTIONS, FORWARD(ts)...);
+    Request request;
+    setOption(request, OPTIONS, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -178,10 +182,10 @@ Response Options(Ts&&... ts)
 template <typename... Ts>
 Response Patch(Ts&&... ts)
 {
-    Session session;
-    setOption(session, PATCH, FORWARD(ts)...);
+    Request request;
+    setOption(request, PATCH, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -190,10 +194,10 @@ Response Patch(Ts&&... ts)
 template <typename... Ts>
 Response Post(Ts&&... ts)
 {
-    Session session;
-    setOption(session, POST, FORWARD(ts)...);
+    Request request;
+    setOption(request, POST, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -202,10 +206,10 @@ Response Post(Ts&&... ts)
 template <typename... Ts>
 Response Put(Ts&&... ts)
 {
-    Session session;
-    setOption(session, PUT, FORWARD(ts)...);
+    Request request;
+    setOption(request, PUT, FORWARD(ts)...);
 
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -214,22 +218,10 @@ Response Put(Ts&&... ts)
 template <typename... Ts>
 Response Trace(Ts&&... ts)
 {
-    Session session;
-    setOption(session, TRACE, FORWARD(ts)...);
+    Request request;
+    setOption(request, TRACE, FORWARD(ts)...);
 
-    return session.exec();
-}
-
-
-/** \brief Wrapper for HTTP CONNECT request.
- */
-template <typename... Ts>
-Response Connect(Ts&&... ts)
-{
-    Session session;
-    setOption(session, CONNECT, FORWARD(ts)...);
-
-    return session.exec();
+    return request.exec();
 }
 
 
@@ -239,16 +231,20 @@ Response Connect(Ts&&... ts)
 
 /** \brief Make request to server.
  *
- *  For API reasons, this must occur in the header.
+ *  To avoid compiling external libraries into lattice, misuse inline
+ *  to keep this in the header.
  */
-inline Response Session::exec()
+inline Response Request::exec()
 {
-    if (url.service() == "http") {
-        Connection<HttpAdapter> connection;
+    auto service = url.service();
+    if (service == "http") {
+        HttpConnection connection;
         return exec(connection);
-    } else if (url.service() == "https") {
-        Connection<SslAdapter> connection;
+    } else if (service == "https") {
+        HttpsConnection connection;
         return exec(connection);
+    } else {
+        throw NetworkSchemeError(service);
     }
 
     return Response();
@@ -258,12 +254,12 @@ inline Response Session::exec()
 /** \brief Execute request to server.
  */
 template <typename Connection>
-Response Session::exec(Connection &connection)
+Response Request::exec(Connection &connection)
 {
     open(connection);
     Response response;
     do {
-        connection.send(request());
+        connection.send(bytes());
         response = Response(connection);
         if ((method = response.redirect(method)) != STOP) {
             reset(connection, response);
@@ -279,7 +275,7 @@ Response Session::exec(Connection &connection)
 /** \brief Open connection to server.
  */
 template <typename Connection>
-void Session::open(Connection &connection) const
+void Request::open(Connection &connection) const
 {
     // set options
     connection.setVerifyPeer(verifypeer);
@@ -307,14 +303,14 @@ void Session::open(Connection &connection) const
 /** \brief Reset parameters and connection to server.
  */
 template <typename Connection>
-void Session::reset(Connection &connection,
+void Request::reset(Connection &connection,
     const Response &response)
 {
     // check if we need to reset connection
     bool reconnect = header.closeConnection();
     reconnect |= response.headers().closeConnection();
 
-    Url newurl(response.headers().at("location").data());
+    Url newurl(response.headers().at("location"));
     if (newurl.absolute()) {
         // reconnect if the service or host changes
         reconnect |= url.service() != newurl.service();

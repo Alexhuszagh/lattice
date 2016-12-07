@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     lattice::Timeout timeout(1000);
     auto response = lattice::Options(url, timeout);
 
-    if (response.status() == 200) {
+    if (response.ok()) {
         std::cout << "Allow:\n"
                   << "------------------\n"
                   << response.headers().at("allow") << "\n"

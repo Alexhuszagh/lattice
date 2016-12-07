@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     lattice::Timeout timeout(1000);
     auto response = lattice::Patch(url, parameters, timeout);
 
-    if (response.status() == 200) {
+    if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
                   << response.body()

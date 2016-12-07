@@ -8,7 +8,6 @@
 #include "lattice.hpp"
 
 #include <iostream>
-#include <vector>
 
 
 int main(int argc, char *argv[])
@@ -23,12 +22,12 @@ int main(int argc, char *argv[])
 
     // set cookies
     auto response = lattice::Get(url, cookies, timeout, redirects, cache);
-    if (response.status() == 200) {
+    if (response.ok()) {
         // delete the cookies
         url = {"http://httpbin.org/cookies/delete"};
         cookies = {{"name", ""}};
         response = lattice::Get(url, cookies, timeout, redirects, cache);
-        if (response.status() == 200) {
+        if (response.ok()) {
             std::cout << "Successfully set and deleted cookies" << std::endl;
         } else {
             std::cout << "Could not delete the set cookies, error code: "

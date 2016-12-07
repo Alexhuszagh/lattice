@@ -3,14 +3,19 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Generic lattice utilities.
+ *  \brief Macro definitions.
  */
 
 #pragma once
 
-#include "util/base64.hpp"
-#include "util/define.hpp"
-#include "util/enum.hpp"
-#include "util/punycode.hpp"
-#include "util/string.hpp"
-#include "util/utf.hpp"
+#include <utility>
+
+
+namespace lattice
+{
+// MACROS
+// ------
+
+#define FORWARD(...) std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
+
+}   /* lattice */
