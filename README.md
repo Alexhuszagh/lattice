@@ -7,11 +7,10 @@ Lattice is a C++11, cross-platform library for client-side network requests.
 
 - [Motivation](#motivation)
 - [Features](#features)
-- [Lattice Is Not...](#lattice-is-not...)
+- [Design](#design)
 - [Dependencies](#dependencies)
 - [Building](#building)
 - [Documentation](#documentation)
-- [Design](#design)
 - [Planned Features](#planned-features)
 - [Contributors](#contributors)
 - [Contributor Guidelines](#contributors-guidelines)
@@ -62,7 +61,7 @@ $ ./get
 }
 ```
 
-No dependencies, no defines, no unresolved symbols. 
+No external libraries, no defines, no unresolved symbols. No hassle.
 
 ## Features
 
@@ -84,9 +83,14 @@ No dependencies, no defines, no unresolved symbols.
 - Domain validation
 - Certificate validation
 
-## Lattice is Not...
+## Design
 
-All batteries included. Lattice will identify compressed data streams, JSON, XML and other data types, but it will not decode or parse them. It is lightweight, making minimal assumptions of the requirements of the user.
+Lattice has four main components: adapters, connections, requests and responses. 
+
+1. Adapters wrap native sockets or SSL connections into an interface with 4 core methods: `open`, `close`, `write`, and `read`. 
+2. Connections wrap specific adapters, and add shared methods like DNS lookup. 
+3. Requests format data for HTTP requests, with user-friendly methods like `setAuth` or `setMultiPart`.
+4. Responses parse data sent from the server.
 
 ## Dependencies
 
@@ -105,80 +109,12 @@ Simply clone, configure with CMake, and build.
 git clone https://github.com/Alexhuszagh/lattice.git
 cd lattice/build
 cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
-make -j 5                       # "msbuild Lattice.sln" for MSVC
+make -j 5                       # "msbuild lattice.sln" for MSVC
 ```
 
 ## Documentation
 
 Coming soon, for now, see the the [examples](/example) for how to use lattice.
-
-## Design
-
-Lattice uses template-driven socket adapters as the backend, which abstract the socket connection into a few core methods: `open`, `close`, `write`, and `read`, with optional extensions, making lattice easy to extend.
-
-For example, to write a UDP socket adapter for streaming requests, is as simple as:
-
-```cpp
-class UdpSocketAdapter
-{
-    int sock = -1;
-
-    bool open(const addrinfo &info,
-        const std::string &/*host*/);
-    void close();
-    size_t write(const char *buf,
-        size_t len);
-    size_t read(char *buf,
-        size_t count);
-};
-
-
-/** Open connection to socket, return if the connection was 
- *  successfully established 
- */
-void UdpSocketAdapter::open(const addrinfo &info,
-        const std::string &/*host*/)
-{
-    sock = socket(info.ai_family, SOCK_DGRAM, info.ai_protocol);
-    if (sock < 0) {
-        return false;
-    }
-    if (connect(sock, info.ai_addr, info.ai_addrlen) >= 0) {
-        return true;
-    }
-
-    ::close(sock);
-    return false;
-}
-
-
-/** Close open connection.
- */
-void UdpSocketAdapter::close()
-{
-    if (sock >= 0) {
-        ::close(sock);
-        sock = -1;
-    }
-}
-
-/** Send data to socket.
- */
-size_t UdpSocketAdapter::write(const char *buf,
-    size_t len)
-{
-    return ::send(sock, buf, len, 0);
-}
-
-
-/** Read data from socket.
- */
-size_t UdpSocketAdapter::read(char *buf,
-    size_t count)
-{
-    return ::recv(sock, buf, count, 0);
-}
-```
 
 ## Planned Features
 

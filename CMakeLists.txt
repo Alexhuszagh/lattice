@@ -2,7 +2,7 @@
 #  :license: MIT, see LICENSE.md for more details.
 
 cmake_minimum_required(VERSION 2.8)
-project(Lattice CXX)
+project(lattice CXX)
 
 # FLAGS
 # -----

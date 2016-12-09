@@ -5,8 +5,9 @@
  *  \brief Create no-opt adapter.
  */
 
-#include "lattice/exception.hpp"
+#include "lattice/dns.hpp"
 #include "lattice/ssl.hpp"
+#include "lattice/util.hpp"
 
 
 namespace lattice
@@ -36,14 +37,6 @@ public:
         size_t len);
     size_t read(char *buf,
         size_t count);
-
-    // OPTIONS
-    void setReuseAddress();
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol protocol);
-    void setVerifyPeer(const VerifyPeer &peer);
 };
 
 
@@ -109,60 +102,5 @@ size_t NoSslAdapter<HttpAdapter>::read(char *buf,
     throw MissingSslError();
     return 0;
 }
-
-
-/** \brief Allow socket address reuse.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setReuseAddress()
-{
-    throw MissingSslError();
-}
-
-
-/** \brief Set the max time for socket requests.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setTimeout(const Timeout &timeout)
-{
-    throw MissingSslError();
-}
-
-
-/** \brief Set the max time for socket requests.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setCertificateFile(const CertificateFile &certificate)
-{
-    throw MissingSslError();
-}
-
-
-/** \brief Set file to manually revoke certificates.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setRevocationLists(const RevocationLists &revoke)
-{
-    throw MissingSslError();
-}
-
-
-/** \brief Set SSL protocol.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setSslProtocol(const SslProtocol protocol)
-{
-    throw MissingSslError();
-}
-
-
-/** \brief Change peer certificate validation.
- */
-template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::setVerifyPeer(const VerifyPeer &peer)
-{
-    throw MissingSslError();
-}
-
 
 }   /* lattice */

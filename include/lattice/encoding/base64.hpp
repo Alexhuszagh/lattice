@@ -254,4 +254,7 @@ std::string b64Encode(const std::string &other);
  */
 std::string b64Decode(const std::string &other);
 
+#define BASE64_ENCODE b64Encode
+#define BASE64_DECODE b64Decode
+
 }   /* lattice */

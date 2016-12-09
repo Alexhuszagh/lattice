@@ -357,8 +357,7 @@ Response Request::exec(Connection &connection)
         response = Response(connection);
         if (response.unauthorized() && digest) {
             // using digest authentication
-            auto data = message(response);
-            connection.write(data);
+            connection.write(message(response));
             response = Response(connection);
             return response;
         } else if ((method = response.redirect(method)) != STOP) {

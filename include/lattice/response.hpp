@@ -128,13 +128,13 @@ protected:
     template <typename T>
     using IsNotSame = typename std::enable_if<!std::is_same<T, Response>::value>::type;
 
-    StatusCode code;
-    Header header;
-    Cookies cookie;
+    StatusCode status_;
+    Header headers_;
+    Cookies cookies_;
     TransferEncoding transfer = static_cast<TransferEncoding>(0);
     MimeType mime;
     std::string charset;
-    std::string data;
+    std::string body_;
 
     void parseCode(const std::string &line);
     void parseCookie(const std::string &string);
@@ -224,12 +224,12 @@ Response::Response(Connection &connection)
     parseHeaders(connection.headers());
     if (!!transfer && !(transfer & IDENTITY)) {
         // connection has the transfer set and is not identity
-        data = connection.chunked();
-    } else if (header.find("content-length") != header.end()) {
-        data = connection.body(std::stol(header.at("content-length")));
+        body_ = connection.chunked();
+    } else if (headers().find("content-length") != headers().end()) {
+        body_ = connection.body(std::stol(headers().at("content-length")));
     } else {
         // no content-length or chunked storage, just read
-        data = connection.read();
+        body_ = connection.read();
     }
 }
 

@@ -9,12 +9,11 @@
 #ifdef HAVE_OPENSSL
 
 #include "lattice/dns.hpp"
-#include "lattice/exception.hpp"
 #include "lattice/method.hpp"
-#include "lattice/mutex.hpp"
 #include "lattice/ssl.hpp"
 #include "lattice/timeout.hpp"
 #include "lattice/url.hpp"
+#include "lattice/util.hpp"
 
 #include <openssl/asn1.h>
 #include <openssl/err.h>

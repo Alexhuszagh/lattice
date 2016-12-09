@@ -33,17 +33,29 @@ namespace lattice
 
 #ifdef _WIN32
 
+     /** \brief Wrapper that acquires the context for the crypt library.
+      *
+      * If the keyset has not been set, it also initializes that.
+      */
+    bool acquireContext(HCRYPTPROV *ctx)
+    {
+        if (!CryptAcquireContext(ctx, nullptr, nullptr, PROV_RSA_FULL, 0)) {
+            return CryptAcquireContext(ctx, nullptr, nullptr, PROV_RSA_FULL, CRYPT_NEWKEYSET);
+        }
+        return true;
+    }
+
     /** \brief Generate cryptograhically random bytes on Windows.
      */
     std::string sysrandom(const size_t size)
     {
         HCRYPTPROV ctx;
-        if (!CryptAcquireContext(ctx, nullptr, nullptr, PROV_RSA_FULL, 0)) {
+        if (!acquireContext(&ctx)) {
             throw WindowsCrypt32Error();
         }
 
         BYTE *buffer = new BYTE[size];
-        if(CryptGenRandom(hCryptProv, size, buffer)) {
+        if(!CryptGenRandom(ctx, size, buffer)) {
             throw WindowsCrypt32Error();
         }
 
@@ -51,7 +63,7 @@ namespace lattice
             throw WindowsCrypt32Error();
         }
 
-        std::string output(buffer, size);
+        std::string output(reinterpret_cast<char*>(buffer), size);
         delete[] buffer;
 
         return output;

@@ -245,7 +245,7 @@ void MD5_Update(MD5_CTX *ctx,
     memcpy(ctx->buffer, data, size);
 }
 
-#define OUT(dst, src) \
+#define MD5_OUT(dst, src) \
     (dst)[0] = (unsigned char)(src); \
     (dst)[1] = (unsigned char)((src) >> 8); \
     (dst)[2] = (unsigned char)((src) >> 16); \
@@ -275,15 +275,15 @@ void MD5_Final(unsigned char *result,
     memset(&ctx->buffer[used], 0, available - 8);
 
     ctx->lo <<= 3;
-    OUT(&ctx->buffer[56], ctx->lo)
-    OUT(&ctx->buffer[60], ctx->hi)
+    MD5_OUT(&ctx->buffer[56], ctx->lo)
+    MD5_OUT(&ctx->buffer[60], ctx->hi)
 
     body(ctx, ctx->buffer, 64);
 
-    OUT(&result[0], ctx->a)
-    OUT(&result[4], ctx->b)
-    OUT(&result[8], ctx->c)
-    OUT(&result[12], ctx->d)
+    MD5_OUT(&result[0], ctx->a)
+    MD5_OUT(&result[4], ctx->b)
+    MD5_OUT(&result[8], ctx->c)
+    MD5_OUT(&result[12], ctx->d)
 
     memset(ctx, 0, sizeof(*ctx));
 }

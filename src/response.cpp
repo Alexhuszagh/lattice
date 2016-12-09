@@ -33,7 +33,7 @@ void Response::parseCode(const std::string &line)
 
     // no code returned, give an ok status (non-standard conforming)
     const int number = start == end ? 200 : std::stoi(line.substr(start, end));
-    code = static_cast<StatusCode>(number);
+    status_ = static_cast<StatusCode>(number);
 }
 
 
@@ -44,7 +44,7 @@ void Response::parseCookie(const std::string &string)
     size_t delimiter = string.find_first_of("=");
     size_t end = string.find_first_of(";", delimiter);
     size_t count = end - delimiter;
-    cookie.emplace(string.substr(0, delimiter), string.substr(delimiter, count));
+    cookies_.emplace(string.substr(0, delimiter), string.substr(delimiter, count));
 }
 
 
@@ -89,7 +89,7 @@ void Response::parseContentType(std::string &string)
                 charset = it->substr(8);
             } else {
                 // generalized parameter
-                header["content-type"] += *it + ";";
+                headers_["content-type"] += *it + ";";
             }
         }
     }
@@ -124,7 +124,7 @@ void Response::parseType(const std::string &string)
         case 'x': {
             // custom token, must store
             std::get<0>(mime) = XTOKEN;
-            header["x-token"] += string.substr(2, string.find("/") - 2);
+            headers_["x-token"] += string.substr(2, string.find("/") - 2);
             break;
         }
         default:
@@ -160,7 +160,7 @@ void Response::parseHeader(const std::string &line)
             // TODO
         } else {
             // fallthrough
-            header.emplace(key, value);
+            headers_.emplace(key, value);
         }
     }
 }
@@ -183,20 +183,20 @@ void Response::parseHeaders(const std::string &lines)
 /** \brief Null constructor.
  */
 Response::Response():
-    code(static_cast<StatusCode>(0))
+    status_(static_cast<StatusCode>(0))
 {}
 
 
 /** \brief Copy constructor.
  */
 Response::Response(const Response &other):
-    code(other.code),
-    header(other.header),
-    cookie(other.cookie),
+    status_(other.status_),
+    headers_(other.headers_),
+    cookies_(other.cookies_),
     transfer(other.transfer),
     mime(other.mime),
     charset(other.charset),
-    data(other.data)
+    body_(other.body_)
 {}
 
 
@@ -210,7 +210,7 @@ Response::~Response()
  */
 const int Response::status() const
 {
-    return static_cast<int>(code);
+    return static_cast<int>(status_);
 }
 
 
@@ -218,7 +218,7 @@ const int Response::status() const
  */
 const std::string & Response::body() const
 {
-    return data;
+    return body_;
 }
 
 
@@ -226,7 +226,7 @@ const std::string & Response::body() const
  */
 const Header & Response::headers() const
 {
-    return header;
+    return headers_;
 }
 
 
@@ -234,7 +234,7 @@ const Header & Response::headers() const
  */
 const Cookies & Response::cookies() const
 {
-    return cookie;
+    return cookies_;
 }
 
 
@@ -250,8 +250,8 @@ TransferEncoding Response::transferEncoding() const
  */
 std::string Response::contentEncoding() const
 {
-    auto it = header.find("content-encoding");
-    if (it != header.end()) {
+    auto it = headers().find("content-encoding");
+    if (it != headers().end()) {
         return it->second;
     }
 
@@ -279,8 +279,8 @@ bool Response::compressed() const
     }
 
     // check if the content-encoding was set and a transformation applied
-    auto it = header.find("content-encoding");
-    if (it != header.end() && it->second != "identity") {
+    auto it = headers().find("content-encoding");
+    if (it != headers().end() && it->second != "identity") {
         return true;
     }
 
@@ -309,8 +309,8 @@ bool Response::compress() const
         return true;
     }
 
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "compress"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "compress"));
 }
 
 
@@ -322,8 +322,8 @@ bool Response::deflate() const
         return true;
     }
 
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "deflate"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "deflate"));
 }
 
 
@@ -335,8 +335,8 @@ bool Response::exi() const
         return true;
     }
 
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "exi"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "exi"));
 }
 
 
@@ -351,8 +351,8 @@ bool Response::gzip() const
         return true;
     }
 
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "gzip"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "gzip"));
 }
 
 
@@ -360,8 +360,8 @@ bool Response::gzip() const
  */
 bool Response::pack200Gzip() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "pack200-gzip"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "pack200-gzip"));
 }
 
 
@@ -369,8 +369,8 @@ bool Response::pack200Gzip() const
  */
 bool Response::br() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "br"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "br"));
 }
 
 
@@ -390,8 +390,8 @@ bool Response::bzip2() const
         return true;
     }
 
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "bzip2"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "bzip2"));
 }
 
 
@@ -399,8 +399,8 @@ bool Response::bzip2() const
  */
 bool Response::lzma() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "lzma"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "lzma"));
 }
 
 
@@ -408,8 +408,8 @@ bool Response::lzma() const
  */
 bool Response::peerdist() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "peerdist"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "peerdist"));
 }
 
 
@@ -417,8 +417,8 @@ bool Response::peerdist() const
  */
 bool Response::xpress() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "xpress"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "xpress"));
 }
 
 
@@ -426,8 +426,8 @@ bool Response::xpress() const
  */
 bool Response::xz() const
 {
-    auto it = header.find("content-encoding");
-    return ((it != header.end() && it->second == "xz"));
+    auto it = headers().find("content-encoding");
+    return ((it != headers().end() && it->second == "xz"));
 }
 
 
@@ -555,7 +555,7 @@ std::string Response::encoding() const
  */
 bool Response::ok() const
 {
-    return code == StatusCode::OK;
+    return status_ == StatusCode::OK;
 }
 
 
@@ -563,7 +563,7 @@ bool Response::ok() const
  */
 bool Response::unauthorized() const
 {
-    return code == StatusCode::UNAUTHORIZED;
+    return status_ == StatusCode::UNAUTHORIZED;
 }
 
 
@@ -574,7 +574,7 @@ bool Response::unauthorized() const
  */
 Method Response::redirect(Method method) const
 {
-    switch (code) {
+    switch (status_) {
         case StatusCode::MOVED_PERMANENTLY:
             /* fallthrough */
         case StatusCode::TEMPORARY_REDIRECT:
@@ -599,7 +599,7 @@ Method Response::redirect(Method method) const
  */
 bool Response::permanentRedirect() const
 {
-    return code == StatusCode::PERMANENT_REDIRECT;
+    return status_ == StatusCode::PERMANENT_REDIRECT;
 }
 
 

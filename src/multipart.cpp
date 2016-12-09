@@ -158,20 +158,28 @@ PartValue::PartValue()
 /** \brief Initializer copy constructor.
  */
 PartValue::PartValue(const std::string &filename,
-        const std::string &type):
+        const std::string &contentType):
     filename(filename)
 {
-    this->type = type.empty() ? detectContentType(this->filename) : type;
+    if (contentType.empty()) {
+        this->contentType_ = detectContentType(this->filename);
+    } else {
+        this->contentType_ = contentType;
+    }
 }
 
 
 /** \brief Initializer move constructor.
  */
 PartValue::PartValue(std::string &&path,
-        std::string &&type):
+        std::string &&contentType):
     filename(FORWARD(filename))
 {
-    this->type = type.empty() ? detectContentType(this->filename) : type;
+    if (contentType.empty()) {
+        this->contentType_ = detectContentType(this->filename);
+    } else {
+        this->contentType_ = contentType;
+    }
 }
 
 
@@ -179,7 +187,7 @@ PartValue::PartValue(std::string &&path,
  */
 PartValue::PartValue(const PartValue &other):
     filename(other.filename),
-    type(other.type)
+    contentType_(other.contentType_)
 {}
 
 
@@ -203,7 +211,7 @@ std::string PartValue::name() const
  */
 const std::string & PartValue::contentType() const
 {
-    return type;
+    return contentType_;
 }
 
 
@@ -253,7 +261,7 @@ FileValue::FileValue(std::string &&path,
 /** \brief Copy constructor.
  */
 FileValue::FileValue(const FileValue &other):
-    PartValue(other.filename, other.type)
+    PartValue(other.filename, other.contentType_)
 {}
 
 
@@ -290,28 +298,28 @@ BufferValue::BufferValue()
 /** \brief Initializer copy constructor.
  */
 BufferValue::BufferValue(const std::string &filename,
-        const std::string &contents,
+        const std::string &buffer,
         const std::string &contentType):
     PartValue(filename, contentType),
-    contents(contents)
+    buffer_(buffer)
 {}
 
 
 /** \brief Initializer move constructor.
  */
 BufferValue::BufferValue(std::string &&filename,
-        std::string &&contents,
+        std::string &&buffer,
         std::string &&contentType):
     PartValue(FORWARD(filename), FORWARD(contentType)),
-    contents(FORWARD(contents))
+    buffer_(FORWARD(buffer))
 {}
 
 
 /** Copy constructor.
  */
 BufferValue::BufferValue(const BufferValue &other):
-    PartValue(other.filename, other.type),
-    contents(contents)
+    PartValue(other.filename, other.contentType_),
+    buffer_(other.buffer_)
 {}
 
 
@@ -319,7 +327,7 @@ BufferValue::BufferValue(const BufferValue &other):
  */
 const std::string & BufferValue::buffer() const
 {
-    return contents;
+    return buffer_;
 }
 
 
@@ -339,7 +347,7 @@ std::string BufferValue::string() const
 /** \brief Null constructor.
  */
 Multipart::Multipart():
-    separator(SHA1_HEX(pseudorandom(8)))
+    boundary_(SHA1_HEX(pseudorandom(8)))
 {}
 
 
@@ -347,7 +355,7 @@ Multipart::Multipart():
  */
 Multipart::Multipart(std::initializer_list<detail::PartPtr> &&list):
     Base(FORWARD(list)),
-    separator(SHA1_HEX(pseudorandom(8)))
+    boundary_(SHA1_HEX(pseudorandom(8)))
 {}
 
 
@@ -355,7 +363,7 @@ Multipart::Multipart(std::initializer_list<detail::PartPtr> &&list):
  */
 Multipart::Multipart(const Multipart &other):
     Base(other.begin(), other.end()),
-    separator(other.separator)
+    boundary_(other.boundary_)
 {}
 
 
@@ -363,7 +371,7 @@ Multipart::Multipart(const Multipart &other):
  */
 const std::string & Multipart::boundary() const
 {
-    return separator;
+    return boundary_;
 }
 
 

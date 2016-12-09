@@ -188,7 +188,7 @@ void Request::setTimeout(const Timeout &timeout)
  */
 void Request::setAuth(const Authentication &auth)
 {
-    header["Authorization"] = "Basic " + b64Encode(auth.string());
+    header["Authorization"] = "Basic " + BASE64_ENCODE(auth.string());
 }
 
 
@@ -414,7 +414,7 @@ void Request::setOption(const Timeout &timeout)
  */
 void Request::setOption(const Authentication &auth)
 {
-    header["Authorization"] = "Basic " + b64Encode(auth.string());
+    header["Authorization"] = "Basic " + BASE64_ENCODE(auth.string());
 }
 
 

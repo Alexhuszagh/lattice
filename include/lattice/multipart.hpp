@@ -40,13 +40,13 @@ typedef std::shared_ptr<BufferValue> BufferPtr;
 struct PartValue
 {
     std::string filename;
-    std::string type;
+    std::string contentType_;
 
     PartValue();
     PartValue(const std::string &filename,
-        const std::string &type);
+        const std::string &contentType);
     PartValue(std::string &&filename,
-        std::string &&type);
+        std::string &&contentType);
     PartValue(const PartValue &other);
 
     std::string basename() const;
@@ -62,9 +62,9 @@ struct FileValue: PartValue
 {
     FileValue();
     FileValue(const std::string &filename,
-        const std::string &type = "");
+        const std::string &contentType = "");
     FileValue(std::string &&filename,
-        std::string &&type);
+        std::string &&contentType);
     FileValue(const FileValue &other);
 
     std::string buffer() const;
@@ -76,14 +76,14 @@ struct FileValue: PartValue
  */
 struct BufferValue: PartValue
 {
-    std::string contents;
+    std::string buffer_;
 
     BufferValue();
     BufferValue(const std::string &filename,
-        const std::string &contents,
+        const std::string &buffer,
         const std::string &contentType = "");
     BufferValue(std::string &&filename,
-        std::string &&contents,
+        std::string &&buffer,
         std::string &&contentType);
     BufferValue(const BufferValue &other);
 
@@ -126,7 +126,7 @@ class Multipart: public std::vector<detail::PartPtr>
 {
 protected:
     typedef std::vector<detail::PartPtr> Base;
-    std::string separator;
+    std::string boundary_;
 
 public:
     Multipart();

@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "mutex.hpp"
 #include "request.hpp"
 #include "response.hpp"
+#include "util.hpp"
 
 #include <future>
 #include <thread>
