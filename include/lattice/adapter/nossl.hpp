@@ -48,18 +48,14 @@ public:
  */
 template <typename HttpAdapter>
 NoSslAdapter<HttpAdapter>::NoSslAdapter()
-{
-    throw MissingSslError();
-}
+{}
 
 
 /** \brief Destructor.
  */
 template <typename HttpAdapter>
 NoSslAdapter<HttpAdapter>::~NoSslAdapter()
-{
-    throw MissingSslError();
-}
+{}
 
 
 /** \brief Open socket.
