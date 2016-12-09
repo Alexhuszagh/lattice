@@ -189,9 +189,9 @@ size_t UdpSocketAdapter::read(char *buf,
 
 - Alex Huszagh
 
-Lattice uses code directly adapted from [CPR](https://github.com/whoshuu/cpr) and therefore credits those [authors](AUTHORS), and can be considered a fork in some form. Contributors to CPR are not affiliated with Lattice. 
+Lattice is effectively a fork of [CPR](https://github.com/whoshuu/cpr) with a different backend, and credits those in [authors](AUTHORS). Contributors specified in CPR are not affiliated with lattice in any form. 
 
-The OpenSSL adapter was reimplemented from libssl annotations in the cURL project, and therefore is  a derivative work.
+Code from various open source projects was also integrated into lattice, and derivative works are credited in both the source and header files, as well as LICENSE.md.
 
 ## Contributor Guidelines
 

@@ -1,7 +1,6 @@
 The MIT License (MIT)
 =====================
 
-Copyright © `1998 - 2016`, `Daniel Stenberg, <daniel@haxx.se>, et al.`
 Copyright © `2015` `Huu Nguyen`
 Copyright © `2016` `The Regents of the University of California`
 
