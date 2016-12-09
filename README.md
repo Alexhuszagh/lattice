@@ -6,12 +6,12 @@ Lattice is a modern C++, cross-platform library for client-side network requests
 **Table of Contents**
 
 - [Motivation](#motivation)
-- [Design](#design)
 - [Features](#features)
 - [Lattice Is Not...](#lattice-is-not...)
 - [Dependencies](#dependencies)
 - [Building](#building)
 - [Documentation](#documentation)
+- [Design](#design)
 - [Planned Features](#planned-features)
 - [Contributors](#contributors)
 - [Contributor Guidelines](#contributors-guidelines)
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 }
 ```
 
-**2. Build**
+**2. Build & Run**
 
 ```bash
 $ g++ get.cpp -o get -std=c++11 liblattice.a
@@ -63,6 +63,54 @@ $ ./get
 ```
 
 No dependencies, no defines, no unresolved symbols. 
+
+## Features
+
+- Custom Headers
+- Parameters
+- Cookies
+- DNS caching
+- Redirections
+- Content-Type detection
+- Pooled requests
+- International domain names
+- Unicode Support (UTF8, UTF16, UTF32)
+- Auth (Basic, Digest)
+- Proxies (Beta)
+
+**HTTPS Only**
+
+- SSL/TLS adapters for sockets
+- Domain validation
+- Certificate validation
+
+## Lattice is Not...
+
+All batteries included. Lattice will identify compressed data streams, JSON, XML and other data types, but it will not decode or parse them. It is lightweight, making minimal assumptions of the requirements of the user.
+
+## Dependencies
+
+- C++11 Compiler
+- CMake
+- Native threads (POSIX or Win32)
+- (Optional) OpenSSL
+
+SSL/TLS support is header-only, the library itself has no SSL dependencies.
+
+## Building
+
+Simply clone, configure with CMake, and build.
+
+```
+git clone https://github.com/Alexhuszagh/lattice.git
+cd lattice/build
+cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
+make -j 5                       # "msbuild Lattice.sln" for MSVC
+```
+
+## Documentation
+
+Coming soon, for now, see the the [examples][/example] for how to use lattice.
 
 ## Design
 
@@ -122,56 +170,6 @@ size_t UdpSocketAdapter::read(char *buf,
     return ::recv(sock, buf, count, 0);
 }
 ```
-
-//SOCK_STREAM
-
-## Features
-
-- Custom Headers
-- Parameters
-- Cookies
-- DNS caching
-- Redirections
-- Content-Type detection
-- Pooled requests
-- International domain names
-- Unicode Support (UTF8, UTF16, UTF32)
-- Auth (Basic, Digest)
-- Proxies (Beta)
-
-**HTTPS Only**
-
-- SSL/TLS adapters for sockets
-- Domain validation
-- Certificate validation
-
-## Lattice is Not...
-
-All batteries included. Lattice will identify compressed data streams, JSON, XML and other data types, but it will not decode or parse them. It is lightweight, making minimal assumptions of the requirements of the user.
-
-## Dependencies
-
-- C++11 Compiler
-- CMake
-- Native threads (POSIX or Win32)
-- (Optional) OpenSSL
-
-SSL/TLS support is header-only, the library itself has no SSL dependencies.
-
-## Building
-
-Simply clone, configure with CMake, and build.
-
-```
-git clone https://github.com/Alexhuszagh/lattice.git
-cd lattice/build
-cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
-make -j 5                       # "msbuild Lattice.sln" for MSVC
-```
-
-## Documentation
-
-Coming soon, for now, see the the [examples][/example] for how to use lattice.
 
 ## Planned Features
 
