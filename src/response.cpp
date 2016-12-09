@@ -174,7 +174,8 @@ void Response::parseHeaders(const std::string &lines)
     std::string line;
     while (::lattice::getline(stream, line)) {
         if (!line.empty()) {
-            parseHeader(line);
+            // data() is used to fix a compiler optimization bug in MSYS2
+            parseHeader(line.data());
         }
     }
 }
