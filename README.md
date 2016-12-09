@@ -1,7 +1,7 @@
 lattice
 =======
 
-Lattice is a modern C++, cross-platform library for client-side network requests.
+Lattice is a C++11, cross-platform library for client-side network requests.
 
 **Table of Contents**
 
