@@ -110,7 +110,7 @@ make -j 5                       # "msbuild Lattice.sln" for MSVC
 
 ## Documentation
 
-Coming soon, for now, see the the [examples][/example] for how to use lattice.
+Coming soon, for now, see the the [examples](/example) for how to use lattice.
 
 ## Design
 
@@ -133,6 +133,9 @@ class UdpSocketAdapter
 };
 
 
+/** Open connection to socket, return if the connection was 
+ *  successfully established 
+ */
 void UdpSocketAdapter::open(const addrinfo &info,
         const std::string &/*host*/)
 {
@@ -149,6 +152,8 @@ void UdpSocketAdapter::open(const addrinfo &info,
 }
 
 
+/** Close open connection.
+ */
 void UdpSocketAdapter::close()
 {
     if (sock >= 0) {
@@ -157,6 +162,8 @@ void UdpSocketAdapter::close()
     }
 }
 
+/** Send data to socket.
+ */
 size_t UdpSocketAdapter::write(const char *buf,
     size_t len)
 {
@@ -164,6 +171,8 @@ size_t UdpSocketAdapter::write(const char *buf,
 }
 
 
+/** Read data from socket.
+ */
 size_t UdpSocketAdapter::read(char *buf,
     size_t count)
 {
