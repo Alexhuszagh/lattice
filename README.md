@@ -101,7 +101,7 @@ SSL/TLS support is header-only, the library itself has no SSL dependencies.
 
 Simply clone, configure with CMake, and build.
 
-```
+```bash
 git clone https://github.com/Alexhuszagh/lattice.git
 cd lattice/build
 cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
