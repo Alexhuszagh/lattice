@@ -13,6 +13,7 @@
 #include "method.hpp"
 #include "ssl.hpp"
 #include "timeout.hpp"
+#include "util.hpp"
 
 #include <cstdlib>
 #include <cstring>
@@ -100,19 +101,55 @@ public:
     // REQUESTS
     void open(const Url &url);
     void close();
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol ssl);
-    void setVerifyPeer(const VerifyPeer &peer);
+    void write(const std::string &data);
     void setCache(const DnsCache &cache);
-    void send(const std::string &data);
 
     // RESPONSE
     std::string headers();
     std::string chunked();
     std::string body(const long length);
     std::string read();
+
+    // OPTIONAL
+    template <typename T = Adapter>
+    typename std::enable_if<(HasSetTimeout<T>::value), void>::type
+    setTimeout(const Timeout &timeout);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(!HasSetTimeout<T>::value), void>::type
+    setTimeout(const Timeout &timeout);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(HasSetCertificateFile<T>::value), void>::type
+    setCertificateFile(const CertificateFile &certificate);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(!HasSetCertificateFile<T>::value), void>::type
+    setCertificateFile(const CertificateFile &certificate);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(HasSetRevocationLists<T>::value), void>::type
+    setRevocationLists(const RevocationLists &revoke);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(!HasSetRevocationLists<T>::value), void>::type
+    setRevocationLists(const RevocationLists &revoke);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(HasSetSslProtocol<T>::value), void>::type
+    setSslProtocol(const SslProtocol ssl);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(!HasSetSslProtocol<T>::value), void>::type
+    setSslProtocol(const SslProtocol ssl);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(HasSetVerifyPeer<T>::value), void>::type
+    setVerifyPeer(const VerifyPeer &peer);
+
+    template <typename T = Adapter>
+    typename std::enable_if<(!HasSetVerifyPeer<T>::value), void>::type
+    setVerifyPeer(const VerifyPeer &peer);
 };
 
 
@@ -161,46 +198,101 @@ void Connection<Adapter>::close()
 /** \brief Set timeout for socket requests.
  */
 template <typename Adapter>
-void Connection<Adapter>::setTimeout(const Timeout &timeout)
+template <typename T>
+typename std::enable_if<(HasSetTimeout<T>::value), void>::type
+Connection<Adapter>::setTimeout(const Timeout &timeout)
 {
     adapter.setTimeout(timeout);
 }
 
 
+/** \brief Set timeout for socket requests (noop).
+ */
+template <typename Adapter>
+template <typename T>
+typename std::enable_if<(!HasSetTimeout<T>::value), void>::type
+Connection<Adapter>::setTimeout(const Timeout &timeout)
+{}
+
+
 /** \brief Set certificate file for SSL/TLS.
  */
 template <typename Adapter>
-void Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
+template <typename T>
+typename std::enable_if<(HasSetCertificateFile<T>::value), void>::type
+Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
 {
     adapter.setCertificateFile(certificate);
 }
 
 
+/** \brief Set certificate file for SSL/TLS (noop).
+ */
+template <typename Adapter>
+template <typename T>
+typename std::enable_if<(!HasSetCertificateFile<T>::value), void>::type
+Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
+{}
+
+
 /** \brief Set file to manually revoke certificates.
  */
 template <typename Adapter>
-void Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
+template <typename T>
+typename std::enable_if<(HasSetRevocationLists<T>::value), void>::type
+Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
 {
     adapter.setRevocationLists(revoke);
 }
 
 
+/** \brief Set file to manually revoke certificates (noop).
+ */
+template <typename Adapter>
+template <typename T>
+typename std::enable_if<(!HasSetRevocationLists<T>::value), void>::type
+Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
+{}
+
+
 /** \brief Set SSL protocol.
  */
 template <typename Adapter>
-void Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
+template <typename T>
+typename std::enable_if<(HasSetSslProtocol<T>::value), void>::type
+Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
 {
     adapter.setSslProtocol(ssl);
 }
 
 
+/** \brief Set SSL protocol (noop).
+ */
+template <typename Adapter>
+template <typename T>
+typename std::enable_if<(!HasSetSslProtocol<T>::value), void>::type
+Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
+{}
+
+
 /** \brief Change peer certificate validation.
  */
 template <typename Adapter>
-void Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
+template <typename T>
+typename std::enable_if<(HasSetVerifyPeer<T>::value), void>::type
+Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
 {
     adapter.setVerifyPeer(peer);
 }
+
+
+/** \brief Change peer certificate validation (noop).
+ */
+template <typename Adapter>
+template <typename T>
+typename std::enable_if<(!HasSetVerifyPeer<T>::value), void>::type
+Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
+{}
 
 
 /** \brief Set DNS cache.
@@ -215,7 +307,7 @@ void Connection<Adapter>::setCache(const DnsCache &cache)
 /** \brief Send data through socket.
  */
 template <typename Adapter>
-void Connection<Adapter>::send(const std::string &data)
+void Connection<Adapter>::write(const std::string &data)
 {
     int sent = adapter.write(data.data(), data.size());
     if (sent != static_cast<int>(data.size())) {

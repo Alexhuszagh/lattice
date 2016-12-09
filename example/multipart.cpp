@@ -12,10 +12,12 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Multipart multipart;
-    multipart.emplace_back(lattice::CreateFile("a.json"));
-    multipart.emplace_back(lattice::CreateFile("b.txt"));
-    multipart.emplace_back(lattice::CreateFile("c.xml"));
+    lattice::Multipart multipart = {
+        lattice::CreateFile("a.json"),
+        lattice::CreateFile("b.txt"),
+        lattice::CreateFile("c.xml"),
+        lattice::CreateBuffer("d.csv", "A,B\nC,D"),
+    };
     lattice::Url url = {"http://httpbin.org/post"};
     lattice::Timeout timeout(1000);
     auto response = lattice::Post(url, multipart, timeout);

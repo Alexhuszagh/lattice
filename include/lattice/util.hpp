@@ -11,4 +11,5 @@
 #include "util/define.hpp"
 #include "util/enum.hpp"
 #include "util/filesystem.hpp"
+#include "util/sfinae.hpp"
 #include "util/string.hpp"

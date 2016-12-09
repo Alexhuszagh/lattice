@@ -158,12 +158,6 @@ void Win32SocketAdapter::setSslProtocol(const SslProtocol ssl)
 }
 
 
-/** \brief Change peer certificate validation (noop).
- */
-void Win32SocketAdapter::setVerifyPeer(const VerifyPeer &peer)
-{}
-
-
 /** \brief Get socket descriptor.
  */
 const SOCKET Win32SocketAdapter::fd() const

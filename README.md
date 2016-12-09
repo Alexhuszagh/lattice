@@ -1,15 +1,17 @@
 lattice
 =======
 
-Lattice is a modern, light-weight, client-side, cross-platform library for network requests.
+Lattice is a modern C++, cross-platform library for client-side network requests.
 
 **Table of Contents**
 
 - [Motivation](#motivation)
+- [Design](#design)
 - [Features](#features)
 - [Lattice Is Not...](#lattice-is-not...)
 - [Dependencies](#dependencies)
 - [Building](#building)
+- [Documentation](#documentation)
 - [Planned Features](#planned-features)
 - [Contributors](#contributors)
 - [Contributor Guidelines](#contributors-guidelines)
@@ -18,9 +20,110 @@ Lattice is a modern, light-weight, client-side, cross-platform library for netwo
 
 ## Motivation
 
+Requests in modern C++ can simple and expressive, abstracting low-level interfaces from the user. A get request, using lattice, is as easy as:
+
+**1. Code**
+```cpp
+#include <lattice.hpp>
+#include <iostream>
 
 
-//Lattice aims to be a light-weight, adaptable, and easily embeddable client-side networking library, simplifying integration of basic networking into projects.
+int main(int argc, char *argv[])
+{
+    lattice::Parameters parameters = {
+        {"param1", "value1"},
+        {"param2", "value2"},
+    };
+    lattice::Url url = {"http://httpbin.org/get"};
+    auto response = lattice::Get(url, parameters);
+
+    std::cout << response.body() << std::endl;
+}
+```
+
+**2. Build**
+
+```bash
+$ g++ get.cpp -o get -std=c++11 liblattice.a
+$ ./get
+{
+  "args": {
+    "param1": "value1", 
+    "param2": "value2"
+  }, 
+  "headers": {
+    "Accept": "*/*", 
+    "Cookie": "fake=fake_value", 
+    "Host": "httpbin.org", 
+    "User-Agent": "lattice/0.1.0"
+  }, 
+  "origin": "XXX.X.X.X", 
+  "url": "http://httpbin.org/get?param1=value1&param2=value2"
+}
+```
+
+No dependencies, no defines, no unresolved symbols. 
+
+## Design
+
+Lattice uses template-driven socket adapters as the backend, which abstract the socket connection into a few core methods: `open`, `close`, `write`, and `read`, with optional extensions, making lattice easy to extend.
+
+For example, to write a UDP socket adapter for streaming requests, is as simple as:
+
+```cpp
+class UdpSocketAdapter
+{
+    int sock = -1;
+
+    bool open(const addrinfo &info,
+        const std::string &/*host*/);
+    void close();
+    size_t write(const char *buf,
+        size_t len);
+    size_t read(char *buf,
+        size_t count);
+};
+
+
+void UdpSocketAdapter::open(const addrinfo &info,
+        const std::string &/*host*/)
+{
+    sock = socket(info.ai_family, SOCK_DGRAM, info.ai_protocol);
+    if (sock < 0) {
+        return false;
+    }
+    if (connect(sock, info.ai_addr, info.ai_addrlen) >= 0) {
+        return true;
+    }
+
+    ::close(sock);
+    return false;
+}
+
+
+void UdpSocketAdapter::close()
+{
+    if (sock >= 0) {
+        ::close(sock);
+        sock = -1;
+    }
+}
+
+size_t UdpSocketAdapter::write(const char *buf,
+    size_t len)
+{
+    return ::send(sock, buf, len, 0);
+}
+
+
+size_t UdpSocketAdapter::read(char *buf,
+    size_t count)
+{
+    return ::recv(sock, buf, count, 0);
+}
+```
+
+//SOCK_STREAM
 
 ## Features
 
@@ -65,6 +168,10 @@ cd lattice/build
 cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
 make -j 5                       # "msbuild Lattice.sln" for MSVC
 ```
+
+## Documentation
+
+Coming soon, for now, see the the [examples][/example] for how to use lattice.
 
 ## Planned Features
 

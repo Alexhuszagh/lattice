@@ -5,7 +5,6 @@
  *  \brief Create no-opt adapter.
  */
 
-#include "abstract.hpp"
 #include "lattice/exception.hpp"
 #include "lattice/ssl.hpp"
 
@@ -19,7 +18,7 @@ namespace lattice
 /** \brief No-opt SSL socket adapter.
  */
 template <typename HttpAdapter>
-class NoSslAdapter: public AbstractAdapter
+class NoSslAdapter
 {
 protected:
     typedef NoSslAdapter<HttpAdapter> This;
@@ -30,21 +29,21 @@ public:
     ~NoSslAdapter();
 
     // REQUESTS
-    virtual bool open(const addrinfo &info,
+    bool open(const addrinfo &info,
         const std::string &host);
-    virtual void close();
-    virtual size_t write(const char *buf,
+    void close();
+    size_t write(const char *buf,
         size_t len);
-    virtual size_t read(char *buf,
+    size_t read(char *buf,
         size_t count);
 
     // OPTIONS
-    virtual void setReuseAddress();
-    virtual void setTimeout(const Timeout &timeout);
-    virtual void setCertificateFile(const CertificateFile &certificate);
-    virtual void setRevocationLists(const RevocationLists &revoke);
-    virtual void setSslProtocol(const SslProtocol protocol);
-    virtual void setVerifyPeer(const VerifyPeer &peer);
+    void setReuseAddress();
+    void setTimeout(const Timeout &timeout);
+    void setCertificateFile(const CertificateFile &certificate);
+    void setRevocationLists(const RevocationLists &revoke);
+    void setSslProtocol(const SslProtocol protocol);
+    void setVerifyPeer(const VerifyPeer &peer);
 };
 
 

@@ -151,12 +151,6 @@ void PosixSocketAdapter::setSslProtocol(const SslProtocol ssl)
 }
 
 
-/** \brief Change peer certificate validation (noop).
- */
-void PosixSocketAdapter::setVerifyPeer(const VerifyPeer &peer)
-{}
-
-
 /** \brief Get socket descriptor.
  */
 const int PosixSocketAdapter::fd() const

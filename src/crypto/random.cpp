@@ -7,7 +7,10 @@
 
 #include "lattice.hpp"
 
+#include <cstring>
+#include <ctime>
 #include <fstream>
+#include <random>
 
 #if defined(_WIN32)
 #   include "wincrypt.h"
@@ -75,5 +78,34 @@ namespace lattice
     }
 
 #endif                  // WIN32
+
+
+/** \brief Get psuedo-random bytes for general purposes.
+ *
+ *  Uses the 32-bitt Mersenne Twister algorithm.
+ *
+ *  \warning This is **not** suitable for cryptographic purposes.
+ */
+std::string pseudorandom(const size_t size)
+{
+    std::mt19937 generator;
+    generator.seed(time(nullptr));
+
+    char *buffer = new char[size];
+    char *ptr = buffer;
+    size_t counter = size / sizeof(uint32_t);
+    while (counter--) {
+        const uint32_t value = generator();
+        memmove(ptr, &value, sizeof(value));
+        ptr += sizeof(value);
+    }
+
+    std::string output(buffer, size);
+    delete[] buffer;
+
+    return output;
+}
+
+
 
 }   /* lattice */

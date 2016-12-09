@@ -26,7 +26,7 @@ void sendRequest(lattice::HttpConnection &connection)
     lattice::setOption(request, lattice::GET, url, timeout, parameters);
 
     // send data and get response
-    connection.send(request.message());
+    connection.write(request.message());
 }
 
 
@@ -44,7 +44,7 @@ void sendRedirect(lattice::HttpConnection &connection,
     lattice::setOption(request, lattice::GET, url, timeout);
 
     // send data and get response
-    connection.send(request.message());
+    connection.write(request.message());
 }
 
 

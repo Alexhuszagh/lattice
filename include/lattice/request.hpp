@@ -353,12 +353,12 @@ Response Request::exec(Connection &connection)
     open(connection);
     Response response;
     do {
-        connection.send(message());
+        connection.write(message());
         response = Response(connection);
         if (response.unauthorized() && digest) {
             // using digest authentication
             auto data = message(response);
-            connection.send(data);
+            connection.write(data);
             response = Response(connection);
             return response;
         } else if ((method = response.redirect(method)) != STOP) {

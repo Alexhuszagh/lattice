@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "adapter/abstract.hpp"
 #include "adapter/openssl.hpp"
 #include "adapter/nossl.hpp"
 #include "adapter/posix.hpp"

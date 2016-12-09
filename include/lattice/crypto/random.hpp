@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Cryptographic random number generators.
+ *  \brief Random number generators.
  */
 
 #include <string>
@@ -14,8 +14,12 @@ namespace lattice
 // ---------
 
 
-/** \brief Get random bytes to seed number generators.
+/** \brief Get random bytes for cryptographic applications.
  */
 std::string sysrandom(const size_t size);
+
+/** \brief Get psuedo-random bytes for general purposes.
+ */
+std::string pseudorandom(const size_t size);
 
 }   /* lattice */

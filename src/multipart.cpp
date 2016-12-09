@@ -339,7 +339,7 @@ std::string BufferValue::string() const
 /** \brief Null constructor.
  */
 Multipart::Multipart():
-    separator(SHA1_HEX(sysrandom(8)))
+    separator(SHA1_HEX(pseudorandom(8)))
 {}
 
 
@@ -347,7 +347,7 @@ Multipart::Multipart():
  */
 Multipart::Multipart(std::initializer_list<detail::PartPtr> &&list):
     Base(FORWARD(list)),
-    separator(SHA1_HEX(sysrandom(8)))
+    separator(SHA1_HEX(pseudorandom(8)))
 {}
 
 
