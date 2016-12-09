@@ -44,6 +44,7 @@ bool PosixSocketAdapter::open(const addrinfo &info,
     if (sock < 0) {
         return false;
     }
+    setReuseAddress();
     if (::connect(sock, info.ai_addr, info.ai_addrlen) >= 0) {
         return true;
     }
@@ -79,6 +80,26 @@ size_t PosixSocketAdapter::read(char *buf,
     size_t count)
 {
     return ::recv(sock, buf, count, 0);
+}
+
+
+/** \brief Allow socket address reuse.
+ */
+void PosixSocketAdapter::setReuseAddress()
+{
+    int reuse = 1;
+    char *option = reinterpret_cast<char*>(&reuse);
+    int size = sizeof(reuse);
+    if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, option, size)) {
+        throw SocketOptionError();
+    }
+
+    #ifdef SO_REUSEPORT
+        // use reuseport if available
+        if (::setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, option, size)) {
+            throw SocketOptionError();
+        }
+    #endif
 }
 
 

@@ -92,6 +92,7 @@ public:
         size_t count);
 
     // OPTIONS
+    virtual void setReuseAddress();
     virtual void setTimeout(const Timeout &timeout);
     virtual void setCertificateFile(const CertificateFile &certificate);
     virtual void setRevocationLists(const RevocationLists &revoke);
@@ -372,6 +373,15 @@ size_t OpenSslAdapter<HttpAdapter>::read(char *buf,
     size_t count)
 {
     return SSL_read(ssl, buf, count);
+}
+
+
+/** \brief Allow socket address reuse.
+ */
+template <typename HttpAdapter>
+void OpenSslAdapter<HttpAdapter>::setReuseAddress()
+{
+    adapter.setReuseAddress();
 }
 
 

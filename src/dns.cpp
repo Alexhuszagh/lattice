@@ -164,7 +164,19 @@ DnsLookup::DnsLookup(const std::string &host,
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
 
-    if (getaddrinfo(host.data(), service.data(), &hints, &result)) {
+    // get our host and port
+    std::string nodeString, portString;
+    const char *node = host.data();
+    const char *port = service.data();
+    const size_t index = host.find(":");
+    if (index != std::string::npos) {
+        nodeString = host.substr(0, index);
+        portString = host.substr(index+1);
+        node = nodeString.data();
+        port = portString.data();
+    }
+
+    if (getaddrinfo(node, port, &hints, &result)) {
         throw AddressError(host, service);
     }
 

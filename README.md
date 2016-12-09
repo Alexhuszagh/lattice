@@ -1,7 +1,7 @@
 lattice
 =======
 
-A light-weight, dependency-free, cross-platform library for client-side network requests.
+Lattice is a modern, light-weight, client-side, cross-platform library for network requests.
 
 **Table of Contents**
 
@@ -18,24 +18,29 @@ A light-weight, dependency-free, cross-platform library for client-side network 
 
 ## Motivation
 
-Lattice aims to be a light-weight, adaptable, and easily embeddable client-side networking library, simplifying integration of basic networking into projects.
+
+
+//Lattice aims to be a light-weight, adaptable, and easily embeddable client-side networking library, simplifying integration of basic networking into projects.
 
 ## Features
 
 - Custom Headers
-- URL-encoded parameters
+- Parameters
 - Cookies
 - DNS caching
-- Redirection following
-- GET/HEAD/POST/PATCH/PUT/OPTIONS/DELETE/TRACE methods 
-- Response type detection
-- Pseudo-asynchronous requests
-- International domain names and Unicode parameters
+- Redirections
+- Content type detection
+- Pooled requests
+- International domain names
+- Unicode
+- Auth (Basic, Digest)
+- Proxies
 
 **HTTPS Only**
 
 - SSL/TLS adapters for sockets
-- Domain Name and certification validation
+- Domain validation
+- Certificate validation
 
 ## Lattice is Not...
 
@@ -63,9 +68,9 @@ make -j 5                       # "msbuild Lattice.sln" for MSVC
 
 ## TODO
 
+- OAuth
 - Multipart
 - Body
-- Options
 - Payload
 
 ## Contributors
@@ -74,7 +79,7 @@ make -j 5                       # "msbuild Lattice.sln" for MSVC
 
 Lattice uses code directly adapted from [CPR](https://github.com/whoshuu/cpr) and therefore credits those [authors](AUTHORS), and can be considered a fork in some form. Contributors to CPR are not affiliated with Lattice. 
 
-The OpenSSL adapter was reimplemented from libssl annotations in the cURL project, and therefore is a derivative work.
+The OpenSSL adapter was reimplemented from libssl annotations in the cURL project, and therefore is  a derivative work.
 
 ## Contributor Guidelines
 

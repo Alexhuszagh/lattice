@@ -8,7 +8,13 @@
 
 #include "lattice.hpp"
 
+#include <cstdio>
+#include <fstream>
 #include <sstream>
+
+#if defined(_WIN32)
+#   include "wincrypt.h"
+#endif
 
 
 namespace lattice
@@ -17,70 +23,87 @@ namespace lattice
 // -------
 
 
-/** \brief Get raw bytestream from request.
+/** \brief Get name for HTTP request.
  */
-std::string Request::bytes()
+std::string Request::methodName() const
 {
-    std::stringstream stream;
-    std::string name;
-    std::string headers = header.string();
-    if (!header.host() && !url.empty() && url.absolute()) {
+    switch (method) {
+        case GET:
+            return "GET";
+        case HEAD:
+            return "HEAD";
+        case POST:
+            return "POST";
+        case DELETE:
+            return "DELETE";
+        case OPTIONS:
+            return "OPTIONS";
+        case PATCH:
+            return "PATCH";
+        case PUT:
+            return "PUT";
+        case TRACE:
+            return "TRACE";
+        case CONNECT:
+            return "CONNECT";
+        default:
+            throw std::out_of_range("HTTP request method unknown.\n");
+    }
+}
+
+
+/** \brief Get headers for an initial HTTP request.
+ */
+std::stringstream Request::messageHeader() const
+{
+    std::stringstream data;
+    data << header.string();
+    if (!header.host() && url.absolute()) {
         // specify a default host
-        headers += "Host: " + url.host() + "\r\n";
+        data << "Host: " + url.host() + "\r\n";
     }
     if (!header.userAgent()) {
         // specify a default user agent
-        headers += "User-Agent: lattice/" + VERSION + "\r\n";
+        data << "User-Agent: lattice/" + VERSION + "\r\n";
     }
-    if (isUnicode(parameters) && method == POST) {
+    if (!header.connection()) {
+        // Keep-Alive by default
+        data << "Connection: keep-alive\r\n";
+    }
+    if (!header.accept()) {
+        // accept everything by default
+        data << "Accept: */*\r\n";
+    }
+    if (!header.cookie()) {
+        // give a dummy cookie
+        data << "Cookie: fake=fake_value\r\n";
+    }
+    if (isUnicode(parameters)) {
         // parameters must be UTF-8, are added to body
-        headers += "Content-Type: text/plain; charset=utf-8\r\n";
+        data << "Content-Type: text/plain; charset=utf-8\r\n";
     }
 
-    switch (method) {
-        case GET:
-            name = "GET";
-            break;
-        case HEAD:
-            name = "HEAD";
-            break;
-        case POST:
-            name = "POST";
-            break;
-        case DELETE:
-            name = "DELETE";
-            break;
-        case OPTIONS:
-            name = "OPTIONS";
-            break;
-        case PATCH:
-            name = "PATCH";
-            break;
-        case PUT:
-            name = "PUT";
-            break;
-        case TRACE:
-            name = "TRACE";
-            break;
-        case CONNECT:
-            name = "CONNECT";
-            break;
+    return data;
+}
+
+
+/** \brief Get headers for a follow up response to an HTTP request.
+ *
+ *  Currently used only for digest authentication.
+ */
+std::stringstream Request::messageHeader(const Response &response) const
+{
+    auto data = messageHeader();
+    if (digest) {
+        try {
+            auto string = response.headers().at("www-authenticate");
+            DigestChallenge challenge(string);
+            data << challenge.header(url, parameters, digest, response.body(), methodName());
+        } catch(std::exception) {
+        }
     }
 
-    if (method == POST) {
-        stream << name << " " << url.path() << " HTTP/1.1\r\n"
-               << headers
-               << "\r\n"
-               << parameters.post()
-               << "\r\n\r\n";
-    } else {
-        stream << name << " " << url.path() << parameters.get()
-               << " HTTP/1.1\r\n"
-               << headers
-               << "\r\n\r\n";
-    }
-
-    return stream.str();
+    return data;
 }
 
 
@@ -152,6 +175,22 @@ void Request::setTimeout(const Timeout &timeout)
 void Request::setAuth(const Authentication &auth)
 {
     header["Authorization"] = "Basic " + b64Encode(auth.string());
+}
+
+
+/** \brief Set digest auth for session.
+ */
+void Request::setDigest(const Digest &digest)
+{
+    this->digest = digest;
+}
+
+
+/** \brief Set proxy for socket.
+ */
+void Request::setProxy(const Proxy &proxy)
+{
+    this->proxy = proxy;
 }
 
 
@@ -281,6 +320,22 @@ void Request::setOption(const Authentication &auth)
 }
 
 
+/** \brief Set digest auth for session.
+ */
+void Request::setOption(const Digest &digest)
+{
+    this->digest = digest;
+}
+
+
+/** \brief Set proxy for socket.
+ */
+void Request::setOption(const Proxy &proxy)
+{
+    this->proxy = proxy;
+}
+
+
 /** \brief Set cookies for session.
  */
 void Request::setOption(const Cookies &cookies)
@@ -343,6 +398,104 @@ void Request::setOption(const DnsCache &cache)
 {
     this->cache = cache;
 }
+
+
+/** \brief Get HTTP method.
+ */
+const Method Request::getMethod() const
+{
+    return method;
+}
+
+
+/** \brief Get URL for session.
+ */
+const Url & Request::getUrl() const
+{
+    return url;
+}
+
+
+/** \brief Set parameters for session.
+ */
+const Parameters & Request::getParameters() const
+{
+    return parameters;
+}
+
+
+/** \brief Set header for session.
+ */
+const Header & Request::getHeader() const
+{
+    return header;
+}
+
+
+/** \brief Get timeout for session.
+ */
+const Timeout & Request::getTimeout() const
+{
+    return timeout;
+}
+
+
+/** \brief Get digest auth for session.
+ */
+const Digest & Request::getDigest() const
+{
+    return digest;
+}
+
+
+/** \brief Set maximum redirects for request.
+ */
+const Redirects & Request::getRedirects() const
+{
+    return redirects;
+}
+
+
+/** \brief Set certificate file for SSL encryption.
+ */
+const CertificateFile & Request::getCertificateFile() const
+{
+    return certificate;
+}
+
+
+/** \brief Set file to manually revoke certificates.
+ */
+const RevocationLists & Request::getRevocationLists() const
+{
+    return revoke;
+}
+
+
+/** \brief Set protocol for SSL encryption.
+ */
+const SslProtocol Request::getSslProtocol() const
+{
+    return ssl;
+}
+
+
+/** \brief Get peer certificate validation.
+ */
+const VerifyPeer Request::getVerifyPeer() const
+{
+    return verifypeer;
+}
+
+
+/** \brief Get the DNS cache.
+ */
+const DnsCache Request::getDnsCache() const
+{
+    return cache;
+}
+
+
 
 }   /* lattice */
 

@@ -19,24 +19,36 @@ namespace lattice
 /** \brief Initializer list constructor.
  */
 AddressError::AddressError(const std::string &host,
-        const std::string &service):
-    host(host),
-    service(service)
-{}
+        const std::string &service)
+{
+    std::stringstream stream;
+    stream << "Unable to get address from getaddrinfo("
+           << host << ", " << service << ").\n";
+
+    message = stream.str();
+}
 
 
 /** \brief Initializer list constructor.
  */
 RequestError::RequestError(const int sent,
-        const int total):
-    sent(sent),
-    total(total)
-{}
+        const int total)
+{
+    std::stringstream stream;
+    stream << "Unable to get make request: sent "
+           << sent << " of " << total << " bytes.\n";
+
+    message = stream.str();
+}
 
 
-NetworkSchemeError::NetworkSchemeError(const std::string &service):
-    service(service)
-{}
+NetworkSchemeError::NetworkSchemeError(const std::string &service)
+{
+    std::stringstream stream;
+    stream << "Network scheme \"" << service << "\" is not supported.\n";
+
+    message = stream.str();
+}
 
 
 /** \brief Warn user about user encryption methods without SSL/TLS support.

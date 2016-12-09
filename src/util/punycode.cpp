@@ -116,7 +116,6 @@ uint32_t decodeByte(uint8_t c)
     } else if ((c >= 65) && (c <= 90)) {
         return c - 'A';                     // 'A'..'Z'
     }
-    printf("Char is %d\n", c);
     throw std::out_of_range("Character to decode is out of range\n");
 }
 

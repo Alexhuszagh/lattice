@@ -61,6 +61,21 @@ void trim(std::string &string,
 std::vector<std::string> split(const std::string &string,
     const char *delimiters);
 
+/** \brief Split string by delimiter.
+ *
+ *  Split string by delimiter, but allow escaped or quoted characters
+ *  to be successfully included.
+ *
+ *  \param string           String to split
+ *  \param quote            Quoting character
+ *  \param escape           Escape character
+ *  \param delimiters       Character delimiter
+ */
+std::vector<std::string> safesplit(const std::string &string,
+    const char delimiter,
+    const char quote,
+    const char escape);
+
 /** \brief Join string from begin and end iterator pairs.
  *
  *  \param items            Vector of items to join

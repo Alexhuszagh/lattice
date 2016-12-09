@@ -39,6 +39,7 @@ public:
         size_t count);
 
     // OPTIONS
+    virtual void setReuseAddress();
     virtual void setTimeout(const Timeout &timeout);
     virtual void setCertificateFile(const CertificateFile &certificate);
     virtual void setRevocationLists(const RevocationLists &revoke);
@@ -108,6 +109,15 @@ size_t NoSslAdapter<HttpAdapter>::read(char *buf,
 {
     throw MissingSslError();
     return 0;
+}
+
+
+/** \brief Allow socket address reuse.
+ */
+template <typename HttpAdapter>
+void NoSslAdapter<HttpAdapter>::setReuseAddress()
+{
+    throw MissingSslError();
 }
 
 

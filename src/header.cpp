@@ -47,11 +47,43 @@ std::string Header::string() const
 }
 
 
+/** \brief Check if the header specifies what types it accepts.
+ */
+bool Header::accept() const
+{
+    return find("accept") != end();
+}
+
+
+/** \brief Check if the header contains cookies.
+ */
+bool Header::cookie() const
+{
+    return find("cookie") != end();
+}
+
+
 /** \brief Check if the header specifies a host.
  */
 bool Header::host() const
 {
     return find("host") != end();
+}
+
+
+/** \brief Check if the header has an authorization protocol.
+ */
+bool Header::authorization() const
+{
+    return find("authorization") != end();
+}
+
+
+/** \brief Check if the header has an "www-authenticate" data.
+ */
+bool Header::wwwauthenticate() const
+{
+    return find("www-authenticate") != end();
 }
 
 
@@ -72,6 +104,14 @@ bool Header::closeConnection() const
         return it->second == "close";
     }
     return false;
+}
+
+
+/** \brief Check if the header specifies a connection.
+ */
+bool Header::connection() const
+{
+    return find("connection") != end();
 }
 
 

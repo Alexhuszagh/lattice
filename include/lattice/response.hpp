@@ -198,6 +198,7 @@ public:
 
     // STATUS
     bool ok() const;
+    bool unauthorized() const;
     Method redirect(Method method) const;
     bool permanentRedirect() const;
 };
@@ -223,11 +224,7 @@ Response::Response(Connection &connection)
     parseHeaders(connection.headers());
     if (!!transfer && !(transfer & IDENTITY)) {
         // connection has the transfer set and is not identity
-        if (header.closeConnection()) {
-            data = connection.read();
-        } else {
-            data = connection.chunked();
-        }
+        data = connection.chunked();
     } else if (header.find("content-length") != header.end()) {
         data = connection.body(std::stol(header.at("content-length")));
     } else {

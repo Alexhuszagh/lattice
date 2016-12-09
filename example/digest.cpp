@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple GET request with basic auth.
+ *  \brief Simple GET request with digest auth.
  */
 
 #include "lattice.hpp"
@@ -12,12 +12,12 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Authentication auth = {"user", "passwd"};
-    lattice::Url url = {"http://httpbin.org/basic-auth/user/passwd"};
+    lattice::Digest digest = {"user", "pass"};
+    lattice::Url url = {"http://httpbin.org/digest-auth/auth/user/pass"};
     lattice::Timeout timeout(1000);
 
     // set cookies
-    auto response = lattice::Get(url, auth, timeout);
+    auto response = lattice::Get(url, digest, timeout);
     if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
                   << "Encoding: " << response.encoding() << "\n"
                   << "------------------\n";
     } else {
-      std::cout << "Could not authenticate, error code: "
+      std::cout << "Shit: "
                 << response.status()  << std::endl;
     }
 

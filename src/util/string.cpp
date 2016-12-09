@@ -77,7 +77,7 @@ void trim(std::string &string,
 std::vector<std::string> split(const std::string &string,
     const char *delimiters)
 {
-    std::vector<std::string> items;
+    std::vector<std::string> data;
     const char *begin = string.data();
     const char *end = begin + string.size();
     const char *interval;
@@ -85,15 +85,65 @@ std::vector<std::string> split(const std::string &string,
     while (true) {
         interval = strpbrk(begin, delimiters);
         if (interval) {
-            items.push_back(std::string(begin, interval));
+            data.push_back(std::string(begin, interval));
         } else {
-            items.push_back(std::string(begin, end));
+            data.push_back(std::string(begin, end));
             break;
         }
         begin = interval+1;
     }
 
-    return items;
+    return data;
+}
+
+
+/** \brief Split string by delimiter(s).
+ *
+ *  \param string           String to split
+ *  \param quote            Quoting character
+ *  \param escape           Escape character
+ *  \param delimiters       Character delimiter
+ */
+std::vector<std::string> safesplit(const std::string &string,
+    const char delimiter,
+    const char quote,
+    const char escape)
+{
+    std::vector<std::string> data;
+
+    bool isQuoted = false;
+    bool isEscaped = false;
+    char *word = new char[string.size()];
+    int j = 0;
+    int k = 0;
+
+    for (const char c : string) {
+        if (isEscaped) {            // escape letter and undo escaping
+            isEscaped = false;
+            word[j] = c;
+            j++;
+        }  else if (c == escape) {
+            isEscaped = true;       // escape next character
+        } else if (c == quote) {
+            isQuoted ^= true;       // opening/ending quote
+        } else if (isQuoted) {
+            word[j] = c;            // append quoted character to word
+            j++;
+        } else if (c == delimiter) {
+            data.emplace_back(std::string(word, j));
+            memset(word, 0, j);     // write null values to line
+            j = 0;
+            k++;
+        } else {
+            word[j] = c;            // append unquoted word
+            j++;
+        }
+    }
+
+    data.emplace_back(std::string(word, j));
+    delete[] word;
+
+    return data;
 }
 
 

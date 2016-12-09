@@ -12,10 +12,12 @@
 #include "auth.hpp"
 #include "connection.hpp"
 #include "cookie.hpp"
+#include "digest.hpp"
 #include "dns.hpp"
 #include "header.hpp"
 #include "method.hpp"
 #include "parameter.hpp"
+#include "proxy.hpp"
 #include "redirect.hpp"
 #include "response.hpp"
 #include "ssl.hpp"
@@ -38,6 +40,8 @@ protected:
     Url url;
     Parameters parameters;
     Header header;
+    Digest digest;
+    Proxy proxy;
     Timeout timeout;
     Redirects redirects;
     CertificateFile certificate;
@@ -46,6 +50,9 @@ protected:
     SslProtocol ssl = static_cast<SslProtocol>(0);
     VerifyPeer verifypeer;
     DnsCache cache = nullptr;
+
+    std::stringstream messageHeader() const;
+    std::stringstream messageHeader(const Response &response) const;
 
 public:
     Request();
@@ -59,6 +66,8 @@ public:
     void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
     void setAuth(const Authentication &auth);
+    void setDigest(const Digest &digest);
+    void setProxy(const Proxy &proxy);
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
     void setCertificateFile(const CertificateFile &certificate);
@@ -76,6 +85,8 @@ public:
     void setOption(const Header &header);
     void setOption(const Timeout &timeout);
     void setOption(const Authentication &auth);
+    void setOption(const Digest &digest);
+    void setOption(const Proxy &proxy);
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
     void setOption(const CertificateFile &certificate);
@@ -85,9 +96,26 @@ public:
     void setOption(VerifyPeer &&peer);
     void setOption(const DnsCache &cache);
 
+    // ACCESS
+    const Method getMethod() const;
+    const Url & getUrl() const;
+    const Parameters & getParameters() const;
+    const Header & getHeader() const;
+    const Timeout & getTimeout() const;
+    const Digest & getDigest() const;
+    const Redirects & getRedirects() const;
+    const CertificateFile & getCertificateFile() const;
+    const RevocationLists & getRevocationLists() const;
+    const SslProtocol getSslProtocol() const;
+    const VerifyPeer getVerifyPeer() const;
+    const DnsCache getDnsCache() const;
+
     // CONNECTIONS
+    template <typename... Ts>
+    std::string message(Ts&&... ts) const;
+    std::string methodName() const;
+
     Response exec();
-    std::string bytes();
 
     template <typename Connection>
     void open(Connection &connection) const;
@@ -229,6 +257,34 @@ Response Trace(Ts&&... ts)
 // --------------
 
 
+/** \brief Get message for request.
+ */
+template <typename... Ts>
+std::string Request::message(Ts&&... ts) const
+{
+    std::stringstream stream;
+
+    // get first line
+    if (method == POST) {
+        stream << methodName() << " " << url.path()
+               << " HTTP/1.1\r\n"
+               << messageHeader(FORWARD(ts)...).str()
+               << "\r\n" << parameters.post();
+    } else {
+        stream << methodName() << " " << url.path() << parameters.get()
+               << " HTTP/1.1\r\n"
+               << messageHeader(FORWARD(ts)...).str();
+    }
+
+    // TODO: body, payload?
+
+    // end message
+    stream << "\r\n\r\n";
+
+    return stream.str();
+}
+
+
 /** \brief Make request to server.
  *
  *  To avoid compiling external libraries into lattice, misuse inline
@@ -259,9 +315,15 @@ Response Request::exec(Connection &connection)
     open(connection);
     Response response;
     do {
-        connection.send(bytes());
+        connection.send(message());
         response = Response(connection);
-        if ((method = response.redirect(method)) != STOP) {
+        if (response.unauthorized() && digest) {
+            // using digest authentication
+            auto data = message(response);
+            connection.send(data);
+            response = Response(connection);
+            return response;
+        } else if ((method = response.redirect(method)) != STOP) {
             reset(connection, response);
         } else {
             break;
@@ -293,7 +355,11 @@ void Request::open(Connection &connection) const
     }
 
     // open and set timeout
-    connection.open(url);
+    if (!proxy) {
+        connection.open(url);
+    } else {
+        connection.open(Url(proxy));
+    }
     if (timeout) {
         connection.setTimeout(timeout);
     }

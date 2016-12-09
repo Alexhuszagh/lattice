@@ -35,8 +35,7 @@ class WinSockStartupError
 class AddressError: public std::exception
 {
 protected:
-    std::string host;
-    std::string service;
+    std::string message;
 
 public:
     AddressError(const std::string &host,
@@ -46,11 +45,7 @@ public:
      */
     virtual const char * what() const throw()
     {
-        std::stringstream stream;
-        stream << "Unable to get address from getaddrinfo("
-               << host << ", " << service << ").\n";
-
-        return stream.str().data();
+        return message.data();
     }
 };
 
@@ -73,8 +68,7 @@ struct ConnectionError: public std::exception
 class RequestError: public std::exception
 {
 protected:
-    int sent;
-    int total;
+    std::string message;
 
 public:
     RequestError(const int sent,
@@ -84,11 +78,7 @@ public:
      */
     virtual const char * what() const throw()
     {
-        std::stringstream stream;
-        stream << "Unable to get make request: sent "
-               << sent << " of " << total << " bytes.\n";
-
-        return stream.str().data();
+        return message.data();
     }
 };
 
@@ -177,7 +167,7 @@ class CertificateLoadingError: public std::exception
 class NetworkSchemeError: public std::exception
 {
 protected:
-    std::string service;
+    std::string message;
 
 public:
     NetworkSchemeError(const std::string &service);
@@ -186,10 +176,7 @@ public:
      */
     virtual const char * what() const throw()
     {
-        std::stringstream stream;
-        stream << "Network scheme \"" << service << "\" is not supported.\n";
-
-        return stream.str().data();
+        return message.data();
     }
 };
 
@@ -203,6 +190,28 @@ class NegativeReadError: public std::exception
     virtual const char * what() const throw()
     {
         return "Asked to read negative bytes, exiting...\n";
+    }
+};
+
+
+/** \brief Server fails to provide authentication credentials.
+ */
+class ServerDigestError: public std::exception
+{
+    virtual const char * what() const throw()
+    {
+        return "Unauthorized access, no credentials sent to authenticate.\n";
+    }
+};
+
+
+/** \brief Unable to create a secure context in the Win32 API.
+ */
+class WindowsCrypt32Error: public std::exception
+{
+    virtual const char * what() const throw()
+    {
+        return "Unable to create or free a secure context in the Win32 API.\n";
     }
 };
 

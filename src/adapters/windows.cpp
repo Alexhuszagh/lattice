@@ -61,6 +61,7 @@ bool Win32SocketAdapter::open(const addrinfo &info,
     if (sock == INVALID_SOCKET) {
         return false;
     }
+    setReuseAddress();
     if (!::connect(sock, info.ai_addr, info.ai_addrlen)) {
         return true;
     }
@@ -98,6 +99,19 @@ size_t Win32SocketAdapter::read(char *buf,
     size_t count)
 {
     return ::recv(sock, buf, count, 0);
+}
+
+
+/** \brief Allow socket address reuse.
+ */
+void Win32SocketAdapter::setReuseAddress()
+{
+    int reuse = 1;
+    char *option = reinterpret_cast<char*>(&reuse);
+    int size = sizeof(reuse);
+    if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, option, size)) {
+        throw SocketOptionError();
+    }
 }
 
 

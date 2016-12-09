@@ -39,8 +39,13 @@ public:
     using Base::Base;
 
     std::string string() const;
+    bool accept() const;
+    bool cookie() const;
     bool host() const;
     bool userAgent() const;
+    bool authorization() const;
+    bool wwwauthenticate() const;
+    bool connection() const;
     bool closeConnection() const;
 
     friend std::ostream & operator<<(std::ostream &os,

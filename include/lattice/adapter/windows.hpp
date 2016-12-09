@@ -47,6 +47,7 @@ public:
         size_t count);
 
     // OPTIONS
+    virtual void setReuseAddress();
     virtual void setTimeout(const Timeout &timeout);
     virtual void setCertificateFile(const CertificateFile &certificate);
     virtual void setRevocationLists(const RevocationLists &revoke);

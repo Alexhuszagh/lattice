@@ -32,6 +32,7 @@ struct AbstractAdapter
         size_t count) = 0;
 
     // OPTIONS
+    virtual void setReuseAddress() = 0;
     virtual void setTimeout(const Timeout &timeout) = 0;
     virtual void setCertificateFile(const CertificateFile &certificate) = 0;
     virtual void setRevocationLists(const RevocationLists &revoke) = 0;

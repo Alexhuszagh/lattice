@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Example
- *  \brief Simple GET request with basic auth.
+ *  \brief Simple HTTP GET request with an IP address.
  */
 
 #include "lattice.hpp"
@@ -12,12 +12,15 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Authentication auth = {"user", "passwd"};
-    lattice::Url url = {"http://httpbin.org/basic-auth/user/passwd"};
+    lattice::Parameters parameters = {
+        {"param1", "value1"},
+        {"param2", "value2"},
+    };
+    auto cache = lattice::CreateDnsCache();
+    lattice::Url url = {"23.22.14.18/get"};
     lattice::Timeout timeout(1000);
+    auto response = lattice::Get(url, parameters, timeout, cache);
 
-    // set cookies
-    auto response = lattice::Get(url, auth, timeout);
     if (response.ok()) {
         std::cout << "Body:\n"
                   << "------------------\n"
@@ -26,8 +29,8 @@ int main(int argc, char *argv[])
                   << "Encoding: " << response.encoding() << "\n"
                   << "------------------\n";
     } else {
-      std::cout << "Could not authenticate, error code: "
-                << response.status()  << std::endl;
+        std::cout << "Response was not successful, error code: "
+                  << response.status()  << std::endl;
     }
 
     return 0;

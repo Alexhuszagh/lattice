@@ -102,9 +102,9 @@ endif()
 set_target_properties(Lattice PROPERTIES OUTPUT_NAME lattice)
 set(LATTICE_LIBRARIES Lattice Threads::Threads ${OPENSSL_LIBRARIES})
 if(MSVC)
-    list(APPEND LATTICE_LIBRARIES ws2_32.lib)
+    list(APPEND LATTICE_LIBRARIES ws2_32.lib crypt32.lib)
 elseif(MINGW)
-    list(APPEND LATTICE_LIBRARIES -lws2_32)
+    list(APPEND LATTICE_LIBRARIES -lws2_32 -lcrypt32)
 endif()
 
 # EXAMPLES

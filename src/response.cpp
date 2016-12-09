@@ -7,6 +7,7 @@
 
 #include "lattice.hpp"
 
+#include <cctype>
 #include <cstring>
 #include <sstream>
 #include <string>
@@ -26,7 +27,12 @@ namespace lattice
  */
 void Response::parseCode(const std::string &line)
 {
-    int number = std::stoi(line.substr(9, line.find(" ", 10)));
+    const size_t start = 9;
+    size_t end = start;
+    while (end < line.size() && isdigit(line[end++]));
+
+    // no code returned, give an ok status (non-standard conforming)
+    const int number = start == end ? 200 : std::stoi(line.substr(start, end));
     code = static_cast<StatusCode>(number);
 }
 
@@ -150,6 +156,8 @@ void Response::parseHeader(const std::string &line)
             parseTransferEncoding(value);
         } else if (key == "content-type") {
             parseContentType(value);
+        } else if (key == "authorization") {
+            // TODO
         } else {
             // fallthrough
             header.emplace(key, value);
@@ -548,6 +556,14 @@ std::string Response::encoding() const
 bool Response::ok() const
 {
     return code == StatusCode::OK;
+}
+
+
+/** \brief Check if response is unathorized.
+ */
+bool Response::unauthorized() const
+{
+    return code == StatusCode::UNAUTHORIZED;
 }
 
 
