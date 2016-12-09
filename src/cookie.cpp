@@ -32,11 +32,11 @@ std::string Cookies::encode() const
 {
     std::stringstream stream;
     for (const auto &item: *this) {
-        stream << ::lattice::encode(item.first) << "=";
+        stream << urlencode(item.first) << "=";
         if (versionOneCookie(item.second)) {
             stream << item.second;
         } else {
-            stream << ::lattice::encode(item.second);
+            stream << urlencode(item.second);
         }
         stream << "; ";
     }

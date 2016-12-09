@@ -19,12 +19,8 @@ namespace lattice
 
 /** \brief URL class instance.
  */
-class Url: public std::string
+struct Url: public std::string
 {
-protected:
-    typedef std::string Base;
-
-public:
     Url();
     Url(const char *cstring);
     Url(const char *array,

@@ -81,8 +81,15 @@ set(HAVE_SSL ${OPENSSL_FOUND})
 # -------
 
 file(GLOB LATTICE_SOURCES src/*.cpp)
+file(GLOB LATTICE_CRYPTO_SOURCES src/crypto/*.cpp)
+file(GLOB LATTICE_ENCODING_SOURCES src/encoding/*.cpp)
 file(GLOB LATTICE_UTIL_SOURCES src/util/*.cpp)
-list(APPEND LATTICE_SOURCES ${LATTICE_UTIL_SOURCES})
+list(APPEND LATTICE_SOURCES
+    ${LATTICE_CRYPTO_SOURCES}
+    ${LATTICE_ENCODING_SOURCES}
+    ${LATTICE_UTIL_SOURCES}
+)
+
 if(UNIX)
     list(APPEND LATTICE_SOURCES src/adapters/posix.cpp)
 elseif(WIN32)
@@ -112,12 +119,23 @@ endif()
 
 file(GLOB LATTICE_EXAMPLES example/*.cpp)
 file(GLOB LATTICE_SSL_EXAMPLES example/ssl/*.cpp)
-if(HAVE_SSL)
+file(GLOB LATTICE_MULTIPART_EXAMPLES example/multipart/*)
+
+# SSL
+if(HAVE_SSL AND BUILD_EXAMPLES)
     list(APPEND LATTICE_EXAMPLES ${LATTICE_SSL_EXAMPLES})
     file(COPY example/ssl/client.crt
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
     )
 endif()
+
+# MULTIPART
+if(BUILD_EXAMPLES)
+    file(COPY ${LATTICE_MULTIPART_EXAMPLES}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
+
 
 if(BUILD_EXAMPLES)
     foreach(source ${LATTICE_EXAMPLES})

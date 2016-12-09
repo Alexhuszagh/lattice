@@ -12,7 +12,7 @@
 #pragma once
 
 #include "auth.hpp"
-#include "hash.hpp"
+#include "crypto.hpp"
 #include "parameter.hpp"
 
 #include <cstdint>

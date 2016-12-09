@@ -239,7 +239,6 @@ void Url::setDirectory(const std::string &directory)
 void Url::setFile(const std::string &file)
 {
     size_t index = find_last_of('/');
-    // TODO:
     replace(index + 1, std::string::npos, file);
 }
 

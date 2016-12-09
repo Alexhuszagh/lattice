@@ -16,6 +16,7 @@
 #include "dns.hpp"
 #include "header.hpp"
 #include "method.hpp"
+#include "multipart.hpp"
 #include "parameter.hpp"
 #include "proxy.hpp"
 #include "redirect.hpp"
@@ -41,6 +42,7 @@ protected:
     Parameters parameters;
     Header header;
     Digest digest;
+    Multipart multipart;
     Proxy proxy;
     Timeout timeout;
     Redirects redirects;
@@ -61,17 +63,27 @@ public:
     // EXPLICIT OPTIONS
     void setMethod(const Method method);
     void setUrl(const Url &url);
+    void setUrl(Url &&url);
     void setParameters(const Parameters &parameters);
     void setParameters(Parameters &&parameters);
     void setHeader(const Header &header);
     void setTimeout(const Timeout &timeout);
     void setAuth(const Authentication &auth);
     void setDigest(const Digest &digest);
+    void setMultipart(const Multipart &multipart);
+    void setMultipart(Multipart &&multipart);
     void setProxy(const Proxy &proxy);
+    void setProxy(Proxy &&proxy);
+    void setBody(const Body &body);
+    void setBody(Body &&body);
+    void setPayload(const Payload &payload);
+    void setPayload(Payload &&payload);
     void setCookies(const Cookies &cookies);
     void setRedirects(const Redirects &redirects);
     void setCertificateFile(const CertificateFile &certificate);
+    void setCertificateFile(CertificateFile &&certificate);
     void setRevocationLists(const RevocationLists &revoke);
+    void setRevocationLists(RevocationLists &&revoke);
     void setSslProtocol(const SslProtocol ssl);
     void setVerifyPeer(const VerifyPeer &peer);
     void setVerifyPeer(VerifyPeer &&peer);
@@ -80,17 +92,27 @@ public:
     // FORWARDING OPTIONS
     void setOption(const Method method);
     void setOption(const Url &url);
+    void setOption(Url &&url);
     void setOption(const Parameters &parameters);
     void setOption(Parameters &&parameters);
     void setOption(const Header &header);
     void setOption(const Timeout &timeout);
     void setOption(const Authentication &auth);
     void setOption(const Digest &digest);
+    void setOption(const Multipart &multipart);
+    void setOption(Multipart &&multipart);
     void setOption(const Proxy &proxy);
+    void setOption(Proxy &&proxy);
+    void setOption(const Body &body);
+    void setOption(Body &&body);
+    void setOption(const Payload &payload);
+    void setOption(Payload &&payload);
     void setOption(const Cookies &cookies);
     void setOption(const Redirects &redirects);
     void setOption(const CertificateFile &certificate);
+    void setOption(CertificateFile &&certificate);
     void setOption(const RevocationLists &revoke);
+    void setOption(RevocationLists &&revoke);
     void setOption(const SslProtocol ssl);
     void setOption(const VerifyPeer &peer);
     void setOption(VerifyPeer &&peer);
@@ -264,22 +286,38 @@ std::string Request::message(Ts&&... ts) const
 {
     std::stringstream stream;
 
+    // get our formatted body
+    std::string body;
+    if (method == POST && !parameters.empty()) {
+        body += parameters;
+    } else if (multipart) {
+        body += multipart.string();
+    }
+
+    // get formatted headers
+    auto headers = messageHeader(FORWARD(ts)...);
+    if (!body.empty()) {
+        headers << "Content-Length: " << body.size() << "\r\n";
+    }
+
     // get first line
     if (method == POST) {
         stream << methodName() << " " << url.path()
                << " HTTP/1.1\r\n"
-               << messageHeader(FORWARD(ts)...).str()
-               << "\r\n" << parameters.post();
+               << headers.str()
+               << "\r\n" << body;
     } else {
         stream << methodName() << " " << url.path() << parameters.get()
                << " HTTP/1.1\r\n"
-               << messageHeader(FORWARD(ts)...).str();
+               << headers.str()
+               << "\r\n" << body;
     }
 
-    // TODO: body, payload?
-
-    // end message
-    stream << "\r\n\r\n";
+    // end message with double CRLF
+    stream << "\r\n";
+    if (!body.empty()) {
+        stream << "\r\n";
+    }
 
     return stream.str();
 }

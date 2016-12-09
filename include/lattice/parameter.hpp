@@ -45,4 +45,21 @@ struct Parameters: public std::string
     const std::string & post() const;
 };
 
+
+/** \brief HTTP parameters object for a POST request.
+ */
+struct Body: Parameters
+{
+    using Parameters::Parameters;
+};
+
+
+/** \brief HTTP parameters object for a POST request.
+ */
+struct Payload: Parameters
+{
+    using Parameters::Parameters;
+};
+
+
 }   /* lattice */

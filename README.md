@@ -10,7 +10,7 @@ Lattice is a modern, light-weight, client-side, cross-platform library for netwo
 - [Lattice Is Not...](#lattice-is-not...)
 - [Dependencies](#dependencies)
 - [Building](#building)
-- [TODO](#todo)
+- [Planned Features](#planned-features)
 - [Contributors](#contributors)
 - [Contributor Guidelines](#contributors-guidelines)
 - [Credits](#credits)
@@ -29,12 +29,12 @@ Lattice is a modern, light-weight, client-side, cross-platform library for netwo
 - Cookies
 - DNS caching
 - Redirections
-- Content type detection
+- Content-Type detection
 - Pooled requests
 - International domain names
-- Unicode
+- Unicode Support (UTF8, UTF16, UTF32)
 - Auth (Basic, Digest)
-- Proxies
+- Proxies (Beta)
 
 **HTTPS Only**
 
@@ -66,12 +66,10 @@ cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
 make -j 5                       # "msbuild Lattice.sln" for MSVC
 ```
 
-## TODO
+## Planned Features
 
 - OAuth
-- Multipart
-- Body
-- Payload
+- Asynchronous requests
 
 ## Contributors
 
@@ -86,7 +84,7 @@ The OpenSSL adapter was reimplemented from libssl annotations in the cURL projec
 All useful pull requests will be merged, provided that they do not add external dependencies and follow these guidelines.
 
 1. Preprocessor macros should be used sparingly.
-2. Code syntax should not depend on the preprocess.
+2. Code syntax should not depend on the preprocessor.
 3. Your code must be readable.
 
 ## License

@@ -47,6 +47,7 @@ public:
     bool wwwauthenticate() const;
     bool connection() const;
     bool closeConnection() const;
+    bool contentType() const;
 
     friend std::ostream & operator<<(std::ostream &os,
         const Header &header);

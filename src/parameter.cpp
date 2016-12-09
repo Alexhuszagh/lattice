@@ -66,9 +66,9 @@ Parameters & Parameters::add(const Parameter &parameter)
 
     // add escape values
     if (parameter.value.empty()) {
-        append(encode(parameter.key));
+        append(urlencode(parameter.key));
     } else {
-        append(encode(parameter.key) + "=" + encode(parameter.value));
+        append(urlencode(parameter.key) + "=" + urlencode(parameter.value));
     }
 
     return *this;

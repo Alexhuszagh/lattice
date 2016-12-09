@@ -8,34 +8,15 @@
 
 #include "lattice.hpp"
 
-//#include <cassert>
 #include <algorithm>
 #include <cstdint>
 #include <stdexcept>
-//#include <cstring>
-//#include <cctype>
 
 
 namespace lattice
 {
 namespace punycode
 {
-// MACROS
-// ------
-
-//#define min(a, b) ((a) < (b) ? (a) : (b))
-
-/** \brief Punycode paramters.
- *
- *  [reference]   http://tools.ietf.org/html/rfc3492#section-5
- */
-//#define BASE 36
-//#define TMIN 1
-//#define TMAX 26
-//#define SKEW 38
-//#define INITIAL_N 128
-//#define INITIAL_BIAS 72
-
 // FUNCTIONS
 // ---------
 

@@ -35,13 +35,13 @@ unsigned char fromHex(unsigned char x);
  *  \param string       String to encode
  *  \return             URL-encoded string
  */
-std::string encode(const std::string &string);
+std::string urlencode(const std::string &string);
 
 /** \brief URL-decode string.
  *
  *  \param string       String to encode
  *  \return             URL-decoded string
  */
-std::string decode(const std::string &string);
+std::string urldecode(const std::string &string);
 
 }   /* lattice */

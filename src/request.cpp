@@ -78,9 +78,9 @@ std::stringstream Request::messageHeader() const
         // give a dummy cookie
         data << "Cookie: fake=fake_value\r\n";
     }
-    if (isUnicode(parameters)) {
+    if (!header.contentType() && isUnicode(parameters)) {
         // parameters must be UTF-8, are added to body
-        data << "Content-Type: text/plain; charset=utf-8\r\n";
+        data << "Content-Type: text/x-www-form-urlencoded; charset=utf-8\r\n";
     }
 
     return data;
@@ -128,13 +128,27 @@ void Request::setMethod(const Method method)
 
 
 /** \brief Set URL for session.
+ *
+ *  \warning HTTP1.1 **requires** a host for the session, so the URL
+ *  must be absolute.
  */
 void Request::setUrl(const Url &url)
 {
-    if (url.relative()) {
+    this->url = url;
+    if (this->url .relative()) {
         throw RelativeUrlError();
     }
-    this->url = url;
+}
+
+
+/** \brief Set URL for session.
+ */
+void Request::setUrl(Url &&url)
+{
+    this->url = std::move(url);
+    if (this->url .relative()) {
+        throw RelativeUrlError();
+    }
 }
 
 
@@ -194,6 +208,73 @@ void Request::setProxy(const Proxy &proxy)
 }
 
 
+/** \brief Set proxy for socket.
+ */
+void Request::setProxy(Proxy &&proxy)
+{
+    this->proxy = std::move(proxy);
+}
+
+
+/** \brief Set multipart message body.
+ */
+void Request::setMultipart(const Multipart &multipart)
+{
+    this->multipart = multipart;
+    if (this->multipart) {
+        header["Content-Type"] = this->multipart.header();
+    }
+}
+
+
+/** \brief Set multipart message body.
+ */
+void Request::setMultipart(Multipart &&multipart)
+{
+    this->multipart = std::move(multipart);
+    if (this->multipart) {
+        header["Content-Type"] = this->multipart.header();
+    }
+}
+
+
+/** \brief Set body for a POST request.
+ */
+void Request::setBody(const Body &body)
+{
+    this->parameters = static_cast<Parameters>(body);
+    method = POST;
+}
+
+
+/** \brief Set body for a POST request.
+ */
+void Request::setBody(Body &&body)
+{
+    this->parameters = std::move(static_cast<Parameters>(body));
+    method = POST;
+}
+
+
+/** \brief Set payload for a POST request.
+ */
+void Request::setPayload(const Payload &payload)
+{
+    this->parameters = static_cast<Parameters>(payload);
+    method = POST;
+}
+
+
+/** \brief Set payload for a POST request.
+ */
+void Request::setPayload(Payload &&payload)
+{
+    this->parameters = std::move(static_cast<Parameters>(payload));
+    method = POST;
+}
+
+
+
 /** \brief Set cookies for session.
  */
 void Request::setCookies(const Cookies &cookies)
@@ -217,12 +298,27 @@ void Request::setCertificateFile(const CertificateFile &certificate)
     this->certificate = certificate;
 }
 
+/** \brief Set certificate file for SSL encryption.
+ */
+void Request::setCertificateFile(CertificateFile &&certificate)
+{
+    this->certificate = std::move(certificate);
+}
+
 
 /** \brief Set file to manually revoke certificates.
  */
 void Request::setRevocationLists(const RevocationLists &revoke)
 {
     this->revoke = revoke;
+}
+
+
+/** \brief Set file to manually revoke certificates.
+ */
+void Request::setRevocationLists(RevocationLists &&revoke)
+{
+    this->revoke = std::move(revoke);
 }
 
 
@@ -267,16 +363,18 @@ void Request::setOption(const Method method)
 
 
 /** \brief Set URL for session.
- *
- *  \warning HTTP1.1 **requires** a host for the session, so the URL
- *  must be absolute.
  */
 void Request::setOption(const Url &url)
 {
-    if (url.relative()) {
-        throw RelativeUrlError();
-    }
-    this->url = url;
+    setUrl(url);
+}
+
+
+/** \brief Set URL for session.
+ */
+void Request::setOption(Url &&url)
+{
+    setUrl(FORWARD(url));
 }
 
 
@@ -336,6 +434,62 @@ void Request::setOption(const Proxy &proxy)
 }
 
 
+/** \brief Set proxy for socket.
+ */
+void Request::setOption(Proxy &&proxy)
+{
+    this->proxy = std::move(proxy);
+}
+
+
+/** \brief Set multipart message body.
+ */
+void Request::setOption(const Multipart &multipart)
+{
+    setMultipart(multipart);
+}
+
+
+/** \brief Set multipart message body.
+ */
+void Request::setOption(Multipart &&multipart)
+{
+    setMultipart(FORWARD(multipart));
+}
+
+
+/** \brief Set body for a POST request.
+ */
+void Request::setOption(const Body &body)
+{
+    setBody(body);
+}
+
+
+/** \brief Set body for a POST request.
+ */
+void Request::setOption(Body &&body)
+{
+    setBody(FORWARD(body));
+}
+
+
+/** \brief Set payload for a POST request.
+ */
+void Request::setOption(const Payload &payload)
+{
+    setPayload(payload);
+}
+
+
+/** \brief Set payload for a POST request.
+ */
+void Request::setOption(Payload &&payload)
+{
+    setPayload(FORWARD(payload));
+}
+
+
 /** \brief Set cookies for session.
  */
 void Request::setOption(const Cookies &cookies)
@@ -360,11 +514,27 @@ void Request::setOption(const CertificateFile &certificate)
 }
 
 
+/** \brief Set certificate file for SSL encryption.
+ */
+void Request::setOption(CertificateFile &&certificate)
+{
+    this->certificate = std::move(certificate);
+}
+
+
 /** \brief Set file to manually revoke certificates.
  */
 void Request::setOption(const RevocationLists &revoke)
 {
     this->revoke = revoke;
+}
+
+
+/** \brief Set file to manually revoke certificates.
+ */
+void Request::setOption(RevocationLists &&revoke)
+{
+    this->revoke = std::move(revoke);
 }
 
 

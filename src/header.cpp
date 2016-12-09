@@ -115,6 +115,14 @@ bool Header::connection() const
 }
 
 
+/** \brief Check if the header specifies a Content-Type.
+ */
+bool Header::contentType() const
+{
+    return find("content-Type") != end();
+}
+
+
 /** \brief Print headers to stream.
  */
 std::ostream & operator<<(std::ostream &os,

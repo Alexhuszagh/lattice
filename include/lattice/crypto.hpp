@@ -2,10 +2,14 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Encrypted authentication for requests.
+ *  \brief Cryptographic algorithms (**weak**) for requests..
  */
 
 #pragma once
+
+#include "crypto/md5.hpp"
+#include "crypto/random.hpp"
+#include "crypto/sha1.hpp"
 
 
 namespace lattice
