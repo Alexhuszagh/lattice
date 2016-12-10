@@ -1,8 +1,9 @@
 The MIT License (MIT)
 =====================
 
-Copyright © `2015` `Huu Nguyen`
-Copyright © `2016` `The Regents of the University of California`
+Copyright for portions of project CPR are held by `Huu Nguyen, 2015` as part of project Lattice. All other copyright for project Foo are held by `The Regents of the University of California, 2016`. 
+
+Lattice draws from other open source projects, including code from `Daniel Stenberg, 1998-2016`, `Ben Noordhuis, 2011`, `Davis E. King, 2003`, `Alexander Peslyak, 2001`, and `Steve Reid`. The licenses and attributions for derived works can be found in individual source and header files.
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation

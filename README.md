@@ -1,7 +1,7 @@
 lattice
 =======
 
-Lattice is a C++11, cross-platform library for client-side network requests.
+Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests](https://github.com/kennethreitz/requests) and [C++ Requests](https://github.com/whoshuu/cpr.
 
 **Table of Contents**
 
@@ -20,7 +20,7 @@ Lattice is a C++11, cross-platform library for client-side network requests.
 
 ## Motivation
 
-Requests in modern C++ can simple and expressive, abstracting low-level interfaces from the user. A get request, using lattice, is as easy as:
+Lattice is a modern, self-contained, thread-safe HTTP library for C++, abstracting away the low-level interfaces. No more hand-encoded URL parameters or international domain names.
 
 **1. Code**
 ```cpp
@@ -62,7 +62,7 @@ $ ./get
 }
 ```
 
-No external libraries, no defines, no unresolved symbols. No hassle.
+Compare this to the same code using [cURL](https://gist.github.com/Alexhuszagh/e3c534f7cf317c5f88102f1307113622). No external libraries, no defines, no unresolved symbols. No hassle.
 
 ## Features
 
@@ -135,9 +135,7 @@ Coming soon, for now, see the the [examples](/example) for how to use lattice.
 
 - Alex Huszagh
 
-Lattice is effectively a fork of [CPR](https://github.com/whoshuu/cpr) with a different backend, and credits those in [authors](AUTHORS). Contributors specified in CPR are not affiliated with lattice in any form. 
-
-Code from various open source projects was also integrated into lattice, and derivative works are credited in both the source and header files, as well as LICENSE.md.
+Lattice is a fork of [C++ Requests](https://github.com/whoshuu/cpr) with a different backend, and credits those contributors in [authors](AUTHORS). 
 
 ## Contributor Guidelines
 
