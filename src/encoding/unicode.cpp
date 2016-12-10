@@ -108,16 +108,24 @@ std::string toNarrow(const std::string &string,
 
 
 /** \brief STL wrapper for utf8To16.
+ *
+ *  Use lambdas rather than decltype for MSVC compatibility.
  */
 std::string utf8To16(const std::string &string)
 {
     // types
     using C1 = uint8_t;
     using C2 = uint16_t;
-//    using Function = decltype(detail::utf8To16<const C1*, C2*>);
-//
-//    return toWide<C1, C2, Function>(string, detail::utf8To16);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toWide<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf8To16(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 /** \brief STL wrapper for utf8To32.
@@ -127,10 +135,16 @@ std::string utf8To32(const std::string &string)
     // types
     using C1 = uint8_t;
     using C2 = uint32_t;
-//    using Function = decltype(detail::utf8To32<const C1*, C2*>);
-//
-//    return toWide<C1, C2, Function>(string, detail::utf8To32);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toWide<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf8To32(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 
@@ -141,10 +155,16 @@ std::string utf16To32(const std::string &string)
     // types
     using C1 = uint16_t;
     using C2 = uint32_t;
-//    using Function = decltype(detail::utf16To32<const C1*, C2*>);
-//
-//    return toWide<C1, C2, Function>(string, detail::utf16To32);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toWide<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf16To32(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 
@@ -155,10 +175,16 @@ std::string utf16To8(const std::string &string)
     // types
     using C1 = uint16_t;
     using C2 = uint8_t;
-//    using Function = decltype(detail::utf16To8<const C1*, C2*>);
-//
-//    return toNarrow<C1, C2, Function>(string, detail::utf16To8);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toNarrow<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf16To8(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 
@@ -169,10 +195,16 @@ std::string utf32To8(const std::string &string)
     // types
     using C1 = uint32_t;
     using C2 = uint8_t;
-//    using Function = decltype(detail::utf32To8<const C1*, C2*>);
-//
-//    return toNarrow<C1, C2, Function>(string, detail::utf32To8);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toNarrow<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf32To8(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 
@@ -183,10 +215,16 @@ std::string utf32To16(const std::string &string)
     // types
     using C1 = uint32_t;
     using C2 = uint16_t;
-//    using Function = decltype(detail::utf32To16<const C1*, C2*>);
-//
-//    return toNarrow<C1, C2, Function>(string, detail::utf32To16);
-    return "";
+    typedef std::function<size_t(const C1*, const C1*, C2*, C2*, bool)> Fun;
+
+    return toNarrow<C1, C2, Fun>(string, [](const C1 *srcBegin,
+        const C1 *srcEnd,
+        C2 *dstBegin,
+        C2 *dstEnd,
+        bool strict)
+    {
+        return detail::utf32To16(srcBegin, srcEnd, dstBegin, dstEnd, strict);
+    });
 }
 
 }   /* utf */
