@@ -12,6 +12,11 @@
 #include <cstdio>
 #include <cstring>
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4267)
+#endif
+
 
 namespace lattice
 {
@@ -272,3 +277,7 @@ std::string sha1HexDigest(const std::string &string)
 
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

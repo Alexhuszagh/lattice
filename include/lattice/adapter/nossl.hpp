@@ -9,6 +9,11 @@
 #include "lattice/ssl.hpp"
 #include "lattice/util.hpp"
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4722)
+#endif
+
 
 namespace lattice
 {
@@ -100,3 +105,7 @@ size_t NoSslAdapter<HttpAdapter>::read(char *buf,
 }
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

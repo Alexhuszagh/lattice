@@ -142,6 +142,7 @@ DigestAlgorithm DigestChallenge::algorithm() const
     } else if (data == "sha") {
         return SHA1_DIGEST;
     }
+    throw UnknownDigestAlgorithm();
 }
 
 

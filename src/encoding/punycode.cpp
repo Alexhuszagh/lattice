@@ -12,6 +12,11 @@
 #include <cstdint>
 #include <stdexcept>
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4244 4267)
+#endif
+
 
 namespace lattice
 {
@@ -118,7 +123,7 @@ void encodeCharacter(const uint32_t bias,
     uint32_t q = delta;
 
     while (begin < end) {
-        auto t = threshold(k, bias);
+        t = threshold(k, bias);
 
         if (q < t) {
             break;
@@ -256,3 +261,7 @@ std::string utf32ToPuny(const std::string &string)
 }
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

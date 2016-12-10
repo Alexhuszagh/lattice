@@ -7,6 +7,11 @@
 
 #include "lattice.hpp"
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4715)
+#endif
+
 
 namespace lattice
 {
@@ -73,3 +78,7 @@ VerifyPeer::operator bool() const
 }
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

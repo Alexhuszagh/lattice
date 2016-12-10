@@ -9,6 +9,12 @@
 
 #include <cstdlib>
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4800)
+#endif
+
+
 namespace lattice
 {
 // OBJECTS
@@ -212,3 +218,7 @@ AddressIterator DnsLookup::end() const
 
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

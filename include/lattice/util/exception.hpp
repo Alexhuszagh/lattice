@@ -216,6 +216,18 @@ class WindowsCrypt32Error: public std::exception
 };
 
 
+/** \brief Unable to identify the digest authentification algorithm.
+ */
+class UnknownDigestAlgorithm: public std::exception
+{
+    virtual const char * what() const throw()
+    {
+        return "Unable to identify the hashing algorithm used for digest authentication.\n";
+    }
+};
+
+
+
 /** \brief Warn user about user encryption methods without SSL/TLS support.
  */
 void encryptionWarning();

@@ -16,6 +16,11 @@
 #   include "wincrypt.h"
 #endif
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4244 4267 4800)
+#endif
+
 
 namespace lattice
 {
@@ -119,5 +124,9 @@ std::string pseudorandom(const size_t size)
 }
 
 
-
 }   /* lattice */
+
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

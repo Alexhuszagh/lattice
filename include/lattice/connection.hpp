@@ -17,6 +17,11 @@
 #include <cstdlib>
 #include <cstring>
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4267)
+#endif
+
 
 namespace lattice
 {
@@ -428,3 +433,7 @@ typedef Connection<SslAdapter> HttpsConnection;
 
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif

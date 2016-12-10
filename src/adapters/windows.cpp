@@ -14,6 +14,11 @@
 
 #include <cstdlib>
 
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable:4267)
+#endif
+
 
 namespace lattice
 {
@@ -167,5 +172,9 @@ const SOCKET Win32SocketAdapter::fd() const
 
 
 }   /* lattice */
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif
 
 #endif
