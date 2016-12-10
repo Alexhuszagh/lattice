@@ -1,7 +1,7 @@
 lattice
 =======
 
-Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests](https://github.com/kennethreitz/requests) and [C++ Requests](https://github.com/whoshuu/cpr.
+Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests](https://github.com/kennethreitz/requests) and [C++ Requests](https://github.com/whoshuu/cpr).
 
 **Table of Contents**
 
@@ -20,7 +20,7 @@ Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests]
 
 ## Motivation
 
-Lattice is a modern, self-contained, thread-safe HTTP library for C++, abstracting away the low-level interfaces. No more hand-encoded URL parameters or international domain names.
+Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded URL parameters or international domain names.
 
 **1. Code**
 ```cpp
@@ -30,12 +30,9 @@ Lattice is a modern, self-contained, thread-safe HTTP library for C++, abstracti
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
-        {"param1", "value1"},
-        {"param2", "value2"},
-    };
-    lattice::Url url = {"http://httpbin.org/get"};
-    auto response = lattice::Get(url, parameters);
+    lattice::Url url = {"http://httpbin.org/digest-auth/auth/user/pass"};
+    lattice::Digest digest = {"user", "pass"};
+    auto response = lattice::Get(url, digest);
 
     std::cout << response.body() << std::endl;
 }
@@ -47,18 +44,8 @@ int main(int argc, char *argv[])
 $ g++ get.cpp -o get -std=c++11 liblattice.a
 $ ./get
 {
-  "args": {
-    "param1": "value1", 
-    "param2": "value2"
-  }, 
-  "headers": {
-    "Accept": "*/*", 
-    "Cookie": "fake=fake_value", 
-    "Host": "httpbin.org", 
-    "User-Agent": "lattice/0.1.0"
-  }, 
-  "origin": "XXX.X.X.X", 
-  "url": "http://httpbin.org/get?param1=value1&param2=value2"
+  "authenticated": true, 
+  "user": "user"
 }
 ```
 
@@ -80,7 +67,7 @@ Compare this to the same code using [cURL](https://gist.github.com/Alexhuszagh/e
 
 **HTTPS Only**
 
-- SSL/TLS adapters for sockets
+- SSL/TLS Adapters
 - Domain validation
 - Certificate validation
 
