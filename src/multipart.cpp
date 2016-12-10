@@ -252,7 +252,7 @@ FileValue::FileValue(const std::string &filename,
 
 /** \brief Initializer move constructor.
  */
-FileValue::FileValue(std::string &&path,
+FileValue::FileValue(std::string &&filename,
         std::string &&contentType):
     PartValue(FORWARD(filename), FORWARD(contentType))
 {}

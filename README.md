@@ -10,6 +10,7 @@ Lattice is a C++11, cross-platform library for client-side network requests.
 - [Design](#design)
 - [Dependencies](#dependencies)
 - [Building](#building)
+- [Portability](#portability)
 - [Documentation](#documentation)
 - [Planned Features](#planned-features)
 - [Contributors](#contributors)
@@ -111,6 +112,15 @@ cd lattice/build
 cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
 make -j 5                       # "msbuild lattice.sln" for MSVC
 ```
+
+## Portability
+
+Lattice has been tested with the following compilers and operating systems:
+
+- 64-bit Linux with Clang 3.8.2
+- 64-bit Linux with GCC 5.4.0
+- 32/64-bit Windows with MinGW 5.3.0 (MXE, MinGW, and MSYS2) 
+- 32/64-bit Windows with Visual Studio 14 2015
 
 ## Documentation
 

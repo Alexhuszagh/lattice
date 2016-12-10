@@ -22,13 +22,4 @@ Proxy::operator bool() const
     return !empty();
 }
 
-
-/** \brief Convert proxy to URL for connection.
- */
-Proxy::operator Url() const
-{
-    return Url(static_cast<Url>(*this));
-}
-
-
 }   /* lattice */

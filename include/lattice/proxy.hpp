@@ -23,7 +23,6 @@ public:
     using Url::Url;
 
     explicit operator bool() const;
-    explicit operator Url() const;
 };
 
 
