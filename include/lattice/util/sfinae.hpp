@@ -19,7 +19,7 @@ namespace lattice
 /** \brief Checks if a class is derived from a template class.
  */
 template <
-    template <typename...> typename Template,
+    template <typename...> class Template,
     typename... T
 >
 class IsDerived
