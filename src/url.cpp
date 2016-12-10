@@ -260,4 +260,12 @@ bool Url::absolute() const noexcept
 }
 
 
+/** \brief Check if a URL has been set.
+ */
+Url::operator bool() const
+{
+    return !empty();
+}
+
+
 }   /* lattice */

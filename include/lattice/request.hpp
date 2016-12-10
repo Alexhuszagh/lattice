@@ -288,7 +288,7 @@ std::string Request::message(Ts&&... ts) const
 
     // get our formatted body
     std::string body;
-    if (method == POST && !parameters.empty()) {
+    if (method == POST && parameters) {
         body += parameters;
     } else if (multipart) {
         body += multipart.string();
@@ -378,10 +378,10 @@ void Request::open(Connection &connection) const
 {
     // set options
     connection.setVerifyPeer(verifypeer);
-    if (!certificate.empty()) {
+    if (certificate) {
         connection.setCertificateFile(certificate);
     }
-    if (!revoke.empty()) {
+    if (revoke) {
         connection.setRevocationLists(revoke);
     }
     if (FROM_ENUM(ssl)) {

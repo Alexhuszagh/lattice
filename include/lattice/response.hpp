@@ -201,6 +201,8 @@ public:
     bool unauthorized() const;
     Method redirect(Method method) const;
     bool permanentRedirect() const;
+
+    explicit operator bool() const;
 };
 
 

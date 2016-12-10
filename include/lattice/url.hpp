@@ -46,6 +46,8 @@ struct Url: public std::string
     // PROPERTIES
     bool relative() const noexcept;
     bool absolute() const noexcept;
+
+    explicit operator bool() const;
 };
 
 }   /* lattice */

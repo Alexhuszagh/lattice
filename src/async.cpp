@@ -43,4 +43,12 @@ std::vector<Response> Pool::perform()
 }
 
 
+/** \brief Check if more items can be returns.
+ */
+Pool::operator bool() const
+{
+    return !futures.empty();
+}
+
+
 }   /* lattice */

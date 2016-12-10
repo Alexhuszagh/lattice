@@ -94,4 +94,12 @@ const std::string & Parameters::post() const
 }
 
 
+/** \brief Check if any parameters have been set.
+ */
+Parameters::operator bool() const
+{
+    return !empty();
+}
+
+
 }   /* lattice */

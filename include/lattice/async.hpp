@@ -11,8 +11,10 @@
 #include "response.hpp"
 #include "util.hpp"
 
+#include <chrono>
 #include <future>
 #include <thread>
+#include <type_traits>
 #include <vector>
 
 
@@ -20,6 +22,8 @@ namespace lattice
 {
 // OBJECTS
 // -------
+
+typedef std::vector<Response> Responses;
 
 
 /** \brief Thread pool for asynchronous requests.
@@ -59,7 +63,17 @@ public:
     template <typename... Ts>
     void trace(Ts&&... ts);
 
-    std::vector<Response> perform();
+    Responses perform();
+
+    template <typename Duration>
+    typename std::enable_if<std::is_integral<Duration>::value, Response>::type
+    next(const Duration seconds = 1);
+
+    template <typename Duration>
+    typename std::enable_if<IsDerived<std::chrono::duration, Duration>::value, Response>::type
+    next(const Duration &duration = std::chrono::seconds(1));
+
+    explicit operator bool() const;
 };
 
 
@@ -75,7 +89,7 @@ void Pool::get(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(GET);
         return request.exec();
     }, std::move(request)));
@@ -90,7 +104,7 @@ void Pool::head(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(HEAD);
         return request.exec();
     }, std::move(request)));
@@ -105,7 +119,7 @@ void Pool::options(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(OPTIONS);
         return request.exec();
     }, std::move(request)));
@@ -120,7 +134,7 @@ void Pool::patch(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(PATCH);
         return request.exec();
     }, std::move(request)));
@@ -135,7 +149,7 @@ void Pool::post(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(POST);
         return request.exec();
     }, std::move(request)));
@@ -150,7 +164,7 @@ void Pool::put(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(PUT);
         return request.exec();
     }, std::move(request)));
@@ -165,10 +179,53 @@ void Pool::trace(Ts&&... ts)
     Request request;
     setOption(request, FORWARD(ts)...);
 
-    futures.emplace_back(std::async([](Request &&request) {
+    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(TRACE);
         return request.exec();
     }, std::move(request)));
+}
+
+
+/** \brief Block until next query is ready (using a seconds overload).
+ */
+template <typename Duration>
+typename std::enable_if<std::is_integral<Duration>::value, Response>::type
+Pool::next(const Duration seconds)
+{
+    return next(std::chrono::seconds(seconds));
+}
+
+
+/** \brief Block until next query is ready.
+ */
+template <typename Duration>
+typename std::enable_if<IsDerived<std::chrono::duration, Duration>::value, Response>::type
+Pool::next(const Duration &duration)
+{
+    // set our starting timepoint
+    typedef std::chrono::high_resolution_clock Clock;
+
+    auto now = Clock::now();
+    auto stop = now + duration;
+
+    auto it = futures.begin();
+    while (!futures.empty() && now < stop) {
+        auto status = it->wait_for(std::chrono::milliseconds(50));
+        if (status == std::future_status::ready) {
+            auto response = it->get();
+            futures.erase(it);
+            return response;
+        }
+
+        // increment our conditions
+        now = Clock::now();
+        ++it;
+        if (it == futures.end()) {
+            it = futures.begin();
+        }
+    }
+
+    return Response();
 }
 
 

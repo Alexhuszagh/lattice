@@ -26,16 +26,16 @@ int main(int argc, char *argv[])
     pool.head(get, cache, timeout, parameters);
     pool.post(post, cache, timeout, parameters);
 
-    auto responses = pool.perform();
-    for (const auto &response: responses) {
-        if (response.ok()) {
+    while (pool) {
+        auto response = pool.next(1);
+        if (response && response.ok()) {
             std::cout << "Body:\n"
                       << "------------------\n"
                       << response.body()
                       << "------------------\n"
                       << "Encoding: " << response.encoding() << "\n"
                       << "------------------\n";
-        } else {
+        } else if (response) {
             std::cout << "Response was not successful, error code: "
                       << response.status() << std::endl;
         }

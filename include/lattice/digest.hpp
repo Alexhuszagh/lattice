@@ -55,6 +55,8 @@ public:
 
     bool auth() const;
     bool authInt() const;
+
+    explicit operator bool() const;
 };
 
 
@@ -95,6 +97,8 @@ public:
         const Digest &digest,
         const std::string &body,
         const std::string &method);
+
+    explicit operator bool() const;
 };
 
 

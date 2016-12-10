@@ -12,6 +12,29 @@
 
 namespace lattice
 {
+// TYPES
+// -----
+
+
+/** \brief Checks if a class is derived from a template class.
+ */
+template <
+    template <typename...> typename Template,
+    typename... T
+>
+class IsDerived
+{
+protected:
+    template <typename... U> static char &test(Template<U...> const &);
+    template <typename... U> static long &test(...);
+
+public:
+    enum {
+        value = sizeof(test(std::declval<T...>())) == sizeof(char)
+    };
+};
+
+
 // MEMBERS
 // -------
 
@@ -34,7 +57,6 @@ namespace lattice
             value = sizeof(test<T>(0)) == sizeof(char)                       \
         };                                                                   \
     };                                                                       \
-
 
 // FUNCTIONS
 // ---------

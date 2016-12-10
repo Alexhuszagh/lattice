@@ -51,6 +51,7 @@ public:
 
     friend std::ostream & operator<<(std::ostream &os,
         const Header &header);
+    explicit operator bool() const;
 };
 
 

@@ -51,6 +51,22 @@ CertificateFormat CertificateFile::format() const
 }
 
 
+/** \brief Check if a certificate has been set.
+ */
+CertificateFile::operator bool() const
+{
+    return !empty();
+}
+
+
+/** \brief Check if revocation lists have been set.
+ */
+RevocationLists::operator bool() const
+{
+    return !empty();
+}
+
+
 /** \brief Null constructor.
  */
 VerifyPeer::VerifyPeer()

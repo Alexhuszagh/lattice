@@ -59,6 +59,14 @@ bool QualityOfProtection::authInt() const
 }
 
 
+/** \brief Check if any quality of protection codes have been set.
+ */
+QualityOfProtection::operator bool() const
+{
+    return !empty();
+}
+
+
 /** \brief Initialize digest from challenge string.
  */
 DigestChallenge::DigestChallenge(const std::string &string)
@@ -204,7 +212,7 @@ std::string DigestChallenge::header(const Url &url,
            << "\", response=\"" << response << "\"";
 
     // optional arguments
-    if (!quality.empty()) {
+    if (quality) {
         header << ", qop=\"" << join(quality, ",")
                << "\", nc=" << nc()
                << ", cnonce=\"" << cnonce() << "\"";
@@ -219,6 +227,14 @@ std::string DigestChallenge::header(const Url &url,
     header << "\r\n";
 
     return header.str();
+}
+
+
+/** \brief Check if a challenge has been set.
+ */
+DigestChallenge::operator bool() const
+{
+    return !empty();
 }
 
 

@@ -53,6 +53,8 @@ public:
 
     std::string suffix() const;
     CertificateFormat format() const;
+
+    explicit operator bool() const;
 };
 
 
@@ -65,6 +67,8 @@ protected:
 
 public:
     using Base::Base;
+
+    explicit operator bool() const;
 };
 
 

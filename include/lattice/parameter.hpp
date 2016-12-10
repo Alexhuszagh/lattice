@@ -43,6 +43,7 @@ struct Parameters: public std::string
 
     std::string get() const;
     const std::string & post() const;
+    explicit operator bool() const;
 };
 
 

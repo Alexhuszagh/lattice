@@ -604,5 +604,20 @@ bool Response::permanentRedirect() const
 }
 
 
+/** \brief Check if any data has been set.
+ */
+Response::operator bool() const
+{
+    return (
+        status() ||
+        headers() ||
+        cookies() ||
+        FROM_ENUM(transfer) ||
+        !charset.empty() ||
+        !body().empty()
+    );
+}
+
+
 }   /* lattice */
 

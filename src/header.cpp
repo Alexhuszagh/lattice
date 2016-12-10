@@ -134,4 +134,13 @@ std::ostream & operator<<(std::ostream &os,
 }
 
 
+/** \brief Check if any header data exists.
+ */
+Header::operator bool() const
+{
+    return !empty();
+}
+
+
+
 }   /* lattice */

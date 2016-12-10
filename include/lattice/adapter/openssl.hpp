@@ -234,7 +234,7 @@ void OpenSslAdapter<HttpAdapter>::setVerify(const std::string &host)
     SSL_set_cipher_list(ssl, PREFERRED_CIPHERS);
 
     // initalize content with bundle
-    if (!certificate.empty()) {
+    if (certificate) {
         if (!SSL_CTX_load_verify_locations(ctx, certificate.data(), nullptr)) {
             throw CertificateLoadingError();
         }
@@ -319,10 +319,10 @@ bool OpenSslAdapter<HttpAdapter>::open(const addrinfo &info,
     setContext();
     ssl = SSL_new(ctx);
     setVerify(host);
-    if (!certificate.empty()) {
+    if (certificate) {
         setCertificate();
     }
-    if (!revoke.empty()) {
+    if (revoke) {
         setRevoke();
     }
 
