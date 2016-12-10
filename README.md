@@ -20,7 +20,7 @@ Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests]
 
 ## Motivation
 
-Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded URL parameters or international domain names.
+Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded URL parameters or international domain names. No more manual authentication. 
 
 **1. Code**
 ```cpp
