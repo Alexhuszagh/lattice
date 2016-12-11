@@ -16,6 +16,6 @@ namespace lattice
 // MACROS
 // ------
 
-#define FORWARD(...) std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
+#define LATTICE_FWD(...) std::forward<decltype(__VA_ARGS__)>(__VA_ARGS__)
 
 }   /* lattice */

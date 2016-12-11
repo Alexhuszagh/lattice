@@ -89,7 +89,7 @@ public:
     void setVerifyPeer(VerifyPeer &&peer);
     void setCache(const DnsCache &cache);
 
-    // FORWARDING OPTIONS
+    // LATTICE_FWDING OPTIONS
     void setOption(const Method method);
     void setOption(const Url &url);
     void setOption(Url &&url);
@@ -160,7 +160,7 @@ public:
 template <typename T>
 void setOption(Request& request, T&& t)
 {
-    request.setOption(FORWARD(t));
+    request.setOption(LATTICE_FWD(t));
 }
 
 
@@ -174,8 +174,8 @@ void setOption(Request& request,
     T &&t,
     Ts&&... ts)
 {
-    setOption(request, FORWARD(t));
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(t));
+    setOption(request, LATTICE_FWD(ts)...);
 }
 
 
@@ -185,7 +185,7 @@ template <typename... Ts>
 Response Delete(Ts&&... ts)
 {
     Request request;
-    setOption(request, DELETE, FORWARD(ts)...);
+    setOption(request, DELETE, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -197,7 +197,7 @@ template <typename... Ts>
 Response Get(Ts&&... ts)
 {
     Request request;
-    setOption(request, GET, FORWARD(ts)...);
+    setOption(request, GET, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -209,7 +209,7 @@ template <typename... Ts>
 Response Head(Ts&&... ts)
 {
     Request request;
-    setOption(request, HEAD, FORWARD(ts)...);
+    setOption(request, HEAD, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -221,7 +221,7 @@ template <typename... Ts>
 Response Options(Ts&&... ts)
 {
     Request request;
-    setOption(request, OPTIONS, FORWARD(ts)...);
+    setOption(request, OPTIONS, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -233,7 +233,7 @@ template <typename... Ts>
 Response Patch(Ts&&... ts)
 {
     Request request;
-    setOption(request, PATCH, FORWARD(ts)...);
+    setOption(request, PATCH, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -245,7 +245,7 @@ template <typename... Ts>
 Response Post(Ts&&... ts)
 {
     Request request;
-    setOption(request, POST, FORWARD(ts)...);
+    setOption(request, POST, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -257,7 +257,7 @@ template <typename... Ts>
 Response Put(Ts&&... ts)
 {
     Request request;
-    setOption(request, PUT, FORWARD(ts)...);
+    setOption(request, PUT, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -269,7 +269,7 @@ template <typename... Ts>
 Response Trace(Ts&&... ts)
 {
     Request request;
-    setOption(request, TRACE, FORWARD(ts)...);
+    setOption(request, TRACE, LATTICE_FWD(ts)...);
 
     return request.exec();
 }
@@ -295,7 +295,7 @@ std::string Request::message(Ts&&... ts) const
     }
 
     // get formatted headers
-    auto headers = messageHeader(FORWARD(ts)...);
+    auto headers = messageHeader(LATTICE_FWD(ts)...);
     if (!body.empty()) {
         headers << "Content-Length: " << body.size() << "\r\n";
     }

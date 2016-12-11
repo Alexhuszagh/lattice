@@ -76,7 +76,7 @@ std::string md5HexDigest(const std::string &string);
 // API
 // ---
 
-#define MD5 md5Hash
-#define MD5_HEX md5HexDigest
+static const auto &MD5 = md5Hash;
+static const auto &MD5_HEX = md5HexDigest;
 
 }   /* lattice */

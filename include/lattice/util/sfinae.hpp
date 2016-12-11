@@ -86,4 +86,9 @@ HAS_MEMBER_FUNCTION(setSslProtocol, HasSetSslProtocol);
  */
 HAS_MEMBER_FUNCTION(setVerifyPeer, HasSetVerifyPeer);
 
+// CLEANUP
+// -------
+
+#undef HAS_MEMBER_FUNCTION
+
 }   /* lattice */

@@ -59,7 +59,7 @@ std::string sha1HexDigest(const std::string &string);
 // API
 // ---
 
-#define SHA1 sha1Hash
-#define SHA1_HEX sha1HexDigest
+static const auto &SHA1 = sha1Hash;
+static const auto &SHA1_HEX = sha1HexDigest;
 
 }   /* lattice */

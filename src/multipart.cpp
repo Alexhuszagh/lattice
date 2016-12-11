@@ -173,7 +173,7 @@ PartValue::PartValue(const std::string &filename,
  */
 PartValue::PartValue(std::string &&path,
         std::string &&contentType):
-    filename(FORWARD(filename))
+    filename(LATTICE_FWD(filename))
 {
     if (contentType.empty()) {
         this->contentType_ = detectContentType(this->filename);
@@ -254,7 +254,7 @@ FileValue::FileValue(const std::string &filename,
  */
 FileValue::FileValue(std::string &&filename,
         std::string &&contentType):
-    PartValue(FORWARD(filename), FORWARD(contentType))
+    PartValue(LATTICE_FWD(filename), LATTICE_FWD(contentType))
 {}
 
 
@@ -310,8 +310,8 @@ BufferValue::BufferValue(const std::string &filename,
 BufferValue::BufferValue(std::string &&filename,
         std::string &&buffer,
         std::string &&contentType):
-    PartValue(FORWARD(filename), FORWARD(contentType)),
-    buffer_(FORWARD(buffer))
+    PartValue(LATTICE_FWD(filename), LATTICE_FWD(contentType)),
+    buffer_(LATTICE_FWD(buffer))
 {}
 
 
@@ -354,7 +354,7 @@ Multipart::Multipart():
 /** \brief Initializer list constructor.
  */
 Multipart::Multipart(std::initializer_list<detail::PartPtr> &&list):
-    Base(FORWARD(list)),
+    Base(LATTICE_FWD(list)),
     boundary_(SHA1_HEX(pseudorandom(8)))
 {}
 
@@ -387,7 +387,7 @@ void Multipart::add(const detail::PartPtr &part)
  */
 void Multipart::add(detail::PartPtr &&part)
 {
-    emplace_back(FORWARD(part));
+    emplace_back(LATTICE_FWD(part));
 }
 
 

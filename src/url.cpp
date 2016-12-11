@@ -81,7 +81,7 @@ Url::Url(const std::string &string):
 /** \brief Initializer list constructor.
  */
 Url::Url(std::initializer_list<char> &&list):
-    std::string(FORWARD(list))
+    std::string(LATTICE_FWD(list))
 {
     punyEncodedUrl(*this);
 }

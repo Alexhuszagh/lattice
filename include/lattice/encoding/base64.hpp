@@ -243,8 +243,8 @@ void decode(Container &container,
 
 }   /* base64 */
 
-// API
-// ---
+// FUNCTIONS
+// ---------
 
 /** \brief Alias for base64::encode.
  */
@@ -254,7 +254,10 @@ std::string b64Encode(const std::string &other);
  */
 std::string b64Decode(const std::string &other);
 
-#define BASE64_ENCODE b64Encode
-#define BASE64_DECODE b64Decode
+// API
+// ---
+
+static const auto &BASE64_ENCODE = b64Encode;
+static const auto &BASE64_DECODE = b64Decode;
 
 }   /* lattice */

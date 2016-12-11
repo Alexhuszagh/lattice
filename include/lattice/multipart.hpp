@@ -103,7 +103,7 @@ struct BufferValue: PartValue
 template <typename... Ts>
 detail::FilePtr CreateFile(Ts&&... ts)
 {
-    return detail::FilePtr(new detail::FileValue(FORWARD(ts)...));
+    return detail::FilePtr(new detail::FileValue(LATTICE_FWD(ts)...));
 }
 
 
@@ -112,7 +112,7 @@ detail::FilePtr CreateFile(Ts&&... ts)
 template <typename... Ts>
 detail::BufferPtr CreateBuffer(Ts&&... ts)
 {
-    return detail::BufferPtr(new detail::BufferValue(FORWARD(ts)...));
+    return detail::BufferPtr(new detail::BufferValue(LATTICE_FWD(ts)...));
 }
 
 

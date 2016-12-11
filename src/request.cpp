@@ -374,7 +374,7 @@ void Request::setOption(const Url &url)
  */
 void Request::setOption(Url &&url)
 {
-    setUrl(FORWARD(url));
+    setUrl(LATTICE_FWD(url));
 }
 
 
@@ -454,7 +454,7 @@ void Request::setOption(const Multipart &multipart)
  */
 void Request::setOption(Multipart &&multipart)
 {
-    setMultipart(FORWARD(multipart));
+    setMultipart(LATTICE_FWD(multipart));
 }
 
 
@@ -470,7 +470,7 @@ void Request::setOption(const Body &body)
  */
 void Request::setOption(Body &&body)
 {
-    setBody(FORWARD(body));
+    setBody(LATTICE_FWD(body));
 }
 
 
@@ -486,7 +486,7 @@ void Request::setOption(const Payload &payload)
  */
 void Request::setOption(Payload &&payload)
 {
-    setPayload(FORWARD(payload));
+    setPayload(LATTICE_FWD(payload));
 }
 
 

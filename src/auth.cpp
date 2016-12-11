@@ -25,8 +25,8 @@ Authentication::Authentication()
  */
 Authentication::Authentication(std::string &&username,
         std::string &&password):
-    username(FORWARD(username)),
-    password(FORWARD(password))
+    username(LATTICE_FWD(username)),
+    password(LATTICE_FWD(password))
 {}
 
 

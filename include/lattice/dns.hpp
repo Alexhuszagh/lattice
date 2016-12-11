@@ -122,7 +122,7 @@ public:
 template <typename ...Args>
 DnsCache CreateDnsCache(Args&& ...args)
 {
-    return DnsCache(new Cache(FORWARD(args)...));
+    return DnsCache(new Cache(LATTICE_FWD(args)...));
 }
 
 

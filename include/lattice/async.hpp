@@ -87,7 +87,7 @@ template <typename... Ts>
 void Pool::get(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(GET);
@@ -102,7 +102,7 @@ template <typename... Ts>
 void Pool::head(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(HEAD);
@@ -117,7 +117,7 @@ template <typename... Ts>
 void Pool::options(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(OPTIONS);
@@ -132,7 +132,7 @@ template <typename... Ts>
 void Pool::patch(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(PATCH);
@@ -147,7 +147,7 @@ template <typename... Ts>
 void Pool::post(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(POST);
@@ -162,7 +162,7 @@ template <typename... Ts>
 void Pool::put(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(PUT);
@@ -177,7 +177,7 @@ template <typename... Ts>
 void Pool::trace(Ts&&... ts)
 {
     Request request;
-    setOption(request, FORWARD(ts)...);
+    setOption(request, LATTICE_FWD(ts)...);
 
     futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
         request.setMethod(TRACE);

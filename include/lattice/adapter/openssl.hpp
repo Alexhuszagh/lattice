@@ -31,15 +31,6 @@
 
 namespace lattice
 {
-// MACROS
-// ------
-
-#define CHARP(charp) reinterpret_cast<char*>(charp)
-#define CONST_CHARP(charp) reinterpret_cast<const char*>(charp)
-#define SIZE_T(number) static_cast<size_t>(number)
-#define GET_ASN1_STRING(check) CONST_CHARP(ASN1_STRING_get0_data(check->d.ia5))
-#define GET_ASN1_LENGTH(check) SIZE_T(ASN1_STRING_length(check->d.ia5))
-
 // CONSTANTS
 // ---------
 

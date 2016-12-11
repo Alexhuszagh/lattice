@@ -328,6 +328,19 @@ std::string md5HexDigest(const std::string &string)
 }
 
 
+// CLEANUP
+// -------
+
+#undef F
+#undef G
+#undef H
+#undef H2
+#undef I
+#undef STEP
+#undef SET
+#undef GET
+#undef MD5_OUT
+
 }   /* lattice */
 
 #ifdef _MSC_VER

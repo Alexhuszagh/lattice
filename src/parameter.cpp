@@ -25,8 +25,8 @@ Parameter::Parameter()
  */
 Parameter::Parameter(std::string &&key,
         std::string &&value):
-    key(FORWARD(key)),
-    value(FORWARD(value))
+    key(LATTICE_FWD(key)),
+    value(LATTICE_FWD(value))
 {}
 
 

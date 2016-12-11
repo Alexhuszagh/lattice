@@ -52,7 +52,7 @@ std::string formatter(const T width)
  *
  *  The width, as well as the step interval is controlled by
  */
-template <typename T = uint8_t>
+template <typename T>
 std::string hexlify(const std::string &string)
 {
     // get formatting parameters
@@ -83,7 +83,11 @@ std::string hexlify(const std::string &string)
 // API
 // ---
 
-#define HEX hexlify
+template <typename T = uint8_t>
+std::string HEX(const std::string &string)
+{
+    return hexlify<T>(string);
+}
 
 }   /* lattice */
 

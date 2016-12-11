@@ -24,12 +24,38 @@ namespace utf
 {
 namespace detail
 {
-// MACROS
-// ------
+// CASTS
+// -----
 
-#define UTF32(x) static_cast<uint32_t>(x);
-#define UTF16(x) static_cast<uint16_t>(x);
-#define UTF8(x) static_cast<uint8_t>(x);
+
+/** \brief Cast to UTF-32.
+ */
+template <typename T>
+auto UTF32(T t)
+    -> uint32_t
+{
+    return static_cast<uint32_t>(t);
+}
+
+
+/** \brief Cast to UTF-16.
+ */
+template <typename T>
+auto UTF16(T t)
+    -> uint32_t
+{
+    return static_cast<uint16_t>(t);
+}
+
+
+/** \brief Cast to UTF-8.
+ */
+template <typename T>
+auto UTF8(T t)
+    -> uint32_t
+{
+    return static_cast<uint8_t>(t);
+}
 
 // CONSTANTS
 // ---------
@@ -403,11 +429,11 @@ std::string utf32To16(const std::string &string);
 // API
 // ---
 
-#define UTF8_TO_UTF16(x) utf::utf8To16(x)
-#define UTF8_TO_UTF32(x) utf::utf8To32(x)
-#define UTF16_TO_UTF8(x) utf::utf16To8(x)
-#define UTF16_TO_UTF32(x) utf::utf16To32(x)
-#define UTF32_TO_UTF8(x) utf::utf32To8(x)
-#define UTF32_TO_UTF16(x) utf::utf32To16(x)
+static const auto &UTF8_TO_UTF16 = utf::utf8To16;
+static const auto &UTF8_TO_UTF32 = utf::utf8To32;
+static const auto &UTF16_TO_UTF8 = utf::utf16To8;
+static const auto &UTF16_TO_UTF32 = utf::utf16To32;
+static const auto &UTF32_TO_UTF8 = utf::utf32To8;
+static const auto &UTF32_TO_UTF16 = utf::utf32To16;
 
 }   /* lattice */

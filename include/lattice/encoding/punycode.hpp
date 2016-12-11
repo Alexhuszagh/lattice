@@ -33,11 +33,12 @@ std::string utf16ToPuny(const std::string &string);
 /** \brief Convert UTF-32 data to Punycode.
  */
 std::string utf32ToPuny(const std::string &string);
+
 // API
 // ---
 
-#define UTF8_TO_PUNYCODE(x) utf8ToPuny(x)
-#define UTF16_TO_PUNYCODE(x) utf16ToPuny(x)
-#define UTF32_TO_PUNYCODE(x) utf32ToPuny(x)
+static const auto &UTF8_TO_PUNYCODE = utf8ToPuny;
+static const auto &UTF16_TO_PUNYCODE = utf16ToPuny;
+static const auto &UTF32_TO_PUNYCODE = utf32ToPuny;
 
 }   /* lattice */
