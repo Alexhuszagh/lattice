@@ -363,11 +363,11 @@ std::string Connection<Adapter>::chunked()
             // get carriage return
             result = adapter.read(&byte, 1);
 
-            // read our bytes
+            // read bytes
             long bytes = std::strtoul(hex.data(), nullptr, 16);
             buffer = static_cast<char*>(realloc(buffer, bytes + offset));
-            offset += adapter.read(buffer, bytes);
             src = buffer + offset;
+            offset += adapter.read(src, bytes);
 
             // clear our hex buffer for new messages
             hex.clear();
