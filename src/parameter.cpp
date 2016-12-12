@@ -21,12 +21,21 @@ Parameter::Parameter()
 {}
 
 
-/** \brief Initializer list initializer.
+/** \brief Initializer list constructor.
  */
 Parameter::Parameter(std::string &&key,
         std::string &&value):
     key(LATTICE_FWD(key)),
     value(LATTICE_FWD(value))
+{}
+
+
+/** \brief Initializer list constructor.
+ */
+Parameter::Parameter(const std::string &key,
+        const std::string &value):
+    key(key),
+    value(value)
 {}
 
 

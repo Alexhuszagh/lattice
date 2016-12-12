@@ -28,6 +28,8 @@ struct Parameter
     Parameter();
     Parameter(std::string &&key,
         std::string &&value);
+    Parameter(const std::string &key,
+        const std::string &value);
     Parameter(const Parameter &other);
 };
 
