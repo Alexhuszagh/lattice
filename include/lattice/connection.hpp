@@ -16,6 +16,10 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <fstream> // remove
+#include <regex> // remove
+#include <ctime> // remove
+#include <iostream> // remove
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -97,6 +101,9 @@ protected:
     Adapter adapter;
     DnsCache cache = nullptr;
 
+    long readn(char *dst,
+        long bytes);
+
 public:
     Connection();
     Connection(const Connection &other) = delete;
@@ -159,6 +166,31 @@ public:
 
 // IMPLEMENTATION
 // --------------
+
+
+/** \brief Read N-bytes from the socket.
+ *
+ *  Sockets guarantee at least 1 byte will be read, while valid, but do
+ *  not guarantee N-bytes will be successfully read. Read until all
+ *  data have been extracted.
+ */
+template <typename Adapter>
+long Connection<Adapter>::readn(char *dst,
+    long bytes)
+{
+    long count = 0;
+    while (bytes) {
+        long read = adapter.read(dst, bytes);
+        if (!read) {
+            return count;
+        }
+        bytes -= read;
+        dst += read;
+        count += read;
+    }
+
+    return count;
+}
 
 
 /** \brief Null constructor.
@@ -359,6 +391,9 @@ std::string Connection<Adapter>::chunked()
     while ((result = adapter.read(&byte, 1))) {
         if (!(byte == '\r' || byte == '\n')) {
             hex += byte;
+        } else if (hex == "0") {
+            // end of file
+            break;
         } else if (hex.size()) {
             // get carriage return
             result = adapter.read(&byte, 1);
@@ -366,14 +401,14 @@ std::string Connection<Adapter>::chunked()
             // read bytes
             long bytes = std::strtoul(hex.data(), nullptr, 16);
             buffer = static_cast<char*>(realloc(buffer, bytes + offset));
-            src = buffer + offset;
-            offset += adapter.read(src, bytes);
+            long read = readn(buffer + offset, bytes);
+            offset += read;
+            if (read != bytes) {
+                break;
+            }
 
             // clear our hex buffer for new messages
             hex.clear();
-        } else {
-            // trailing line
-            break;
         }
     }
 
