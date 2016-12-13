@@ -16,10 +16,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <fstream> // remove
-#include <regex> // remove
-#include <ctime> // remove
-#include <iostream> // remove
 
 #ifdef _MSC_VER
 #   pragma warning(push)

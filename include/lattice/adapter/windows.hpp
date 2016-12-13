@@ -15,8 +15,6 @@
 #include "lattice/timeout.hpp"
 #include "lattice/url.hpp"
 
-#include <ws2tcpip.h>
-
 
 namespace lattice
 {
