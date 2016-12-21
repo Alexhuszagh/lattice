@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 option(BUILD_EXAMPLES "Build example files" ON)
 option(BUILD_STATIC "Build static library" ON)
+option(BUILD_TESTS "Build unittests (requires GTest)" OFF)
 option(WITH_OPENSSL "Build with OpenSSL" OFF)
 
 if(UNIX AND ${BUILD_STATIC})
@@ -145,4 +146,25 @@ if(BUILD_EXAMPLES)
         set_target_properties(${target} PROPERTIES OUTPUT_NAME ${example})
         target_link_libraries(${target} ${LATTICE_LIBRARIES})
     endforeach(source)
+endif()
+
+# TESTS
+# -----
+
+file(GLOB LATTICE_TESTS test/*.cpp)
+
+if(BUILD_TESTS)
+    add_subdirectory(googletest)
+    add_executable(LatticeTests ${LATTICE_TESTS})
+    target_link_libraries(LatticeTests
+        gtest
+        gtest_main
+        ${AUTOCOM_LIBRARIES}
+    )
+
+     add_custom_target(check
+        COMMAND $<TARGET_FILE:LatticeTests>
+        DEPENDS LatticeTests
+    )
+
 endif()
