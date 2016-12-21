@@ -136,7 +136,7 @@ std::string Url::path() const noexcept
         return *this;
     }
 
-    size_t separator = find("://");
+    const size_t separator = find("://");
     size_t start;
     if (separator == std::string::npos) {
         start = find_first_of('/');
@@ -155,8 +155,12 @@ std::string Url::path() const noexcept
 std::string Url::directory() const noexcept
 {
     std::string data = path();
+    const size_t separator = data.find_last_of('/');
+    if (separator == std::string::npos) {
+        return data.substr(1);
+    }
 
-    return data.substr(0, data.find_last_of('/'));
+    return data.substr(1, separator - 1);
 }
 
 
@@ -165,8 +169,12 @@ std::string Url::directory() const noexcept
 std::string Url::file() const noexcept
 {
     std::string data = path();
+    const size_t separator = data.find_last_of('/');
+    if (separator == std::string::npos) {
+        return data;
+    }
 
-    return data.substr(data.find_last_of('/'));
+    return data.substr(separator + 1);
 }
 
 
@@ -221,15 +229,17 @@ void Url::setPath(const std::string &path)
  */
 void Url::setDirectory(const std::string &directory)
 {
-    size_t separator, start, end = find_last_of('/');
+    size_t separator, start, end;
+    end = find_last_of('/');
     if ((separator = find("://")) != std::string::npos) {
-        start = find_first_of('/');
-    } else {
         start = find_first_of('/', separator+4);
+    } else {
+        start = find_first_of('/');
     }
 
-    if (start + 2 < end) {
-        replace(start + 1, end - 1, directory);
+    if (start != std::string::npos && ++start < end) {
+        const size_t length = end - start;
+        replace(start, length, directory);
     }
 }
 

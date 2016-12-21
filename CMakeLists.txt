@@ -152,6 +152,12 @@ endif()
 # -----
 
 file(GLOB LATTICE_TESTS test/*.cpp)
+file(GLOB LATTICE_CRYPTO_TESTS test/crypto/*.cpp)
+file(GLOB LATTICE_ENCODING_TESTS test/encoding/*.cpp)
+list(APPEND LATTICE_TESTS
+    ${LATTICE_CRYPTO_TESTS}
+    ${LATTICE_ENCODING_TESTS}
+)
 
 if(BUILD_TESTS)
     add_subdirectory(googletest)
@@ -159,7 +165,7 @@ if(BUILD_TESTS)
     target_link_libraries(LatticeTests
         gtest
         gtest_main
-        ${AUTOCOM_LIBRARIES}
+        ${LATTICE_LIBRARIES}
     )
 
      add_custom_target(check

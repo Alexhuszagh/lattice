@@ -22,7 +22,8 @@ namespace lattice
 
 /** \brief Null constructor.
  */
-Timeout::Timeout()
+Timeout::Timeout():
+    timeout(std::chrono::milliseconds(0))
 {}
 
 

@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
         107, 115, 109, -61, -74, 114, 103, -61, -91,
         115, 46, 106, 111, 115, 101, 102, 115, 115, 111,
         110, 46, 111, 114, 103, 47
-    };;
+    };
     lattice::Timeout timeout(1000);
     auto response = lattice::Get(url, timeout);
 
