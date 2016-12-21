@@ -29,7 +29,7 @@ auto FROM_ENUM(const Enum value)
  *
  *  Supports `&`, `&=`, `|`, `|=`, `^`, `^=`, `~`, and bool conversion.
  */
-#define FLAGS(Enum)                                                     \
+#define LATTICE_FLAGS(Enum)                                             \
     /*  \brief Bitwise or operator. */                                  \
     inline Enum operator|(const Enum left, const Enum right)            \
     {                                                                   \

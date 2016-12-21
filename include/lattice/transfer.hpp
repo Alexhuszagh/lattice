@@ -33,7 +33,7 @@ enum TransferEncoding
     IDENTITY    = 16,
 };
 
-FLAGS(TransferEncoding);
+LATTICE_FLAGS(TransferEncoding);
 
 
 }   /* lattice */
