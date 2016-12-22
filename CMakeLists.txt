@@ -168,7 +168,7 @@ if(BUILD_TESTS)
         ${LATTICE_LIBRARIES}
     )
 
-     add_custom_target(check
+     add_custom_target(check_lattice
         COMMAND $<TARGET_FILE:LatticeTests>
         DEPENDS LatticeTests
     )
