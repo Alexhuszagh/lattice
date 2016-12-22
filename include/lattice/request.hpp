@@ -57,8 +57,11 @@ protected:
     std::stringstream messageHeader(const Response &response) const;
 
 public:
-    Request();
-    ~Request();
+    Request() = default;
+    Request(const Request &other) = default;
+    Request & operator=(const Request&) = default;
+    Request(Request&&) = default;
+    Request & operator=(Request&&) = default;
 
     // EXPLICIT OPTIONS
     void setMethod(const Method method);

@@ -20,13 +20,6 @@ namespace lattice
 // -------
 
 
-/** \brief Null constructor.
- */
-Timeout::Timeout():
-    timeout(std::chrono::milliseconds(0))
-{}
-
-
 /** \brief Initializer constructor.
  */
 Timeout::Timeout(const std::chrono::milliseconds &timeout):
@@ -38,13 +31,6 @@ Timeout::Timeout(const std::chrono::milliseconds &timeout):
  */
 Timeout::Timeout(const long ms):
     timeout(std::chrono::milliseconds(ms))
-{}
-
-
-/** \brief Copy constructor.
- */
-Timeout::Timeout(const Timeout &other):
-    timeout(other.timeout)
 {}
 
 

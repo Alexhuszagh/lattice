@@ -40,6 +40,9 @@ protected:
 public:
     Pool();
     Pool(const Pool &other) = delete;
+    Pool & operator=(const Pool&) = delete;
+    Pool(Pool&&) = default;
+    Pool & operator=(Pool&&) = default;
     ~Pool();
 
     template <typename... Ts>

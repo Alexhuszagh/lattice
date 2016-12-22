@@ -103,6 +103,9 @@ protected:
 public:
     Connection();
     Connection(const Connection &other) = delete;
+    Connection & operator=(const Connection&) = delete;
+    Connection(Connection&&) = default;
+    Connection & operator=(Connection&&) = default;
     ~Connection();
 
     // REQUESTS

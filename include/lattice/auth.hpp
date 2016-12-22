@@ -24,10 +24,16 @@ struct Authentication
     std::string username;
     std::string password;
 
-    Authentication();
+    Authentication() = default;
+    Authentication(const Authentication&) = default;
+    Authentication & operator=(const Authentication&) = default;
+    Authentication(Authentication&&) = default;
+    Authentication & operator=(Authentication&&) = default;
+
     Authentication(std::string &&username,
         std::string &&password);
-    Authentication(const Authentication &other);
+    Authentication(const std::string &username,
+        const std::string &password);
 
     const std::string string() const noexcept;
     explicit operator bool() const;

@@ -78,9 +78,13 @@ struct VerifyPeer
 {
     bool verify = true;
 
-    VerifyPeer();
+    VerifyPeer() = default;
+    VerifyPeer(const VerifyPeer &other) = default;
+    VerifyPeer & operator=(const VerifyPeer&) = default;
+    VerifyPeer(VerifyPeer&&) = default;
+    VerifyPeer & operator=(VerifyPeer&&) = default;
+
     VerifyPeer(const bool verify);
-    VerifyPeer(const VerifyPeer &other);
 
     explicit operator bool() const;
 };

@@ -25,20 +25,34 @@ struct Parameter
     std::string key;
     std::string value;
 
-    Parameter();
+    Parameter() = default;
+    Parameter(const Parameter &other) = default;
+    Parameter & operator=(const Parameter&) = default;
+    Parameter(Parameter&&) = default;
+    Parameter & operator=(Parameter&&) = default;
+
     Parameter(std::string &&key,
         std::string &&value);
     Parameter(const std::string &key,
         const std::string &value);
-    Parameter(const Parameter &other);
 };
 
 
 /** \brief HTTP parameters object.
  */
-struct Parameters: public std::string
+class Parameters: public std::string
 {
-    Parameters();
+protected:
+    typedef std::string Base;
+
+public:
+    Parameters() = default;
+    Parameters(const Parameters &other) = default;
+    Parameters & operator=(const Parameters&) = default;
+    Parameters(Parameters&&) = default;
+    Parameters & operator=(Parameters&&) = default;
+
+    using Base::Base;
     Parameters(const std::initializer_list<Parameter>& parameters);
 
     Parameters & add(const Parameter &parameter);

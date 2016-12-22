@@ -128,7 +128,7 @@ protected:
     template <typename T>
     using IsNotSame = typename std::enable_if<!std::is_same<T, Response>::value>::type;
 
-    StatusCode status_;
+    StatusCode status_ = static_cast<StatusCode>(0);
     Header headers_;
     Cookies cookies_;
     TransferEncoding transfer = static_cast<TransferEncoding>(0);
@@ -145,9 +145,11 @@ protected:
     void parseHeaders(const std::string &lines);
 
 public:
-    Response();
-    Response(const Response &other);
-    ~Response();
+    Response() = default;
+    Response(const Response &other) = default;
+    Response & operator=(const Response&) = default;
+    Response(Response&&) = default;
+    Response & operator=(Response&&) = default;
 
     template <typename Connection, typename = IsNotSame<Connection>>
     Response(Connection &connection);

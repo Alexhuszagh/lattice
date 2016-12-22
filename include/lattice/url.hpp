@@ -21,13 +21,17 @@ namespace lattice
  */
 struct Url: public std::string
 {
-    Url();
+    Url() = default;
+    Url(const Url &other) = default;
+    Url & operator=(const Url&) = default;
+    Url(Url&&) = default;
+    Url & operator=(Url&&) = default;
+
     Url(const char *cstring);
     Url(const char *array,
         size_t size);
     Url(const std::string &string);
     Url(std::initializer_list<char> &&list);
-    Url(const Url &url);
 
     // GETTERS
     std::string service() const noexcept;

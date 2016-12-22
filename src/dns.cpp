@@ -28,13 +28,6 @@ AddressIterator::AddressIterator(value_type *value):
 {}
 
 
-/** \brief Copy constructor.
- */
-AddressIterator::AddressIterator(const AddressIterator &other):
-    value(other.value)
-{}
-
-
 /** \brief Dereference iterator.
  */
 auto AddressIterator::operator*() const
@@ -110,12 +103,6 @@ bool AddressIterator::operator!=(const AddressIterator& other) const
 }
 
 
-/** \brief Null constructor.
- */
-Address::Address()
-{}
-
-
 /** \brief Initializer list constructor.
  */
 Address::Address(const addrinfo &info):
@@ -124,17 +111,6 @@ Address::Address(const addrinfo &info):
     protocol(info.ai_protocol),
     address(*info.ai_addr),
     length(info.ai_addrlen)
-{}
-
-
-/** \brief Copy constructor.
- */
-Address::Address(const Address &other):
-    family(other.family),
-    socket_type(other.socket_type),
-    protocol(other.protocol),
-    address(other.address),
-    length(other.length)
 {}
 
 
@@ -151,12 +127,6 @@ Address::operator addrinfo() const
 
     return info;
 }
-
-
-/** \brief Null constructor.
- */
-DnsLookup::DnsLookup()
-{}
 
 
 /** \brief Initializer list constructor.

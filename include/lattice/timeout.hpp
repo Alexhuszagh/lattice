@@ -38,10 +38,14 @@ protected:
     void checkLimits(const Duration &duration) const;
 
 public:
-    Timeout();
+    Timeout() = default;
+    Timeout(const Timeout &other) = default;
+    Timeout & operator=(const Timeout&) = default;
+    Timeout(Timeout&&) = default;
+    Timeout & operator=(Timeout&&) = default;
+
     Timeout(const std::chrono::milliseconds &timeout);
     Timeout(const long ms);
-    Timeout(const Timeout &other);
 
     long seconds() const;
     long milliseconds() const;

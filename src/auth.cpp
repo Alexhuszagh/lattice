@@ -15,13 +15,7 @@ namespace lattice
 // -------
 
 
-/** \brief Null constructor.
- */
-Authentication::Authentication()
-{}
-
-
-/** \brief Initializer list constructor.
+/** \brief Initializer list nove constructor.
  */
 Authentication::Authentication(std::string &&username,
         std::string &&password):
@@ -30,11 +24,12 @@ Authentication::Authentication(std::string &&username,
 {}
 
 
-/** \brief Copy constructor.
+/** \brief Initializer list copy constructor.
  */
-Authentication::Authentication(const Authentication &other):
-    username(other.username),
-    password(other.password)
+Authentication::Authentication(const std::string &username,
+        const std::string &password):
+    username(username),
+    password(password)
 {}
 
 

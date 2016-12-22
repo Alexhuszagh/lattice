@@ -15,12 +15,6 @@ namespace lattice
 // -------
 
 
-/** Null constructor.
- */
-Parameter::Parameter()
-{}
-
-
 /** \brief Initializer list constructor.
  */
 Parameter::Parameter(std::string &&key,
@@ -36,21 +30,6 @@ Parameter::Parameter(const std::string &key,
         const std::string &value):
     key(key),
     value(value)
-{}
-
-
-/** Copy constructor.
- */
-Parameter::Parameter(const Parameter &other):
-    key(other.key),
-    value(other.value)
-{}
-
-
-
-/** Null constructor.
- */
-Parameters::Parameters()
 {}
 
 

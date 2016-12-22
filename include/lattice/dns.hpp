@@ -45,8 +45,13 @@ protected:
     value_type *value = nullptr;
 
 public:
-    AddressIterator(value_type *value = nullptr);
-    AddressIterator(const AddressIterator &other);
+    AddressIterator() = default;
+    AddressIterator(const AddressIterator &other) = default;
+    AddressIterator & operator=(const AddressIterator&) = default;
+    AddressIterator(AddressIterator&&) = default;
+    AddressIterator & operator=(AddressIterator&&) = default;
+
+    AddressIterator(value_type *value);
 
     const value_type & operator*() const;
     const value_type * operator->() const;
@@ -67,9 +72,13 @@ struct Address
     sockaddr address;
     size_t length;
 
-    Address();
+    Address() = default;
+    Address(const Address &other) = default;
+    Address & operator=(const Address&) = default;
+    Address(Address&&) = default;
+    Address & operator=(Address&&) = default;
+
     Address(const addrinfo &info);
-    Address(const Address &other);
 
     explicit operator addrinfo() const;
 };
@@ -101,11 +110,15 @@ protected:
     addrinfo *info = nullptr;
 
 public:
-    DnsLookup();
+    DnsLookup() = default;
+    DnsLookup(const DnsLookup &other) = delete;
+    DnsLookup & operator=(const DnsLookup&) = delete;
+    DnsLookup(DnsLookup&&) = default;
+    DnsLookup & operator=(DnsLookup&&) = default;
+    ~DnsLookup();
+
     DnsLookup(const std::string &host,
         const std::string &service);
-    DnsLookup(const DnsLookup &other) = delete;
-    ~DnsLookup();
 
     // ITERATORS
     AddressIterator begin() const;

@@ -44,12 +44,6 @@ void punyEncodedUrl(Url &url)
 // -------
 
 
-/** \brief Null constructor.
- */
-Url::Url()
-{}
-
-
 /** \brief Initialize from null-terminated C-string.
  */
 Url::Url(const char *cstring):
@@ -85,13 +79,6 @@ Url::Url(std::initializer_list<char> &&list):
 {
     punyEncodedUrl(*this);
 }
-
-
-/** \brief Copy constructor.
- */
-Url::Url(const Url &url):
-    std::string(static_cast<std::string>(url))
-{}
 
 
 /** \brief Get service from  URL.

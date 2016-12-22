@@ -107,18 +107,6 @@ std::stringstream Request::messageHeader(const Response &response) const
 }
 
 
-/** \brief Null constructor.
- */
-Request::Request()
-{}
-
-
-/** \brief Destructor.
- */
-Request::~Request()
-{}
-
-
 /** \brief Set HTTP method.
  */
 void Request::setMethod(const Method method)

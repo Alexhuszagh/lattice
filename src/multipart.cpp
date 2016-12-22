@@ -149,12 +149,6 @@ std::string detectContentType(const std::string &filename)
 // -------
 
 
-/** \brief Null constructor.
- */
-PartValue::PartValue()
-{}
-
-
 /** \brief Initializer copy constructor.
  */
 PartValue::PartValue(const std::string &filename,
@@ -181,14 +175,6 @@ PartValue::PartValue(std::string &&path,
         this->contentType_ = contentType;
     }
 }
-
-
-/** \brief Copy constructor.
- */
-PartValue::PartValue(const PartValue &other):
-    filename(other.filename),
-    contentType_(other.contentType_)
-{}
 
 
 /** \brief Get basename for file.
@@ -236,35 +222,6 @@ std::string PartValue::string() const
 }
 
 
-/** \brief Null constructor.
- */
-FileValue::FileValue()
-{}
-
-
-/** \brief Initializer copy constructor.
- */
-FileValue::FileValue(const std::string &filename,
-        const std::string &contentType):
-    PartValue(filename, contentType)
-{}
-
-
-/** \brief Initializer move constructor.
- */
-FileValue::FileValue(std::string &&filename,
-        std::string &&contentType):
-    PartValue(LATTICE_FWD(filename), LATTICE_FWD(contentType))
-{}
-
-
-/** \brief Copy constructor.
- */
-FileValue::FileValue(const FileValue &other):
-    PartValue(other.filename, other.contentType_)
-{}
-
-
 /** \brief Get data contents from file.
  */
 std::string FileValue::buffer() const
@@ -289,12 +246,6 @@ std::string FileValue::string() const
 }
 
 
-/** \brief Null constructor.
- */
-BufferValue::BufferValue()
-{}
-
-
 /** \brief Initializer copy constructor.
  */
 BufferValue::BufferValue(const std::string &filename,
@@ -312,14 +263,6 @@ BufferValue::BufferValue(std::string &&filename,
         std::string &&contentType):
     PartValue(LATTICE_FWD(filename), LATTICE_FWD(contentType)),
     buffer_(LATTICE_FWD(buffer))
-{}
-
-
-/** Copy constructor.
- */
-BufferValue::BufferValue(const BufferValue &other):
-    PartValue(other.filename, other.contentType_),
-    buffer_(other.buffer_)
 {}
 
 
@@ -342,29 +285,6 @@ std::string BufferValue::string() const
 }
 
 }   /* detail */
-
-
-/** \brief Null constructor.
- */
-Multipart::Multipart():
-    boundary_(SHA1_HEX(pseudorandom(8)))
-{}
-
-
-/** \brief Initializer list constructor.
- */
-Multipart::Multipart(std::initializer_list<detail::PartPtr> &&list):
-    Base(LATTICE_FWD(list)),
-    boundary_(SHA1_HEX(pseudorandom(8)))
-{}
-
-
-/** \brief Copy constructor.
- */
-Multipart::Multipart(const Multipart &other):
-    Base(other.begin(), other.end()),
-    boundary_(other.boundary_)
-{}
 
 
 /** \brief Get boundary for the multipartition.

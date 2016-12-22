@@ -20,23 +20,10 @@ namespace lattice
 // -------
 
 
-/** \brief Null constructor.
- */
-Redirects::Redirects()
-{}
-
-
 /** \brief Initializer list constructor.
  */
 Redirects::Redirects(const long count):
     count(count)
-{}
-
-
-/** \brief Copy constructor.
- */
-Redirects::Redirects(const Redirects &other):
-    count(other.count)
 {}
 
 

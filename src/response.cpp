@@ -181,32 +181,6 @@ void Response::parseHeaders(const std::string &lines)
 }
 
 
-/** \brief Null constructor.
- */
-Response::Response():
-    status_(static_cast<StatusCode>(0))
-{}
-
-
-/** \brief Copy constructor.
- */
-Response::Response(const Response &other):
-    status_(other.status_),
-    headers_(other.headers_),
-    cookies_(other.cookies_),
-    transfer(other.transfer),
-    mime(other.mime),
-    charset(other.charset),
-    body_(other.body_)
-{}
-
-
-/** \brief Destructor.
- */
-Response::~Response()
-{}
-
-
 /** \brief Get status code from response.
  */
 const int Response::status() const

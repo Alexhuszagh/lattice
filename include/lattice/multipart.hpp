@@ -42,12 +42,16 @@ struct PartValue
     std::string filename;
     std::string contentType_;
 
-    PartValue();
+    PartValue() = default;
+    PartValue(const PartValue &other) = default;
+    PartValue & operator=(const PartValue&) = default;
+    PartValue(PartValue&&) = default;
+    PartValue & operator=(PartValue&&) = default;
+
     PartValue(const std::string &filename,
         const std::string &contentType);
     PartValue(std::string &&filename,
         std::string &&contentType);
-    PartValue(const PartValue &other);
 
     std::string basename() const;
     std::string name() const;
@@ -60,12 +64,7 @@ struct PartValue
  */
 struct FileValue: PartValue
 {
-    FileValue();
-    FileValue(const std::string &filename,
-        const std::string &contentType = "");
-    FileValue(std::string &&filename,
-        std::string &&contentType);
-    FileValue(const FileValue &other);
+    using PartValue::PartValue;
 
     std::string buffer() const;
     std::string string() const override;
@@ -78,14 +77,18 @@ struct BufferValue: PartValue
 {
     std::string buffer_;
 
-    BufferValue();
+    BufferValue() = default;
+    BufferValue(const BufferValue &other) = default;
+    BufferValue & operator=(const BufferValue&) = default;
+    BufferValue(BufferValue&&) = default;
+    BufferValue & operator=(BufferValue&&) = default;
+
     BufferValue(const std::string &filename,
         const std::string &buffer,
         const std::string &contentType = "");
     BufferValue(std::string &&filename,
         std::string &&buffer,
         std::string &&contentType);
-    BufferValue(const BufferValue &other);
 
     const std::string & buffer() const;
     std::string string() const override;
@@ -126,12 +129,10 @@ class Multipart: public std::vector<detail::PartPtr>
 {
 protected:
     typedef std::vector<detail::PartPtr> Base;
-    std::string boundary_;
+    std::string boundary_ = SHA1_HEX(pseudorandom(8));
 
 public:
-    Multipart();
-    Multipart(std::initializer_list<detail::PartPtr> &&list);
-    Multipart(const Multipart &other);
+    using Base::Base;
 
     void add(const detail::PartPtr &part);
     void add(detail::PartPtr &&part);

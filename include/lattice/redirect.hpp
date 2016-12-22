@@ -21,9 +21,13 @@ struct Redirects
 {
     long count = 0;
 
-    Redirects();
+    Redirects() = default;
+    Redirects(const Redirects &other) = default;
+    Redirects & operator=(const Redirects&) = default;
+    Redirects(Redirects&&) = default;
+    Redirects & operator=(Redirects&&) = default;
+
     Redirects(const long count);
-    Redirects(const Redirects &other);
 
     Redirects & operator++();
     Redirects operator++(int);

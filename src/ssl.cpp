@@ -67,22 +67,10 @@ RevocationLists::operator bool() const
 }
 
 
-/** \brief Null constructor.
- */
-VerifyPeer::VerifyPeer()
-{}
-
-
 /** \brief Initializer list constructor.
  */
 VerifyPeer::VerifyPeer(const bool verify):
     verify(verify)
-{}
-
-
-/** \brief Copy constructor.
- */
-VerifyPeer::VerifyPeer(const VerifyPeer &other)
 {}
 
 
