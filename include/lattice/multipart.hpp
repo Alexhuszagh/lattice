@@ -49,9 +49,9 @@ struct PartValue
     PartValue & operator=(PartValue&&) = default;
 
     PartValue(const std::string &filename,
-        const std::string &contentType);
+        const std::string &contentType = "");
     PartValue(std::string &&filename,
-        std::string &&contentType);
+        std::string &&contentType = "");
 
     std::string basename() const;
     std::string name() const;
