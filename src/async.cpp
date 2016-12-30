@@ -14,18 +14,6 @@ namespace lattice
 // -------
 
 
-/** \brief Null constructor.
- */
-Pool::Pool()
-{}
-
-
-/** \brief Destructor.
- */
-Pool::~Pool()
-{}
-
-
 /** \brief Block and return all queries.
  */
 std::vector<Response> Pool::perform()

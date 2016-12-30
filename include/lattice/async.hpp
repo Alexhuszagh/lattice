@@ -38,12 +38,11 @@ protected:
     std::vector<std::future<Response>> futures;
 
 public:
-    Pool();
+    Pool() = default;
     Pool(const Pool &other) = delete;
     Pool & operator=(const Pool&) = delete;
     Pool(Pool&&) = default;
     Pool & operator=(Pool&&) = default;
-    ~Pool();
 
     template <typename... Ts>
     void get(Ts&&... ts);
