@@ -20,7 +20,14 @@ namespace lattice
 
 /** \brief String data is Unicode.
  */
-bool isUnicode(const std::string &string);
+template <typename String>
+bool isUnicode(const String &string)
+{
+    typedef typename String::value_type Char;
+    return std::any_of(string.cbegin(), string.cend(), [](const Char c) {
+        return c < 0;
+    });
+}
 
 /** \brief Convert UTF-8 data to Punycode.
  */

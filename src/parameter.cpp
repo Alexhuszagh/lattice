@@ -68,9 +68,9 @@ Parameters & Parameters::add(const Parameter &parameter)
 std::string Parameters::get() const
 {
     if (empty()) {
-        return *this;
+        return ref();
     }
-    return "?" + std::string(*this);
+    return "?" + ref();
 }
 
 
@@ -78,7 +78,7 @@ std::string Parameters::get() const
  */
 const std::string & Parameters::post() const
 {
-    return *this;
+    return ref();
 }
 
 

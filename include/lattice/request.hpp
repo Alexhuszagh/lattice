@@ -292,7 +292,7 @@ std::string Request::message(Ts&&... ts) const
     // get our formatted body
     std::string body;
     if (method == POST && parameters) {
-        body += parameters;
+        body += parameters.post();
     } else if (multipart) {
         body += multipart.string();
     }

@@ -106,7 +106,7 @@ struct BufferValue: PartValue
 template <typename... Ts>
 detail::FilePtr CreateFile(Ts&&... ts)
 {
-    return detail::FilePtr(new detail::FileValue(LATTICE_FWD(ts)...));
+    return std::make_shared<detail::FileValue>(LATTICE_FWD(ts)...);
 }
 
 
@@ -115,7 +115,7 @@ detail::FilePtr CreateFile(Ts&&... ts)
 template <typename... Ts>
 detail::BufferPtr CreateBuffer(Ts&&... ts)
 {
-    return detail::BufferPtr(new detail::BufferValue(LATTICE_FWD(ts)...));
+    return std::make_shared<detail::BufferValue>(LATTICE_FWD(ts)...);
 }
 
 
@@ -125,10 +125,10 @@ detail::BufferPtr CreateBuffer(Ts&&... ts)
 
 /** \brief Data for a multipart
  */
-class Multipart: public std::vector<detail::PartPtr>
+class Multipart: public itl::vector<detail::PartPtr>
 {
 protected:
-    typedef std::vector<detail::PartPtr> Base;
+    typedef itl::vector<detail::PartPtr> Base;
     std::string boundary_ = SHA1_HEX(pseudorandom(8));
 
 public:

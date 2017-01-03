@@ -147,34 +147,6 @@ std::vector<std::string> safesplit(const std::string &string,
 }
 
 
-/** \brief Join string from begin and end iterator pairs.
- */
-std::string join(const std::vector<std::string> &items,
-    const std::string &delimiter)
-{
-    // alloc
-    size_t size = 0;
-    std::for_each(items.begin(), items.end(), [&](const std::string &i) {
-        size += i.size() + delimiter.size();
-    });
-
-    // create
-    std::string joined;
-    joined.reserve(size);
-    for (auto it = items.begin(); it != items.end(); ++it) {
-        joined += *it;
-        joined += delimiter;
-    }
-
-    // trim end
-    if (joined.size() > delimiter.size()) {
-        joined.erase(joined.size() - delimiter.size());
-    }
-    joined.shrink_to_fit();
-    return joined;
-}
-
-
 /** \brief Transform the string to lower-case.
  */
 void tolower(std::string &string)

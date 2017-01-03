@@ -76,14 +76,6 @@ std::vector<std::string> safesplit(const std::string &string,
     const char quote,
     const char escape);
 
-/** \brief Join string from begin and end iterator pairs.
- *
- *  \param items            Vector of items to join
- *  \param delimiter        Iterator at last element to add
- */
-std::string join(const std::vector<std::string> &items,
-    const std::string &delimiter);
-
 /** \brief Transform the string to lower-case.
  */
 void tolower(std::string &string);
@@ -109,6 +101,38 @@ void replace(std::string &string,
  *  UTF-8 source encoding.
  */
 std::string escapeUrl(const std::string src);
+
+
+/** \brief Join string from begin and end iterator pairs.
+ *
+ *  \param items            Vector of items to join
+ *  \param delimiter        Iterator at last element to add
+ */
+template <template <typename...> class Container>
+std::string join(const Container<std::string> &items,
+    const std::string &delimiter)
+{
+    // alloc
+    size_t size = 0;
+    std::for_each(items.begin(), items.end(), [&](const std::string &i) {
+        size += i.size() + delimiter.size();
+    });
+
+    // create
+    std::string joined;
+    joined.reserve(size);
+    for (auto it = items.begin(); it != items.end(); ++it) {
+        joined += *it;
+        joined += delimiter;
+    }
+
+    // trim end
+    if (joined.size() > delimiter.size()) {
+        joined.erase(joined.size() - delimiter.size());
+    }
+    joined.shrink_to_fit();
+    return joined;
+}
 
 
 }   /* lattice */

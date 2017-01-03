@@ -30,9 +30,10 @@ size_t CaseInsensitiveHash::operator()(std::string string) const
 
 /** \brief Initialize from a quality of protection code.
  */
-QualityOfProtection::QualityOfProtection(const std::string &qop):
-    std::vector<std::string>(split(qop, ","))
+QualityOfProtection::QualityOfProtection(const std::string &qop)
 {
+    auto data = split(qop, ",");
+    insert(begin(), data.begin(), data.end());
     for (auto &item: *this) {
         trim(item);
     }

@@ -15,9 +15,9 @@
 #   include <netdb.h>
 #endif
 
+#include <itl/unordered_map.hpp>
 #include <memory>
 #include <string>
-#include <unordered_map>
 
 
 namespace lattice
@@ -86,10 +86,10 @@ struct Address
 
 /** \brief Cache for DNS lookups.
  */
-class Cache: public std::unordered_multimap<std::string, Address>
+class Cache: public itl::unordered_multimap<std::string, Address>
 {
 protected:
-    typedef std::unordered_multimap<std::string, Address> Base;
+    typedef itl::unordered_multimap<std::string, Address> Base;
 
 public:
     using Base::Base;
@@ -137,7 +137,7 @@ public:
 template <typename ...Args>
 DnsCache CreateDnsCache(Args&& ...args)
 {
-    return DnsCache(new Cache(LATTICE_FWD(args)...));
+    return std::make_shared<Cache>(LATTICE_FWD(args)...);
 }
 
 

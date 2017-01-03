@@ -215,16 +215,6 @@ size_t encode(Iter32 srcBegin,
 }   /* punycode */
 
 
-/** \brief String data is Unicode.
- */
-bool isUnicode(const std::string &string)
-{
-    return std::any_of(string.cbegin(), string.cend(), [](const char c) {
-        return c < 0;
-    });
-}
-
-
 /** \brief Convert UTF-8 data to Punycode.
  */
 std::string utf8ToPuny(const std::string &string)

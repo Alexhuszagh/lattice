@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <map>
+#include <itl/map.hpp>
 #include <string>
 
 
@@ -20,10 +20,10 @@ namespace lattice
 
 /** \brief Cookies to store user data for persistent sessions.
  */
-class Cookies: public std::map<std::string, std::string>
+class Cookies: public itl::map<std::string, std::string>
 {
 protected:
-    typedef std::map<std::string, std::string> Base;
+    typedef itl::map<std::string, std::string> Base;
 
 public:
     using Base::Base;
