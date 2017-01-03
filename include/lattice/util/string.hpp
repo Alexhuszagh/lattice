@@ -108,8 +108,8 @@ std::string escapeUrl(const std::string src);
  *  \param items            Vector of items to join
  *  \param delimiter        Iterator at last element to add
  */
-template <template <typename...> class Container>
-std::string join(const Container<std::string> &items,
+template <typename Container>
+std::string join(const Container &items,
     const std::string &delimiter)
 {
     // alloc
