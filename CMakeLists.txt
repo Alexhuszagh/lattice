@@ -166,7 +166,9 @@ list(APPEND LATTICE_TESTS
 )
 
 if(BUILD_TESTS)
-    add_subdirectory(googletest)
+    if(NOT TARGET gtest)
+        add_subdirectory(googletest)
+    endif()
     add_executable(LatticeTests ${LATTICE_TESTS})
     target_link_libraries(LatticeTests
         gtest
