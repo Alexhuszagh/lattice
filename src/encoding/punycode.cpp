@@ -6,7 +6,8 @@
  *  \brief Punycode encoding/decoding.
  */
 
-#include "lattice.hpp"
+#include "lattice/encoding/punycode.hpp"
+#include "lattice/encoding/unicode.hpp"
 
 #include <algorithm>
 #include <cstdint>

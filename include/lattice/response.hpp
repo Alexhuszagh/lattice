@@ -15,9 +15,7 @@
 #include "transfer.hpp"
 #include "url.hpp"
 
-#include <string>
 #include <tuple>
-#include <type_traits>
 
 
 namespace lattice

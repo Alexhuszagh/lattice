@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 11)
 # OPTIONS
 # -------
 
-option(BUILD_EXAMPLES "Build example files" ON)
+option(BUILD_EXAMPLES "Build example files" OFF)
 option(BUILD_STATIC "Build static library" ON)
 option(BUILD_TESTS "Build unittests (requires GTest)" OFF)
 option(WITH_OPENSSL "Build with OpenSSL" OFF)
@@ -97,9 +97,9 @@ list(APPEND LATTICE_SOURCES
 )
 
 if(UNIX)
-    list(APPEND LATTICE_SOURCES src/adapters/posix.cpp)
+    list(APPEND LATTICE_SOURCES src/adapter/posix.cpp)
 elseif(WIN32)
-    list(APPEND LATTICE_SOURCES src/adapters/windows.cpp)
+    list(APPEND LATTICE_SOURCES src/adapter/windows.cpp)
 endif()
 
 set(ITL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/itl/include")

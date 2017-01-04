@@ -5,9 +5,10 @@
  *  \brief String utilities.
  */
 
-#include "lattice.hpp"
+#include "lattice/util/string.hpp"
 
 #include <cstring>
+#include <istream>
 
 
 namespace lattice

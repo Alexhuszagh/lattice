@@ -6,7 +6,10 @@
  *  \brief HTTP/HTTPS request.
  */
 
-#include "lattice.hpp"
+#include "lattice/request.hpp"
+#include "lattice/version.hpp"
+#include "lattice/encoding/base64.hpp"
+#include "lattice/encoding/punycode.hpp"
 
 #include <cstdio>
 #include <fstream>

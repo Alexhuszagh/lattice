@@ -6,7 +6,7 @@
  *  \brief HTTP/HTTPS request.
  */
 
-#include "lattice.hpp"
+#include "lattice/proxy.hpp"
 
 
 namespace lattice

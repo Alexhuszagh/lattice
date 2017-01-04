@@ -6,7 +6,11 @@
  *  \brief Multipart requests (file uploads).
  */
 
-#include "lattice.hpp"
+#include "lattice/multipart.hpp"
+#include "lattice/encoding/punycode.hpp"
+#include "lattice/encoding/unicode.hpp"
+#include "lattice/util/define.hpp"
+#include "lattice/util/filesystem.hpp"
 
 #include <fstream>
 #include <sstream>

@@ -6,7 +6,9 @@
  *  \brief Network request parameters.
  */
 
-#include "lattice.hpp"
+#include "lattice/parameter.hpp"
+#include "lattice/encoding/url.hpp"
+#include "lattice/util/define.hpp"
 
 
 namespace lattice

@@ -5,7 +5,8 @@
  *  \brief Socket and connection exceptions.
  */
 
-#include "lattice.hpp"
+#include "lattice/util/exception.hpp"
+#include "lattice/util/mutex.hpp"
 
 #include <iostream>
 

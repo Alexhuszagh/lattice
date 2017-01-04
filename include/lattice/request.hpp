@@ -24,7 +24,7 @@
 #include "ssl.hpp"
 #include "timeout.hpp"
 #include "url.hpp"
-#include "util.hpp"
+#include "util/define.hpp"
 
 
 namespace lattice

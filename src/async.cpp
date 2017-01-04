@@ -5,7 +5,7 @@
  *  \brief Asynchronous requests.
  */
 
-#include "lattice.hpp"
+#include "lattice/async.hpp"
 
 
 namespace lattice

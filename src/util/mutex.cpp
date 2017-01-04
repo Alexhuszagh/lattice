@@ -5,7 +5,7 @@
  *  \brief Shared mutex.
  */
 
-#include "lattice.hpp"
+#include "lattice/util/mutex.hpp"
 
 
 namespace lattice

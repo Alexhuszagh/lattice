@@ -5,7 +5,7 @@
  *  \brief Cryptographic random number generators.
  */
 
-#include "lattice.hpp"
+#include "lattice/crypto/random.hpp"
 
 #include <cstring>
 #include <ctime>

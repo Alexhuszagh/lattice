@@ -6,7 +6,7 @@
  *  \brief Custom HTTP header.
  */
 
-#include "lattice.hpp"
+#include "lattice/header.hpp"
 
 #include <algorithm>
 #include <cctype>

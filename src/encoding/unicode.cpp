@@ -6,9 +6,10 @@
  *  \brief Convert Unicode code points between encodings.
  */
 
-#include "lattice.hpp"
+#include "lattice/encoding/unicode.hpp"
 
 #include <cstdlib>
+#include <functional>
 
 
 namespace lattice

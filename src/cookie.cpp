@@ -6,7 +6,10 @@
  *  \brief Cookie support for persistent sessions.
  */
 
-#include "lattice.hpp"
+#include "lattice/cookie.hpp"
+#include "lattice/encoding/url.hpp"
+
+#include <sstream>
 
 
 namespace lattice

@@ -6,7 +6,7 @@
  *  \brief Follow redirects.
  */
 
-#include "lattice.hpp"
+#include "lattice/redirect.hpp"
 
 #ifdef _MSC_VER
 #   pragma warning(push)

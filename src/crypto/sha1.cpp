@@ -6,7 +6,8 @@
  *  \brief SHA1 hash function.
  */
 
-#include "lattice.hpp"
+#include "lattice/crypto/sha1.hpp"
+#include "lattice/encoding/hex.hpp"
 
 #include <cstdint>
 #include <cstdio>

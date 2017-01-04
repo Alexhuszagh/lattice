@@ -5,7 +5,7 @@
  *  \brief URL encode/decode data.
  */
 
-#include "lattice.hpp"
+#include "lattice/encoding/url.hpp"
 
 
 namespace lattice

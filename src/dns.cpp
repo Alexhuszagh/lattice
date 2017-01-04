@@ -5,9 +5,11 @@
  *  \brief Domain name lookups and address caching.
  */
 
-#include "lattice.hpp"
+#include "lattice/dns.hpp"
+#include "lattice/util/exception.hpp"
 
 #include <cstdlib>
+#include <cstring>
 
 #ifdef _MSC_VER
 #   pragma warning(push)

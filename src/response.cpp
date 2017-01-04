@@ -5,7 +5,8 @@
  *  \brief Parese request response.
  */
 
-#include "lattice.hpp"
+#include "lattice/response.hpp"
+#include "lattice/util/string.hpp"
 
 #include <cctype>
 #include <cstring>

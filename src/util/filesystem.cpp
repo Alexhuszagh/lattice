@@ -5,7 +5,7 @@
  *  \brief Filesystem and path utilities.
  */
 
-#include "lattice.hpp"
+#include "lattice/util/filesystem.hpp"
 
 
 namespace lattice

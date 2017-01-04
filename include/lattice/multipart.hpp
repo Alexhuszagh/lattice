@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "util.hpp"
+#include "crypto/random.hpp"
+#include "crypto/sha1.hpp"
 
-#include <initializer_list>
+#include <itl/vector.hpp>
 #include <memory>
 #include <string>
-#include <vector>
 
 
 namespace lattice

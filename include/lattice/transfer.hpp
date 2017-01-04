@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "util.hpp"
+#include "util/enum.hpp"
 
 #ifdef _MSC_VER
 #   pragma warning(push)

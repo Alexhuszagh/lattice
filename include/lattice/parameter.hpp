@@ -9,7 +9,6 @@
 #pragma once
 
 #include <itl/string.hpp>
-#include <initializer_list>
 
 
 namespace lattice

@@ -8,7 +8,6 @@
 #pragma once
 
 #include <algorithm>
-#include <istream>
 #include <string>
 #include <type_traits>
 #include <vector>

@@ -20,7 +20,8 @@
  *  There's ABSOLUTELY NO WARRANTY, express or implied.
  */
 
-#include "lattice.hpp"
+#include "lattice/crypto/md5.hpp"
+#include "lattice/encoding/hex.hpp"
 
 #include <cstring>
 

@@ -5,7 +5,7 @@
  *  \brief Base64 encoding and decoding lookup tables.
  */
 
-#include "lattice.hpp"
+#include "lattice/encoding/base64.hpp"
 
 #include <cmath>
 

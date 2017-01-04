@@ -5,7 +5,10 @@
  *  \brief URL object.
  */
 
-#include "lattice.hpp"
+#include "lattice/url.hpp"
+#include "lattice/encoding/punycode.hpp"
+#include "lattice/util/define.hpp"
+#include "lattice/util/string.hpp"
 
 #include <cassert>
 
