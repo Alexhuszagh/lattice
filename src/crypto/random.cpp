@@ -6,6 +6,7 @@
  */
 
 #include "lattice/crypto/random.hpp"
+#include "lattice/util/exception.hpp"
 
 #include <cstring>
 #include <ctime>
@@ -13,6 +14,7 @@
 #include <random>
 
 #if defined(_WIN32)
+#   include "windows.h"
 #   include "wincrypt.h"
 #endif
 
