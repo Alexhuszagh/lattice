@@ -12,7 +12,7 @@
 #pragma once
 
 #include "auth.hpp"
-#include "crypto.hpp"
+#include "crypto/algorithms.hpp"
 
 #include <itl/vector.hpp>
 #include <itl/unordered_map.hpp>
