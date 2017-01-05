@@ -24,7 +24,7 @@ namespace lattice
 
 /** \brief Enumerations for acceptable transfer encodings.
  */
-enum TransferEncoding
+enum TransferEncoding: unsigned int
 {
     CHUNKED     = 1,
     COMPRESS    = 2,

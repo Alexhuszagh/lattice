@@ -20,7 +20,7 @@ namespace lattice
 
 /** \brief HTTP request methods.
  */
-enum Method
+enum Method: unsigned int
 {
     STOP    = 0,
     GET     = 1,

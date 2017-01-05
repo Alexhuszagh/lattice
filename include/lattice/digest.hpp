@@ -13,8 +13,6 @@
 
 #include "auth.hpp"
 #include "crypto.hpp"
-#include "parameter.hpp"
-#include "url.hpp"
 
 #include <itl/vector.hpp>
 #include <itl/unordered_map.hpp>
@@ -22,6 +20,12 @@
 
 namespace lattice
 {
+// FORWARD
+// -------
+
+class Parameters;
+class Url;
+
 // OBJECTS
 // -------
 

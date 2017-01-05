@@ -7,7 +7,11 @@
  */
 
 #include "lattice/digest.hpp"
+#include "lattice/parameter.hpp"
 #include "lattice/url.hpp"
+#include "lattice/crypto/md5.hpp"
+#include "lattice/crypto/random.hpp"
+#include "lattice/crypto/sha1.hpp"
 #include "lattice/encoding/hex.hpp"
 #include "lattice/util/exception.hpp"
 #include "lattice/util/string.hpp"
@@ -15,7 +19,6 @@
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
-
 
 
 namespace lattice
