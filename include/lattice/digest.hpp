@@ -24,7 +24,7 @@ namespace lattice
 // -------
 
 class Parameters;
-class Url;
+struct Url;
 
 // OBJECTS
 // -------
