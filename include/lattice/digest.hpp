@@ -48,10 +48,10 @@ struct Digest: public Authentication
 
 /** \brief Quality of protection directive.
  */
-class QualityOfProtection: public vector<std::string>
+class QualityOfProtection: public std::vector<std::string>
 {
 protected:
-    typedef vector<std::string> Base;
+    typedef std::vector<std::string> Base;
 
 public:
     using Base::Base;

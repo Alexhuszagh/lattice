@@ -50,7 +50,7 @@ void punyEncodedUrl(Url &url)
 /** \brief Initialize from null-terminated C-string.
  */
 Url::Url(const char *cstring):
-    itl::string(cstring)
+    std::string(cstring)
 {
     punyEncodedUrl(*this);
 }
@@ -60,7 +60,7 @@ Url::Url(const char *cstring):
  */
 Url::Url(const char *array,
         size_t size):
-    itl::string(array, size)
+    std::string(array, size)
 {
     punyEncodedUrl(*this);
 }
@@ -69,7 +69,7 @@ Url::Url(const char *array,
 /** \brief Copy constructor.
  */
 Url::Url(const std::string &string):
-    itl::string(string.data(), string.size())
+    std::string(string.data(), string.size())
 {
     punyEncodedUrl(*this);
 }
@@ -78,7 +78,7 @@ Url::Url(const std::string &string):
 /** \brief Initializer list constructor.
  */
 Url::Url(std::initializer_list<char> &&list):
-    itl::string(LATTICE_FWD(list))
+    std::string(LATTICE_FWD(list))
 {
     punyEncodedUrl(*this);
 }
@@ -90,7 +90,7 @@ std::string Url::service() const noexcept
 {
     assert(absolute());
     size_t index = find("://");
-    if (index == itl::string::npos) {
+    if (index == std::string::npos) {
         #ifdef HAVE_SSL
             return "https";
         #else
@@ -107,11 +107,11 @@ std::string Url::host() const noexcept
 {
     assert(absolute());
     size_t start = find("://");
-    if (start == itl::string::npos) {
+    if (start == std::string::npos) {
         return substr(0, find_first_of('/')).data();
     }
     size_t end = find_first_of('/', start+4);
-    if (end == itl::string::npos) {
+    if (end == std::string::npos) {
         substr(start+3).data();
     }
     return substr(start+3, end-start-3).data();
@@ -128,12 +128,12 @@ std::string Url::path() const noexcept
 
     const size_t separator = find("://");
     size_t start;
-    if (separator == itl::string::npos) {
+    if (separator == std::string::npos) {
         start = find_first_of('/');
     } else {
         start = find_first_of('/', separator+4);
     }
-    if (start == itl::string::npos) {
+    if (start == std::string::npos) {
         return "/";
     }
     return substr(start).data();
@@ -146,7 +146,7 @@ std::string Url::directory() const noexcept
 {
     auto data = path();
     const size_t separator = data.find_last_of('/');
-    if (separator == itl::string::npos) {
+    if (separator == std::string::npos) {
         return data.substr(1);
     }
 
@@ -160,7 +160,7 @@ std::string Url::file() const noexcept
 {
     auto data = path();
     const size_t separator = data.find_last_of('/');
-    if (separator == itl::string::npos) {
+    if (separator == std::string::npos) {
         return data;
     }
 
@@ -174,7 +174,7 @@ void Url::setService(const std::string &service)
 {
     assert(absolute());
     size_t index = find("://");
-    if (index != itl::string::npos) {
+    if (index != std::string::npos) {
         // replace service
         replace(0, index, service);
     } else {
@@ -189,7 +189,7 @@ void Url::setService(const std::string &service)
 void Url::setHost(const std::string &host)
 {
     size_t start = find("://");
-    if (start == itl::string::npos) {
+    if (start == std::string::npos) {
         replace(0, find_first_of('/'), host);
     } else {
         size_t end = find_first_of('/', start+4);
@@ -206,10 +206,10 @@ void Url::setPath(const std::string &path)
         assign(path);
     } else {
         size_t separator = find("://");
-        if (separator == itl::string::npos) {
-            replace(find_first_of('/'), itl::string::npos, path);
+        if (separator == std::string::npos) {
+            replace(find_first_of('/'), std::string::npos, path);
         } else {
-            replace(find_first_of('/', separator+4), itl::string::npos, path);
+            replace(find_first_of('/', separator+4), std::string::npos, path);
         }
     }
 }
@@ -221,13 +221,13 @@ void Url::setDirectory(const std::string &directory)
 {
     size_t separator, start, end;
     end = find_last_of('/');
-    if ((separator = find("://")) != itl::string::npos) {
+    if ((separator = find("://")) != std::string::npos) {
         start = find_first_of('/', separator+4);
     } else {
         start = find_first_of('/');
     }
 
-    if (start != itl::string::npos && ++start < end) {
+    if (start != std::string::npos && ++start < end) {
         const size_t length = end - start;
         replace(start, length, directory);
     }
@@ -239,7 +239,7 @@ void Url::setDirectory(const std::string &directory)
 void Url::setFile(const std::string &file)
 {
     size_t index = find_last_of('/');
-    replace(index + 1, itl::string::npos, file);
+    replace(index + 1, std::string::npos, file);
 }
 
 

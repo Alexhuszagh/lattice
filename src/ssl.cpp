@@ -22,7 +22,7 @@ namespace lattice
 
 /** \brief Get filename extension.
  */
-itl::string CertificateFile::suffix() const
+std::string CertificateFile::suffix() const
 {
     const size_t index = find_last_of('.');
     if (index != 0 || index != std::string::npos) {

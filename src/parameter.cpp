@@ -70,9 +70,9 @@ Parameters & Parameters::add(const Parameter &parameter)
 std::string Parameters::get() const
 {
     if (empty()) {
-        return ref();
+        return static_cast<const std::string&>(*this);
     }
-    return "?" + ref();
+    return "?" + static_cast<const std::string&>(*this);
 }
 
 
@@ -80,7 +80,7 @@ std::string Parameters::get() const
  */
 const std::string & Parameters::post() const
 {
-    return ref();
+    return static_cast<const std::string&>(*this);
 }
 
 
