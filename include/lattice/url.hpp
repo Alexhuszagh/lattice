@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <itl/string.hpp>
+#include <string>
 #include <initializer_list>
 
 
@@ -19,7 +19,7 @@ namespace lattice
 
 /** \brief URL class instance.
  */
-struct Url: public itl::string
+struct Url: public std::string
 {
     Url() = default;
     Url(const Url &other) = default;

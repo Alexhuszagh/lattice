@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <itl/string.hpp>
+#include <string>
 
 
 namespace lattice
@@ -39,10 +39,10 @@ struct Parameter
 
 /** \brief HTTP parameters object.
  */
-class Parameters: public itl::string
+class Parameters: public std::string
 {
 protected:
-    typedef itl::string Base;
+    typedef std::string Base;
 
 public:
     Parameters() = default;

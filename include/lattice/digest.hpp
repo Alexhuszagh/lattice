@@ -14,8 +14,8 @@
 #include "auth.hpp"
 #include "crypto/algorithms.hpp"
 
-#include <itl/vector.hpp>
-#include <itl/unordered_map.hpp>
+#include <unordered_map>
+#include <vector>
 
 
 namespace lattice
@@ -48,10 +48,10 @@ struct Digest: public Authentication
 
 /** \brief Quality of protection directive.
  */
-class QualityOfProtection: public itl::vector<std::string>
+class QualityOfProtection: public vector<std::string>
 {
 protected:
-    typedef itl::vector<std::string> Base;
+    typedef vector<std::string> Base;
 
 public:
     using Base::Base;
@@ -69,14 +69,14 @@ public:
  *  \format
  *      Digest nonce="42148a112dd92b7e5b6ac4769c2a6693", opaque="35fa82343c10f5a83c7d9b8bb29d8518", realm="me@kennethreitz.com", qop=auth
  */
-class DigestChallenge: public itl::unordered_map<
+class DigestChallenge: public std::unordered_map<
         std::string,
         std::string,
         CaseInsensitiveHash
     >
 {
 protected:
-    typedef itl::unordered_map<
+    typedef std::unordered_map<
         std::string,
         std::string,
         CaseInsensitiveHash

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <itl/map.hpp>
+#include <map>
 #include <string>
 
 
@@ -29,10 +29,10 @@ struct CaseInsensitiveCompare
 
 /** \brief Custom headers for the request.
  */
-class Header: public itl::map<std::string, std::string, CaseInsensitiveCompare>
+class Header: public std::map<std::string, std::string, CaseInsensitiveCompare>
 {
 protected:
-    typedef itl::map<std::string, std::string, CaseInsensitiveCompare> Base;
+    typedef std::map<std::string, std::string, CaseInsensitiveCompare> Base;
 
 public:
     using Base::Base;

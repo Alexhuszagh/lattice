@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <itl/string.hpp>
+#include <string>
 
 
 namespace lattice
@@ -43,15 +43,15 @@ enum CertificateFormat
 
 /** \brief Holds path to certificate bundle.
  */
-class CertificateFile: public itl::string
+class CertificateFile: public std::string
 {
 protected:
-    typedef itl::string Base;
+    typedef std::string Base;
 
 public:
     using Base::Base;
 
-    itl::string suffix() const;
+    std::string suffix() const;
     CertificateFormat format() const;
 
     explicit operator bool() const;
@@ -60,10 +60,10 @@ public:
 
 /** \brief Holds path to certificate revocation lists.
  */
-class RevocationLists: public itl::string
+class RevocationLists: public std::string
 {
 protected:
-    typedef itl::string Base;
+    typedef std::string Base;
 
 public:
     using Base::Base;

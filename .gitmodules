@@ -1,6 +1,3 @@
-[submodule "itl"]
-	path = itl
-	url = https://github.com/Alexhuszagh/itl
 [submodule "googletest"]
 	path = googletest
 	url = https://github.com/XLTools/googletest
