@@ -1,13 +1,16 @@
 #  :copyright: (c) 2016 The Regents of the University of California.
 #  :license: MIT, see LICENSE.md for more details.
 
+set(CMAKE_LEGACY_CYGWIN_WIN32 1)
 cmake_minimum_required(VERSION 2.8)
 project(lattice CXX)
+enable_testing()
 
 # FLAGS
 # -----
 
 set(CMAKE_CXX_STANDARD 11)
+set(CXX_STANDARD TRUE)
 
 # OPTIONS
 # -------
@@ -23,9 +26,18 @@ if(BUILD_STATIC)
     elseif(MINGW)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
     elseif(MSVC)
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_RELEASE} /MTd /O0")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /O0 /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /Ox /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_CXX_FLAGS_MINSIZEREL} /MT /Zi /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
+        set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /MT /Fd${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pdb")
     endif()
+endif()
+
+# Need to manually set compiler flags for Travis CI
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /std:c++11")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 endif()
 
 # INCLUDES
@@ -107,13 +119,12 @@ set(LATTICE_INCLUDE_DIRS ${LATTICE_INCLUDE_DIR})
 include_directories(${LATTICE_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
 
 if(BUILD_STATIC)
-    add_library(Lattice STATIC ${LATTICE_SOURCES})
+    add_library(lattice STATIC ${LATTICE_SOURCES})
 else()
-    add_library(Lattice SHARED ${LATTICE_SOURCES})
+    add_library(lattice SHARED ${LATTICE_SOURCES})
 endif()
 
-set_target_properties(Lattice PROPERTIES OUTPUT_NAME lattice)
-set(LATTICE_LIBRARIES Lattice Threads::Threads ${OPENSSL_LIBRARIES})
+set(LATTICE_LIBRARIES lattice Threads::Threads ${OPENSSL_LIBRARIES})
 if(MSVC)
     list(APPEND LATTICE_LIBRARIES ws2_32.lib crypt32.lib)
 elseif(MINGW)
@@ -146,7 +157,7 @@ endif()
 if(BUILD_EXAMPLES)
     foreach(source ${LATTICE_EXAMPLES})
         get_filename_component(example ${source} NAME_WE)
-        set(target "Lattice_${example}")
+        set(target ${example})
         add_executable(${target} "${source}")
         set_target_properties(${target} PROPERTIES OUTPUT_NAME ${example})
         target_link_libraries(${target} ${LATTICE_LIBRARIES})
@@ -168,16 +179,15 @@ if(BUILD_TESTS)
     if(NOT TARGET gtest)
         add_subdirectory(googletest)
     endif()
-    add_executable(LatticeTests ${LATTICE_TESTS})
-    target_link_libraries(LatticeTests
+    add_executable(lattice_tests ${LATTICE_TESTS})
+    target_link_libraries(lattice_tests
         gtest
         gtest_main
         ${LATTICE_LIBRARIES}
     )
 
-     add_custom_target(check_lattice
-        COMMAND $<TARGET_FILE:LatticeTests>
-        DEPENDS LatticeTests
+    add_test(NAME lattice_tests
+        COMMAND lattice_tests
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
-
 endif()

@@ -3,6 +3,13 @@ lattice
 
 Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests](https://github.com/kennethreitz/requests) and [C++ Requests](https://github.com/whoshuu/cpr).
 
+[![Build Status](https://travis-ci.org/Alexhuszagh/lattice.svg?branch=master)](https://travis-ci.org/Alexhuszagh/lattice)
+[![Build Status](https://tea-ci.org/api/badges/Alexhuszagh/lattice/status.svg)](https://tea-ci.org/Alexhuszagh/lattice)
+[![Build status](https://ci.appveyor.com/api/projects/status/f00mv37ditu0x9o3?svg=true)](https://ci.appveyor.com/project/Alexhuszagh/lattice)
+[![Coverity Scan Build Status](https://scan.coverity.com/projects/12994/badge.svg)](https://scan.coverity.com/projects/alexhuszagh-lattice)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/94086e9e74ec4c4e8a65c32c2626440b)](https://www.codacy.com/app/Alexhuszagh/lattice?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Alexhuszagh/lattice&amp;utm_campaign=Badge_Grade)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/Alexhuszagh/json/blob/master/LICENSE.md)
+
 **Table of Contents**
 
 - [Motivation](#motivation)
