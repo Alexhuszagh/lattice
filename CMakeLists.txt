@@ -179,6 +179,8 @@ if(BUILD_TESTS)
     if(NOT TARGET gtest)
         add_subdirectory(googletest)
     endif()
+    include_directories(googletest/googletest/include)
+
     add_executable(lattice_tests ${LATTICE_TESTS})
     target_link_libraries(lattice_tests
         gtest
