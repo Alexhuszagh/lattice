@@ -9,12 +9,11 @@
 #include "lattice/digest.hpp"
 #include "lattice/parameter.hpp"
 #include "lattice/url.hpp"
-#include "lattice/crypto/md5.hpp"
 #include "lattice/crypto/random.hpp"
-#include "lattice/crypto/sha1.hpp"
 #include "lattice/util/exception.hpp"
 #include "lattice/util/string.hpp"
 
+#include <hashlib.h>
 #include <hex.h>
 #include <algorithm>
 #include <cstring>
@@ -23,6 +22,20 @@
 
 namespace lattice
 {
+// FUNCTIONS
+// ---------
+
+static std::string sha1_hex(const std::string& str)
+{
+    return sha1_digest(str);
+}
+
+
+static std::string md5_hex(const std::string& str)
+{
+    return md5_digest(str);
+}
+
 // OBJECTS
 // -------
 
@@ -194,7 +207,7 @@ std::string DigestChallenge::header(const Url &url,
 
     // get our initial hash values
     auto algo = algorithm();
-    auto hasher = (algo == SHA1_DIGEST) ? SHA1_HEX : MD5_HEX;
+    auto hasher = (algo == SHA1_DIGEST) ? sha1_hex : md5_hex;
     std::string ha1 = hasher(a1);
     std::string ha2 = hasher(a2);
 

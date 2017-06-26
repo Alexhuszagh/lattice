@@ -9,8 +9,8 @@
 #pragma once
 
 #include "crypto/random.hpp"
-#include "crypto/sha1.hpp"
 
+#include <hashlib.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -129,7 +129,7 @@ class Multipart: public std::vector<detail::PartPtr>
 {
 protected:
     typedef std::vector<detail::PartPtr> Base;
-    std::string boundary_ = SHA1_HEX(pseudorandom(8));
+    std::string boundary_ = sha1_digest(pseudorandom(8));
 
 public:
     using Base::Base;
@@ -142,6 +142,5 @@ public:
     std::string string() const;
     explicit operator bool() const;
 };
-
 
 }   /* lattice */
