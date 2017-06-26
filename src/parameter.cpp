@@ -7,8 +7,9 @@
  */
 
 #include "lattice/parameter.hpp"
-#include "lattice/encoding/url.hpp"
 #include "lattice/util/define.hpp"
+
+#include <url.h>
 
 
 namespace lattice
@@ -56,9 +57,9 @@ Parameters & Parameters::add(const Parameter &parameter)
 
     // add escape values
     if (parameter.value.empty()) {
-        append(urlencode(parameter.key));
+        append(url_encode(parameter.key));
     } else {
-        append(urlencode(parameter.key) + "=" + urlencode(parameter.value));
+        append(url_encode(parameter.key) + "=" + url_encode(parameter.value));
     }
 
     return *this;

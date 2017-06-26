@@ -102,6 +102,7 @@ Simply clone, configure with CMake, and build.
 
 ```bash
 git clone https://github.com/Alexhuszagh/lattice.git
+git submodule update --init --recursive
 cd lattice/build
 cmake .. -DBUILD_EXAMPLES=ON    # "-DWITH_OPENSSL=ON" for SSL examples
 make -j 5                       # "msbuild lattice.sln" for MSVC

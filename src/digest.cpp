@@ -12,10 +12,10 @@
 #include "lattice/crypto/md5.hpp"
 #include "lattice/crypto/random.hpp"
 #include "lattice/crypto/sha1.hpp"
-#include "lattice/encoding/hex.hpp"
 #include "lattice/util/exception.hpp"
 #include "lattice/util/string.hpp"
 
+#include <hex.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
@@ -123,7 +123,7 @@ const std::string & DigestChallenge::nonce() const
 const std::string & DigestChallenge::cnonce()
 {
     if (clientNonce.empty()) {
-        clientNonce = HEX<uint32_t>(sysrandom(8));
+        clientNonce = hex_i32(sysrandom(8));
     }
     return clientNonce;
 }

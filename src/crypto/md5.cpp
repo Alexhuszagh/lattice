@@ -21,8 +21,8 @@
  */
 
 #include "lattice/crypto/md5.hpp"
-#include "lattice/encoding/hex.hpp"
 
+#include <hex.h>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -325,7 +325,7 @@ std::string md5Hash(const std::string &string)
  */
 std::string md5HexDigest(const std::string &string)
 {
-    return HEX<uint8_t>(md5Hash(string));
+    return hex_i8(md5Hash(string));
 }
 
 

@@ -26,6 +26,6 @@ TEST(Md5, Md5)
 TEST(Md5, Md5Hex)
 {
     std::string bytes = "012345";
-    std::string digest = "d6a9a933c8aafc51e55ac0662b6e4d4a";
+    std::string digest = "D6A9A933C8AAFC51E55AC0662B6E4D4A";
     EXPECT_EQ(digest, lattice::MD5_HEX(bytes));
 }

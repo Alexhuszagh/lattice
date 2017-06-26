@@ -26,22 +26,6 @@ bool startswith(const std::string &string,
 }
 
 
-/** \brief Modified getline which trims carriage returns.
- *
- *  Normalizes getline implementations among POSIX and Windows.
- */
-std::istream & getline(std::istream &stream,
-    std::string &string)
-{
-    std::getline(stream, string);
-    if (!string.empty() && string.back() == '\r') {
-        string.erase(string.size() - 1);
-    }
-
-    return stream;
-}
-
-
 /** \brief Trim characters from left-end of string.
  */
 void ltrim(std::string &string,

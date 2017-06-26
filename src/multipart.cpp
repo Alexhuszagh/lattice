@@ -7,11 +7,10 @@
  */
 
 #include "lattice/multipart.hpp"
-#include "lattice/encoding/punycode.hpp"
-#include "lattice/encoding/unicode.hpp"
 #include "lattice/util/define.hpp"
 #include "lattice/util/filesystem.hpp"
 
+#include <unicode.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
@@ -116,12 +115,12 @@ std::string readNarrow(const std::string &filename)
  */
 std::string readWide(const std::string &filename)
 {
-    if (!isUnicode(filename)) {
+    if (!is_unicode(filename)) {
         // ascii only filename, narrow API works.
         return readNarrow(filename);
     }
 
-    auto utf16 = UTF8_TO_UTF16(filename);
+    auto utf16 = utf8_to_utf16(filename);
     auto *name = reinterpret_cast<const wchar_t*>(utf16.data());
     std::wifstream file(filename, std::ios_base::in | std::ios_base::binary);
     std::wostringstream stream;
@@ -131,7 +130,7 @@ std::string readWide(const std::string &filename)
     const size_t size = wide.size() * sizeof(char) / sizeof(wchar_t);
     std::string string(reinterpret_cast<const char*>(wide.data()), size);
 
-    return UTF16_TO_UTF8(string);
+    return utf16_to_utf8(string);
 }
 
 

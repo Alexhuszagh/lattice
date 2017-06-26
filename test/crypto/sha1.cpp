@@ -29,6 +29,6 @@ TEST(Sha1, Sha1)
 TEST(Sha1, Sha1Hex)
 {
     std::string bytes = "012345";
-    std::string digest = "fdf8bc5814536f66012884e146a8887a44709a56";
+    std::string digest = "FDF8BC5814536F66012884E146A8887A44709A56";
     EXPECT_EQ(digest, lattice::SHA1_HEX(bytes));
 }

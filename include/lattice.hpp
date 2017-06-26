@@ -13,7 +13,6 @@
 #include "lattice/crypto.hpp"
 #include "lattice/digest.hpp"
 #include "lattice/dns.hpp"
-#include "lattice/encoding.hpp"
 #include "lattice/header.hpp"
 #include "lattice/multipart.hpp"
 #include "lattice/parameter.hpp"

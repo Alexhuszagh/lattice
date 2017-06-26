@@ -7,8 +7,8 @@
  */
 
 #include "lattice/cookie.hpp"
-#include "lattice/encoding/url.hpp"
 
+#include <url.h>
 #include <sstream>
 
 
@@ -35,11 +35,11 @@ std::string Cookies::encode() const
 {
     std::stringstream stream;
     for (const auto &item: *this) {
-        stream << urlencode(item.first) << "=";
+        stream << url_encode(item.first) << "=";
         if (versionOneCookie(item.second)) {
             stream << item.second;
         } else {
-            stream << urlencode(item.second);
+            stream << url_encode(item.second);
         }
         stream << "; ";
     }

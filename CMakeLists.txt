@@ -40,6 +40,12 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 endif()
 
+# DEPENDENCIES
+# ------------
+
+add_subdirectory(crosscxx)
+include_directories(crosscxx/src)
+
 # INCLUDES
 # --------
 
@@ -124,7 +130,7 @@ else()
     add_library(lattice SHARED ${LATTICE_SOURCES})
 endif()
 
-set(LATTICE_LIBRARIES lattice ${OPENSSL_LIBRARIES})
+set(LATTICE_LIBRARIES lattice crosscxx ${OPENSSL_LIBRARIES})
 if(CMAKE_VERSION VERSION_GREATER 3.1)
     list(APPEND LATTICE_LIBRARIES Threads::Threads)
 else()

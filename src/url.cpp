@@ -6,10 +6,11 @@
  */
 
 #include "lattice/url.hpp"
-#include "lattice/encoding/punycode.hpp"
 #include "lattice/util/define.hpp"
 #include "lattice/util/string.hpp"
 
+#include <punycode.h>
+#include <unicode.h>
 #include <cassert>
 
 
@@ -34,8 +35,8 @@ void punyEncodedUrl(Url &url)
     if (url.absolute()) {
         auto names = split(url.host(), ".");
         for (auto &name: names) {
-            if (isUnicode(name)) {
-                name = "xn--" + UTF8_TO_PUNYCODE(name);
+            if (is_unicode(name)) {
+                name = "xn--" + utf8_to_punycode(name);
             }
         }
         url.setHost(join(names, "."));

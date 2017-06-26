@@ -7,8 +7,8 @@
  */
 
 #include "lattice/crypto/sha1.hpp"
-#include "lattice/encoding/hex.hpp"
 
+#include <hex.h>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
@@ -274,7 +274,7 @@ std::string sha1Hash(const std::string &string)
  */
 std::string sha1HexDigest(const std::string &string)
 {
-    return HEX<uint8_t>(sha1Hash(string));
+    return hex_i8(sha1Hash(string));
 }
 
 // CLEANUP

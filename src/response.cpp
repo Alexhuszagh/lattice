@@ -8,6 +8,7 @@
 #include "lattice/response.hpp"
 #include "lattice/util/string.hpp"
 
+#include <getline.h>
 #include <cctype>
 #include <cstring>
 #include <sstream>
@@ -173,7 +174,7 @@ void Response::parseHeaders(const std::string &lines)
 {
     std::istringstream stream(lines);
     std::string line;
-    while (::lattice::getline(stream, line)) {
+    while (getline(stream, line)) {
         if (!line.empty()) {
             // data() is used to fix a compiler optimization bug in MSYS2
             parseHeader(line.data());

@@ -23,11 +23,6 @@ namespace lattice
 bool startswith(const std::string &string,
     const std::string &substring);
 
-/** \brief Modified getline which trims carriage returns.
- */
-std::istream & getline(std::istream &stream,
-    std::string &string);
-
 /** \brief Trim characters from left-end of string.
  *
  *  \param string               String to trim

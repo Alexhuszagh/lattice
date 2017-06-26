@@ -8,9 +8,10 @@
 
 #include "lattice/request.hpp"
 #include "lattice/version.hpp"
-#include "lattice/encoding/base64.hpp"
-#include "lattice/encoding/punycode.hpp"
 
+#include <base64.h>
+#include <codec.h>
+#include <unicode.h>
 #include <cstdio>
 #include <fstream>
 #include <sstream>
@@ -81,7 +82,7 @@ std::stringstream Request::messageHeader() const
         // give a dummy cookie
         data << "Cookie: fake=fake_value\r\n";
     }
-    if (!header.contentType() && isUnicode(parameters)) {
+    if (!header.contentType() && is_unicode(parameters)) {
         // parameters must be UTF-8, are added to body
         data << "Content-Type: text/x-www-form-urlencoded; charset=utf-8\r\n";
     }
@@ -179,7 +180,7 @@ void Request::setTimeout(const Timeout &timeout)
  */
 void Request::setAuth(const Authentication &auth)
 {
-    header["Authorization"] = "Basic " + BASE64_ENCODE(auth.string());
+    header["Authorization"] = "Basic " + base64_encode(auth.string());
 }
 
 
@@ -405,7 +406,7 @@ void Request::setOption(const Timeout &timeout)
  */
 void Request::setOption(const Authentication &auth)
 {
-    header["Authorization"] = "Basic " + BASE64_ENCODE(auth.string());
+    header["Authorization"] = "Basic " + base64_encode(auth.string());
 }
 
 
