@@ -8,9 +8,8 @@
 
 #pragma once
 
-#include "crypto/random.hpp"
-
 #include <hashlib.h>
+#include <random.h>
 #include <memory>
 #include <string>
 #include <vector>

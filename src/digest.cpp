@@ -9,12 +9,12 @@
 #include "lattice/digest.hpp"
 #include "lattice/parameter.hpp"
 #include "lattice/url.hpp"
-#include "lattice/crypto/random.hpp"
 #include "lattice/util/exception.hpp"
 #include "lattice/util/string.hpp"
 
 #include <hashlib.h>
 #include <hex.h>
+#include <random.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
