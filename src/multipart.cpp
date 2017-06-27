@@ -8,8 +8,8 @@
 
 #include "lattice/multipart.hpp"
 #include "lattice/util/define.hpp"
-#include "lattice/util/filesystem.hpp"
 
+#include <filesystem.h>
 #include <unicode.h>
 #include <fstream>
 #include <sstream>
@@ -184,7 +184,7 @@ PartValue::PartValue(std::string &&path,
  */
 std::string PartValue::basename() const
 {
-    return ::lattice::basename(filename);
+    return ::base_name(filename);
 }
 
 
