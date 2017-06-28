@@ -27,13 +27,13 @@ namespace lattice
 
 static std::string sha1_hex(const std::string& str)
 {
-    return sha1_digest(str);
+    return sha1_hash(str).hexdigest();
 }
 
 
 static std::string md5_hex(const std::string& str)
 {
-    return md5_digest(str);
+    return md5_hash(str).hexdigest();
 }
 
 // OBJECTS
