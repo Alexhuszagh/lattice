@@ -128,7 +128,7 @@ class Multipart: public std::vector<detail::PartPtr>
 {
 protected:
     typedef std::vector<detail::PartPtr> Base;
-    std::string boundary_ = sha1_hash(pseudorandom(8)).hexdigest();;
+    std::string boundary_ = std::string(sha1_hash(pseudorandom(8)).hexdigest().view());
 
 public:
     using Base::Base;
