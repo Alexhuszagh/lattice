@@ -5,19 +5,19 @@
  *  \brief Follow absolute redirects from GET request.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
+    lattice::parameters_t parameters = {
         {"url", "http://httpbin.org/get"},
     };
     lattice::Url url = {"http://httpbin.org/redirect-to"};
-    lattice::Timeout timeout(1000);
-    lattice::Redirects redirects(5);
+    lattice::timeout_t timeout(1000);
+    lattice::redirects_t redirects(5);
     auto response = lattice::Get(url, timeout, redirects, parameters);
 
     if (response.ok()) {

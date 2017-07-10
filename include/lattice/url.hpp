@@ -17,9 +17,10 @@ namespace lattice
 // -------
 
 
-/** \brief URL class instance.
+/**
+ *  \brief URL class instance.
  */
-struct Url: public std::string
+struct Url: std::string
 {
     Url() = default;
     Url(const Url &other) = default;
@@ -28,10 +29,9 @@ struct Url: public std::string
     Url & operator=(Url&&) = default;
 
     Url(const char *cstring);
-    Url(const char *array,
-        size_t size);
+    Url(const char *array, size_t size);
     Url(const std::string &string);
-    Url(std::initializer_list<char> &&list);
+    Url(std::initializer_list<char> list);
 
     // GETTERS
     std::string service() const noexcept;
@@ -41,11 +41,11 @@ struct Url: public std::string
     std::string file() const noexcept;
 
     // SETTERS
-    void setService(const std::string &service);
-    void setHost(const std::string &host);
-    void setPath(const std::string &path);
-    void setDirectory(const std::string &directory);
-    void setFile(const std::string &file);
+    void set_service(const std::string &service);
+    void set_host(const std::string &host);
+    void set_path(const std::string &path);
+    void set_directory(const std::string &directory);
+    void set_file(const std::string &file);
 
     // PROPERTIES
     bool relative() const noexcept;

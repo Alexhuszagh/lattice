@@ -22,14 +22,14 @@ namespace lattice
 
 /** \brief Initializer list constructor.
  */
-Redirects::Redirects(const long count):
+redirects_t::redirects_t(const long count):
     count(count)
 {}
 
 
 /** Pre-increment operator.
  */
-Redirects & Redirects::operator++()
+redirects_t & redirects_t::operator++()
 {
     ++count;
 
@@ -39,9 +39,9 @@ Redirects & Redirects::operator++()
 
 /** Post-increment operator.
  */
-Redirects Redirects::operator++(int)
+redirects_t redirects_t::operator++(int)
 {
-    Redirects copy(*this);
+    redirects_t copy(*this);
     operator++();
 
     return copy;
@@ -50,7 +50,7 @@ Redirects Redirects::operator++(int)
 
 /** Pre-decrement operator.
  */
-Redirects & Redirects::operator--()
+redirects_t & redirects_t::operator--()
 {
     --count;
 
@@ -60,9 +60,9 @@ Redirects & Redirects::operator--()
 
 /** Post-decrement operator.
  */
-Redirects Redirects::operator--(int)
+redirects_t redirects_t::operator--(int)
 {
-    Redirects copy(*this);
+    redirects_t copy(*this);
     operator--();
 
     return copy;
@@ -71,7 +71,7 @@ Redirects Redirects::operator--(int)
 
 /** \brief Explicit conversion to bool.
  */
-Redirects::operator bool() const
+redirects_t::operator bool() const
 {
     return bool(count);
 }

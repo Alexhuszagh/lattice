@@ -3,7 +3,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Timeout for requests.
+ *  \brief timeout_t for requests.
  */
 
 #include <lattice/timeout.hpp>
@@ -20,54 +20,44 @@ namespace lattice
 // -------
 
 
-/** \brief Initializer constructor.
- */
-Timeout::Timeout(const std::chrono::milliseconds &timeout):
+timeout_t::timeout_t(const std::chrono::milliseconds &timeout):
     timeout(timeout)
 {}
 
 
-/** \brief Initializer constructor.
- */
-Timeout::Timeout(const long ms):
+timeout_t::timeout_t(const long ms):
     timeout(std::chrono::milliseconds(ms))
 {}
 
 
-long Timeout::seconds() const
+long timeout_t::seconds() const
 {
     auto seconds = std::chrono::duration_cast<std::chrono::seconds>(timeout);
-    checkLimits(seconds);
+    check_limits(seconds);
 
     return static_cast<long>(seconds.count());
 }
 
 
-/** \brief Cast timer to milliseconds.
- */
-long Timeout::milliseconds() const
+long timeout_t::milliseconds() const
 {
     auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(timeout);
-    checkLimits(ms);
+    check_limits(ms);
 
     return static_cast<long>(ms.count());
 }
 
 
-/** \brief Cast timer to microseconds.
- */
-long Timeout::microseconds() const
+long timeout_t::microseconds() const
 {
     auto us = std::chrono::duration_cast<std::chrono::microseconds>(timeout);
-    checkLimits(us);
+    check_limits(us);
 
     return static_cast<long>(us.count());
 }
 
 
-/** \brief Check if timeout set.
- */
-Timeout::operator bool() const
+timeout_t::operator bool() const
 {
     return bool(timeout.count());;
 }

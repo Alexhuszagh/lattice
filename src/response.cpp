@@ -8,6 +8,7 @@
 #include <lattice/response.hpp>
 #include <lattice/util/string.hpp>
 
+#include <pycpp/casemap.h>
 #include <pycpp/getline.h>
 #include <cctype>
 #include <cstring>
@@ -22,13 +23,14 @@ namespace lattice
 // -------
 
 
-/** \brief Parse status code from HTTP response line.
+/**
+ *  \brief Parse status code from HTTP response line.
  *
  *  This is valid according to RFC 2616 [Section 6.1][reference].
  *
  *  [reference] http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6
  */
-void Response::parseCode(const std::string &line)
+void response_t::parse_code(const std::string &line)
 {
     const size_t start = 9;
     size_t end = start;
@@ -36,13 +38,11 @@ void Response::parseCode(const std::string &line)
 
     // no code returned, give an ok status (non-standard conforming)
     const int number = start == end ? 200 : std::stoi(line.substr(start, end));
-    status_ = static_cast<StatusCode>(number);
+    status_ = static_cast<status_code_t>(number);
 }
 
 
-/** \brief Parse cookie from response line.
- */
-void Response::parseCookie(const std::string &string)
+void response_t::parse_cookie(const std::string &string)
 {
     size_t delimiter = string.find_first_of("=");
     size_t end = string.find_first_of(";", delimiter);
@@ -51,11 +51,9 @@ void Response::parseCookie(const std::string &string)
 }
 
 
-/** \brief Parse transfer encoding from data.
- */
-void Response::parseTransferEncoding(std::string &string)
+void response_t::parse_transfer_encoding(std::string &string)
 {
-    ::lattice::tolower(string);
+    string = ascii_tolower(string);
     auto encodings = split(string, ",");
     for (auto &encoding: encodings) {
         trim(encoding);
@@ -74,16 +72,14 @@ void Response::parseTransferEncoding(std::string &string)
 }
 
 
-/** \brief Parse the "Content-Type" header.
- */
-void Response::parseContentType(std::string &string)
+void response_t::parse_content_type(std::string &string)
 {
-    ::lattice::tolower(string);
+    string = ascii_tolower(string);
     auto values = split(string, ";");
     if (values.size()) {
         // get type, subtype
         auto &front = values.front();
-        parseType(front);
+        parse_type(front);
         std::get<1>(mime) = front.substr(front.find("/") + 1);
 
         // get parameters
@@ -99,9 +95,7 @@ void Response::parseContentType(std::string &string)
 }
 
 
-/** \brief Parse the main data type from "Content-Type".
- */
-void Response::parseType(const std::string &string)
+void response_t::parse_type(const std::string &string)
 {
     switch (string.front()) {
         case 'a': {
@@ -136,29 +130,27 @@ void Response::parseType(const std::string &string)
 }
 
 
-/** \brief Parse header from the HTTP response.
- *
- *  The parsed code must, for HTTP/1.1 start
+/**
+ *  The parsed code must, for HTTP/1.1, start with the status code.
  */
-void Response::parseHeader(const std::string &line)
+void response_t::parse_header_line(const std::string &line)
 {
     if (startswith(line, "HTTP/")) {
         // this is valid
-        parseCode(line);
+        parse_code(line);
     } else {
         // common headers
         size_t colon = line.find_first_of(":");
-        std::string key = line.substr(0, colon);
+        std::string key = ascii_tolower(line.substr(0, colon));
         std::string value = line.substr(colon+1);
-        ::lattice::tolower(key);
         trim(value);
 
         if (key == "set-cookie") {
-            parseCookie(value);
+            parse_cookie(value);
         } else if (key == "transfer-encoding") {
-            parseTransferEncoding(value);
+            parse_transfer_encoding(value);
         } else if (key == "content-type") {
-            parseContentType(value);
+            parse_content_type(value);
         } else if (key == "authorization") {
             // TODO
         } else {
@@ -169,64 +161,50 @@ void Response::parseHeader(const std::string &line)
 }
 
 
-/** \brief Extract headers from the HTTP response.
- */
-void Response::parseHeaders(const std::string &lines)
+void response_t::parse_header(const std::string &lines)
 {
     std::istringstream stream(lines);
     std::string line;
     while (getline(stream, line)) {
         if (!line.empty()) {
             // data() is used to fix a compiler optimization bug in MSYS2
-            parseHeader(line.data());
+            parse_header_line(line.data());
         }
     }
 }
 
 
-/** \brief Get status code from response.
- */
-const int Response::status() const
+const int response_t::status() const
 {
     return static_cast<int>(status_);
 }
 
 
-/** \brief Get response text body.
- */
-const std::string & Response::body() const
+const std::string & response_t::body() const
 {
     return body_;
 }
 
 
-/** \brief Get response headers.
- */
-const Header & Response::headers() const
+const Header & response_t::headers() const
 {
     return headers_;
 }
 
 
-/** \brief Get response cookies.
- */
-const Cookies & Response::cookies() const
+const cookies_t & response_t::cookies() const
 {
     return cookies_;
 }
 
 
-/** \brief Get transfer encoding.
- */
-TransferEncoding Response::transferEncoding() const
+transfer_encoding_t response_t::transfer_encoding() const
 {
     return transfer;
 }
 
 
-/** \brief Get content encoding.
- */
-std::string Response::contentEncoding() const
+std::string response_t::content_encoding() const
 {
     auto it = headers().find("content-encoding");
     if (it != headers().end()) {
@@ -237,14 +215,12 @@ std::string Response::contentEncoding() const
 }
 
 
-/** \brief Data type is compressed in some format.
- *
+/**
  *  \warning This is necessarily slow, since the RFC 2616 can accept
  *  many different compression formats different content-encodings,
  *  transfer-encodings, or application types.
- *
  */
-bool Response::compressed() const
+bool response_t::compressed() const
 {
     // fast check if the transer-encoding was set
     auto transit = (
@@ -276,12 +252,11 @@ bool Response::compressed() const
 }
 
 
-/** \brief Content uses `compress`.
- *
+/**
  *  \warning Compress is deprecated and should not appear in
  *  real applications.
  */
-bool Response::compress() const
+bool response_t::compress() const
 {
     if (!!(transfer & COMPRESS) || std::get<1>(mime) == "x-compress") {
         return true;
@@ -292,9 +267,7 @@ bool Response::compress() const
 }
 
 
-/** \brief Content is Zlib's deflate.
- */
-bool Response::deflate() const
+bool response_t::deflate() const
 {
     if (!!(transfer & DEFLATE)) {
         return true;
@@ -305,9 +278,7 @@ bool Response::deflate() const
 }
 
 
-/** \brief Content is W3's EXI.
- */
-bool Response::exi() const
+bool response_t::exi() const
 {
     if (std::get<1>(mime) == "exi") {
         return true;
@@ -318,12 +289,11 @@ bool Response::exi() const
 }
 
 
-/** \brief Content-type is GZIP-compressed.
- *
+/**
  *  Return whether the "Transfer-Encoding", or "Content-Encoding" is
  *  set the gzip.
  */
-bool Response::gzip() const
+bool response_t::gzip() const
 {
     if (!!(transfer & GZIP) || std::get<1>(mime) == "x-gzip") {
         return true;
@@ -334,35 +304,27 @@ bool Response::gzip() const
 }
 
 
-/** \brief Content is a GZIP-compressed pack200 file.
- */
-bool Response::pack200Gzip() const
+bool response_t::pack200Gzip() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "pack200-gzip"));
 }
 
 
-/** \brief Content is Brotli-compressed.
- */
-bool Response::br() const
+bool response_t::br() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "br"));
 }
 
 
-/** \brief Content is a bzip archive.
- */
-bool Response::bzip() const
+bool response_t::bzip() const
 {
     return std::get<1>(mime) == "x-bzip";
 }
 
 
-/** \brief Content is a bzip2 archive.
- */
-bool Response::bzip2() const
+bool response_t::bzip2() const
 {
     if (std::get<1>(mime) == "x-bzip2") {
         return true;
@@ -373,198 +335,154 @@ bool Response::bzip2() const
 }
 
 
-/** \brief Content is lzma compressed.
- */
-bool Response::lzma() const
+bool response_t::lzma() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "lzma"));
 }
 
 
-/** \brief Content is peerdist compressed.
- */
-bool Response::peerdist() const
+bool response_t::peerdist() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "peerdist"));
 }
 
 
-/** \brief Content is xpress compressed.
- */
-bool Response::xpress() const
+bool response_t::xpress() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "xpress"));
 }
 
 
-/** \brief Content is xz compressed.
- */
-bool Response::xz() const
+bool response_t::xz() const
 {
     auto it = headers().find("content-encoding");
     return ((it != headers().end() && it->second == "xz"));
 }
 
 
-/** \brief Content is a _7z compressed archive.
- */
-bool Response::_7z() const
+bool response_t::_7z() const
 {
     return std::get<1>(mime) == "x-7z-compressed";
 }
 
 
-/** \brief Content is an ACE compressed archive.
- */
-bool Response::ace() const
+bool response_t::ace() const
 {
     return std::get<1>(mime) == "x-ace-compressed";
 }
 
 
-/** \brief Content is an RAR compressed archive.
- */
-bool Response::rar() const
+bool response_t::rar() const
 {
     return std::get<1>(mime) == "x-rar-compressed";
 }
 
 
-/** \brief Content-type is text.
- */
-auto Response::type() const
-    -> const MimeType &
+auto response_t::type() const -> const mime_t&
 {
     return mime;
 }
 
 
-/** \brief Content-type is application.
- */
-bool Response::application() const
+bool response_t::application() const
 {
     return std::get<0>(mime) == APPLICATION;
 }
 
 
-/** \brief Content-type is audio.
- */
-bool Response::audio() const
+bool response_t::audio() const
 {
     return std::get<0>(mime) == AUDIO;
 }
 
 
-/** \brief Content-type is image.
- */
-bool Response::image() const
+bool response_t::image() const
 {
     return std::get<0>(mime) == IMAGE;
 }
 
 
-/** \brief Content-type is message.
- */
-bool Response::message() const
+bool response_t::message() const
 {
     return std::get<0>(mime) == MESSAGE;
 }
 
 
-/** \brief Content-type is multipart.
- */
-bool Response::multipart() const
+bool response_t::multipart() const
 {
     return std::get<0>(mime) == MULTIPART;
 }
 
 
-/** \brief Content-type is text.
- */
-bool Response::text() const
+bool response_t::text() const
 {
     return std::get<0>(mime) == TEXT;
 }
 
-/** \brief Content-type is video.
- */
-bool Response::video() const
+bool response_t::video() const
 {
     return std::get<0>(mime) == VIDEO;
 }
 
 
-/** \brief Content-type is X-token.
- */
-bool Response::xtoken() const
+bool response_t::xtoken() const
 {
     return std::get<0>(mime) == XTOKEN;
 }
 
 
-/** \brief Content-type is JSON.
- */
-bool Response::json() const
+bool response_t::json() const
 {
     return application() && std::get<1>(mime) == "json";
 }
 
 
-/** \brief Content-type is XML.
- */
-bool Response::xml() const
+bool response_t::xml() const
 {
     return application() && std::get<1>(mime) == "xml";
 }
 
 
-/** \brief Get encoding from response.
- */
-std::string Response::encoding() const
+std::string response_t::encoding() const
 {
     return charset;
 }
 
 
-/** \brief Check if response is ok.
- */
-bool Response::ok() const
+bool response_t::ok() const
 {
-    return status_ == StatusCode::OK;
+    return status_ == status_code_t::OK;
 }
 
 
-/** \brief Check if response is unathorized.
- */
-bool Response::unauthorized() const
+bool response_t::unauthorized() const
 {
-    return status_ == StatusCode::UNAUTHORIZED;
+    return status_ == status_code_t::UNAUTHORIZED;
 }
 
 
-/** \brief Check if response is a redirect.
- *
+/**
  *  Found should **not** automatically redirect except for GET/HEAD
  *  requests.
  */
-Method Response::redirect(Method method) const
+method_t response_t::redirect(method_t method) const
 {
     switch (status_) {
-        case StatusCode::MOVED_PERMANENTLY:
+        case status_code_t::MOVED_PERMANENTLY:
             /* fallthrough */
-        case StatusCode::TEMPORARY_REDIRECT:
+        case status_code_t::TEMPORARY_REDIRECT:
             /* fallthrough */
-        case StatusCode::PERMANENT_REDIRECT:
+        case status_code_t::PERMANENT_REDIRECT:
             /* fallthrough */
-        case StatusCode::FOUND:
+        case status_code_t::FOUND:
             if (method == GET || method == HEAD) {
                 return method;
             }
             return STOP;
-        case StatusCode::SEE_OTHER:
+        case status_code_t::SEE_OTHER:
             return GET;
             /* fallthrough */
         default:
@@ -573,28 +491,22 @@ Method Response::redirect(Method method) const
 }
 
 
-/** \brief Check if response is a permanent redirect.
- */
-bool Response::permanentRedirect() const
+bool response_t::permanent_redirect() const
 {
-    return status_ == StatusCode::PERMANENT_REDIRECT;
+    return status_ == status_code_t::PERMANENT_REDIRECT;
 }
 
 
-/** \brief Check if any data has been set.
- */
-Response::operator bool() const
+response_t::operator bool() const
 {
     return (
         status() ||
         headers() ||
         cookies() ||
-        FROM_ENUM(transfer) ||
+        int_t(transfer) ||
         !charset.empty() ||
         !body().empty()
     );
 }
 
-
 }   /* lattice */
-

@@ -5,23 +5,23 @@
  *  \brief Simple asynchronous GET requests.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
+    lattice::parameters_t parameters = {
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    auto cache = lattice::CreateDnsCache();
+    auto cache = lattice::create_dns_cache();
     lattice::Url get = {"http://httpbin.org/get"};
     lattice::Url post = {"http://httpbin.org/post"};
 
-    lattice::Pool pool;
-    lattice::Timeout timeout(1000);
+    lattice::pool_t pool;
+    lattice::timeout_t timeout(1000);
     pool.get(get, cache, timeout, parameters);
     pool.head(get, cache, timeout, parameters);
     pool.post(post, cache, timeout, parameters);

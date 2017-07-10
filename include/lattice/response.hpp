@@ -20,13 +20,19 @@
 
 namespace lattice
 {
+// FORWARD
+// -------
+
+struct response_t;
+
 // OBJECTS
 // -------
 
 
-/** \brief HTTP status codes.
+/**
+ *  \brief HTTP status codes.
  */
-enum StatusCode
+enum status_code_t
 {
     // INFORMATIONAL
     CONTINUE                            = 100,
@@ -101,9 +107,10 @@ enum StatusCode
 };
 
 
-/** \brief Registered types for "Content-Types".
+/**
+ *  \brief Registered types for "Content-Types".
  */
-enum ContentType
+enum content_t
 {
     APPLICATION     = 0,
     AUDIO           = 1,
@@ -116,51 +123,38 @@ enum ContentType
 };
 
 
-/** \brief Generate response from a request.
+using mime_t = std::tuple<content_t, std::string>;
+
+template <typename T>
+using is_response = std::is_same<T, response_t>;
+
+template <typename T>
+using disable_if_response = typename std::enable_if<!is_response<T>::value>::type;
+
+
+/**
+ *  \brief Generate response from a request.
  */
-class Response
+struct response_t
 {
-protected:
-    typedef std::tuple<ContentType, std::string> MimeType;
+    response_t() = default;
+    response_t(const response_t&) = default;
+    response_t & operator=(const response_t&) = default;
+    response_t(response_t&&) = default;
+    response_t & operator=(response_t&&) = default;
 
-    template <typename T>
-    using IsNotSame = typename std::enable_if<!std::is_same<T, Response>::value>::type;
-
-    StatusCode status_ = static_cast<StatusCode>(0);
-    Header headers_;
-    Cookies cookies_;
-    TransferEncoding transfer = static_cast<TransferEncoding>(0);
-    MimeType mime;
-    std::string charset;
-    std::string body_;
-
-    void parseCode(const std::string &line);
-    void parseCookie(const std::string &string);
-    void parseTransferEncoding(std::string &string);
-    void parseContentType(std::string &string);
-    void parseType(const std::string &string);
-    void parseHeader(const std::string &line);
-    void parseHeaders(const std::string &lines);
-
-public:
-    Response() = default;
-    Response(const Response &other) = default;
-    Response & operator=(const Response&) = default;
-    Response(Response&&) = default;
-    Response & operator=(Response&&) = default;
-
-    template <typename Connection, typename = IsNotSame<Connection>>
-    Response(Connection &connection);
+    template <typename Connection, typename = disable_if_response<Connection>>
+    response_t(Connection &connection);
 
     // DATA
     const int status() const;
     const std::string & body() const;
     const Header & headers() const;
-    const Cookies & cookies() const;
+    const cookies_t & cookies() const;
 
     // DATA ENCODING
-    TransferEncoding transferEncoding() const;
-    std::string contentEncoding() const;
+    transfer_encoding_t transfer_encoding() const;
+    std::string content_encoding() const;
 
     // COMPRESSION
     bool compressed() const;
@@ -183,7 +177,7 @@ public:
     bool rar() const;
 
     // TYPE
-    const MimeType & type() const;
+    const mime_t & type() const;
     bool application() const;
     bool audio() const;
     bool image() const;
@@ -199,10 +193,27 @@ public:
     // STATUS
     bool ok() const;
     bool unauthorized() const;
-    Method redirect(Method method) const;
-    bool permanentRedirect() const;
+    method_t redirect(method_t method) const;
+    bool permanent_redirect() const;
 
     explicit operator bool() const;
+
+protected:
+    status_code_t status_ = static_cast<status_code_t>(0);
+    Header headers_;
+    cookies_t cookies_;
+    transfer_encoding_t transfer = static_cast<transfer_encoding_t>(0);
+    mime_t mime;
+    std::string charset;
+    std::string body_;
+
+    void parse_code(const std::string &line);
+    void parse_cookie(const std::string &string);
+    void parse_transfer_encoding(std::string &string);
+    void parse_content_type(std::string &string);
+    void parse_type(const std::string &string);
+    void parse_header_line(const std::string &line);
+    void parse_header(const std::string &lines);
 };
 
 
@@ -210,8 +221,7 @@ public:
 // --------------
 
 
-/** \brief Initializer constructor.
- *
+/**
  *  Initializes the response, first parsing the headers and parsing
  *  them based on RFC 2616 [Section 4.4][reference].
  *
@@ -221,9 +231,9 @@ public:
  *  [reference] https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4
  */
 template <typename Connection, typename>
-Response::Response(Connection &connection)
+response_t::response_t(Connection& connection)
 {
-    parseHeaders(connection.headers());
+    parse_header(connection.headers());
     if (!!transfer && !(transfer & IDENTITY)) {
         // connection has the transfer set and is not identity
         body_ = connection.chunked();
@@ -234,6 +244,5 @@ Response::Response(Connection &connection)
         body_ = connection.read();
     }
 }
-
 
 }   /* lattice */

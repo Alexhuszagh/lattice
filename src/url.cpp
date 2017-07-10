@@ -6,7 +6,6 @@
  */
 
 #include <lattice/url.hpp>
-#include <lattice/util/define.hpp>
 #include <lattice/util/string.hpp>
 
 #include <pycpp/punycode.h>
@@ -21,17 +20,13 @@ namespace lattice
 // ---------
 
 
-/** \brief Check if URL is relative.
- */
-inline bool isRelative(const std::string &string) noexcept
+inline bool is_relative(const std::string &string) noexcept
 {
     return string.empty() || string.front() == '/';
 }
 
 
-/** \brief Get Punycode-encoded URLK.
- */
-void punyEncodedUrl(Url &url)
+void puny_encoded_url(Url &url)
 {
     if (url.absolute()) {
         auto names = split(url.host(), ".");
@@ -40,7 +35,7 @@ void punyEncodedUrl(Url &url)
                 name = "xn--" + utf8_to_punycode(name);
             }
         }
-        url.setHost(join(names, "."));
+        url.set_host(join(names, "."));
     }
 }
 
@@ -49,45 +44,34 @@ void punyEncodedUrl(Url &url)
 // -------
 
 
-/** \brief Initialize from null-terminated C-string.
- */
 Url::Url(const char *cstring):
     std::string(cstring)
 {
-    punyEncodedUrl(*this);
+    puny_encoded_url(*this);
 }
 
 
-/** \brief Initialize from char array.
- */
-Url::Url(const char *array,
-        size_t size):
+Url::Url(const char *array, size_t size):
     std::string(array, size)
 {
-    punyEncodedUrl(*this);
+    puny_encoded_url(*this);
 }
 
 
-/** \brief Copy constructor.
- */
 Url::Url(const std::string &string):
     std::string(string.data(), string.size())
 {
-    punyEncodedUrl(*this);
+    puny_encoded_url(*this);
 }
 
 
-/** \brief Initializer list constructor.
- */
-Url::Url(std::initializer_list<char> &&list):
-    std::string(LATTICE_FWD(list))
+Url::Url(std::initializer_list<char> list):
+    std::string(list.begin())
 {
-    punyEncodedUrl(*this);
+    puny_encoded_url(*this);
 }
 
 
-/** \brief Get service from  URL.
- */
 std::string Url::service() const noexcept
 {
     assert(absolute());
@@ -103,8 +87,6 @@ std::string Url::service() const noexcept
 }
 
 
-/** \brief Get hostname from  URL.
- */
 std::string Url::host() const noexcept
 {
     assert(absolute());
@@ -120,8 +102,6 @@ std::string Url::host() const noexcept
 }
 
 
-/** \brief Get hostname from  URL.
- */
 std::string Url::path() const noexcept
 {
     if (relative()) {
@@ -142,8 +122,6 @@ std::string Url::path() const noexcept
 }
 
 
-/** \brief Get directory component of URL.
- */
 std::string Url::directory() const noexcept
 {
     auto data = path();
@@ -156,8 +134,6 @@ std::string Url::directory() const noexcept
 }
 
 
-/** \brief Get file component of URL.
- */
 std::string Url::file() const noexcept
 {
     auto data = path();
@@ -170,9 +146,7 @@ std::string Url::file() const noexcept
 }
 
 
-/** \brief Set service component of URL.
- */
-void Url::setService(const std::string &service)
+void Url::set_service(const std::string &service)
 {
     assert(absolute());
     size_t index = find("://");
@@ -186,9 +160,7 @@ void Url::setService(const std::string &service)
 }
 
 
-/** \brief Set host component of URL.
- */
-void Url::setHost(const std::string &host)
+void Url::set_host(const std::string &host)
 {
     size_t start = find("://");
     if (start == std::string::npos) {
@@ -200,9 +172,7 @@ void Url::setHost(const std::string &host)
 }
 
 
-/** \brief Set path component of URL.
- */
-void Url::setPath(const std::string &path)
+void Url::set_path(const std::string &path)
 {
     if (relative()) {
         assign(path);
@@ -217,9 +187,7 @@ void Url::setPath(const std::string &path)
 }
 
 
-/** \brief Set directory component of URL.
- */
-void Url::setDirectory(const std::string &directory)
+void Url::set_directory(const std::string &directory)
 {
     size_t separator, start, end;
     end = find_last_of('/');
@@ -236,9 +204,7 @@ void Url::setDirectory(const std::string &directory)
 }
 
 
-/** \brief Set file component of URL.
- */
-void Url::setFile(const std::string &file)
+void Url::set_file(const std::string &file)
 {
     size_t index = find_last_of('/');
     replace(index + 1, std::string::npos, file);
@@ -246,28 +212,21 @@ void Url::setFile(const std::string &file)
 
 
 
-/** \brief URL is a relative identifier.
- */
 bool Url::relative() const noexcept
 {
-    return isRelative(*this);
+    return is_relative(*this);
 }
 
 
-/** \brief URL is an absolute identifier.
- */
 bool Url::absolute() const noexcept
 {
     return !relative();
 }
 
 
-/** \brief Check if a URL has been set.
- */
 Url::operator bool() const
 {
     return !empty();
 }
-
 
 }   /* lattice */

@@ -5,7 +5,7 @@
  *  \brief Url unittests.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <gtest/gtest.h>
 
@@ -40,23 +40,23 @@ TEST(Url, Setters)
     lattice::Url url("http://example.com/path/to/file");
 
     // SERVICE
-    url.setService("https");
+    url.set_service("https");
     EXPECT_EQ("https://example.com/path/to/file", url);
 
     // HOST
-    url.setHost("example.net");
+    url.set_host("example.net");
     EXPECT_EQ("https://example.net/path/to/file", url);
 
     // PATH
-    url.setPath("/new/path/to/file");
+    url.set_path("/new/path/to/file");
     EXPECT_EQ("https://example.net/new/path/to/file", url);
 
     // DIRECTORY
-    url.setDirectory("new/directory");
+    url.set_directory("new/directory");
     EXPECT_EQ("https://example.net/new/directory/file", url);
 
     // FILE
-    url.setFile("document");
+    url.set_file("document");
     EXPECT_EQ("https://example.net/new/directory/document", url);
 }
 

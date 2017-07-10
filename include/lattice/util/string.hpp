@@ -70,10 +70,6 @@ std::vector<std::string> safesplit(const std::string &string,
     const char quote,
     const char escape);
 
-/** \brief Transform the string to lower-case.
- */
-void tolower(std::string &string);
-
 /** \brief Replace substring in string.
  *
  *  Replace up to `max` instances of `sub` with`repl` in the target
@@ -88,13 +84,6 @@ void replace(std::string &string,
     const std::string &sub,
     const std::string &repl,
     int max = -1);
-
-/** Escape printable, non-Unicode, non-alphanumeric characters.
- *
- *  Escapes all ASCII non-alphanumeric characters, assuming
- *  UTF-8 source encoding.
- */
-std::string escapeUrl(const std::string src);
 
 
 /** \brief Join string from begin and end iterator pairs.

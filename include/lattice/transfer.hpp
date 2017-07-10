@@ -8,13 +8,7 @@
 
 #pragma once
 
-// TODO: replace with PyCPP
-#include <lattice/util/enum.hpp>
-
-#ifdef _MSC_VER
-#   pragma warning(push)
-#   pragma warning(disable:4800)
-#endif
+#include <pycpp/enum.h>
 
 
 namespace lattice
@@ -25,7 +19,7 @@ namespace lattice
 
 /** \brief Enumerations for acceptable transfer encodings.
  */
-enum TransferEncoding: unsigned int
+enum transfer_encoding_t: unsigned int
 {
     CHUNKED     = 1,
     COMPRESS    = 2,
@@ -34,10 +28,6 @@ enum TransferEncoding: unsigned int
     IDENTITY    = 16,
 };
 
-LATTICE_FLAGS(TransferEncoding);
+enum_flag(transfer_encoding_t);
 
 }   /* lattice */
-
-#ifdef _MSC_VER
-#   pragma warning(pop)
-#endif

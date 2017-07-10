@@ -5,7 +5,7 @@
  *  \brief GET request to a certificate validated through an intermediate CA.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
     lattice::Url url = {"https://xn--rksmrgs-5wao1o.josefsson.org"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     lattice::CertificateFile certificate("/usr/lib/python3/dist-packages/websocket/cacert.pem");
     auto response = lattice::Get(url, timeout, certificate);
 

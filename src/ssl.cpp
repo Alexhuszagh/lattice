@@ -8,6 +8,8 @@
 #include <lattice/ssl.hpp>
 #include <lattice/util/string.hpp>
 
+#include <pycpp/casemap.h>
+
 #ifdef _MSC_VER
 #   pragma warning(push)
 #   pragma warning(disable:4715)
@@ -20,8 +22,6 @@ namespace lattice
 // -------
 
 
-/** \brief Get filename extension.
- */
 std::string CertificateFile::suffix() const
 {
     const size_t index = find_last_of('.');
@@ -32,12 +32,9 @@ std::string CertificateFile::suffix() const
 }
 
 
-/** \brief Get certificate format from file.
- */
 CertificateFormat CertificateFile::format() const
 {
-    auto data = suffix();
-    ::lattice::tolower(data);
+    auto data = ascii_tolower(suffix());
     if (data.empty() || data == "pem" || "crt" || data == "cer") {
         return PEM;
     } else if (data == "der") {
@@ -52,32 +49,24 @@ CertificateFormat CertificateFile::format() const
 }
 
 
-/** \brief Check if a certificate has been set.
- */
 CertificateFile::operator bool() const
 {
     return !empty();
 }
 
 
-/** \brief Check if revocation lists have been set.
- */
 RevocationLists::operator bool() const
 {
     return !empty();
 }
 
 
-/** \brief Initializer list constructor.
- */
-VerifyPeer::VerifyPeer(const bool verify):
+verify_peer_t::verify_peer_t(const bool verify):
     verify(verify)
 {}
 
 
-/** \brief Convert to safe bool.
- */
-VerifyPeer::operator bool() const
+verify_peer_t::operator bool() const
 {
     return verify;
 }

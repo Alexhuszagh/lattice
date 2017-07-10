@@ -5,21 +5,21 @@
  *  \brief Simple HTTP POST with file uploads.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Multipart multipart = {
-        lattice::CreateFile("a.json"),
-        lattice::CreateFile("b.txt"),
-        lattice::CreateFile("c.xml"),
-        lattice::CreateBuffer("d.csv", "A,B\nC,D"),
+    lattice::multipart_t multipart = {
+        lattice::create_file("a.json"),
+        lattice::create_file("b.txt"),
+        lattice::create_file("c.xml"),
+        lattice::create_buffer("d.csv", "A,B\nC,D"),
     };
     lattice::Url url = {"http://httpbin.org/post"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Post(url, multipart, timeout);
 
     if (response.ok()) {

@@ -21,7 +21,7 @@ namespace lattice
 
 /** \brief Special case of type 1 cookies, with leading and trailing quotes.
  */
-bool versionOneCookie(const std::string &cookie)
+bool encode_version_one_cookie(const std::string &cookie)
 {
     if (!cookie.empty()) {
         return (cookie.front() == '"' && cookie.back() == '"');
@@ -30,14 +30,12 @@ bool versionOneCookie(const std::string &cookie)
 }
 
 
-/** \brief Encode cookies for request.
- */
-std::string Cookies::encode() const
+std::string cookies_t::encode() const
 {
     std::stringstream stream;
     for (const auto &item: *this) {
         stream << url_encode(item.first) << "=";
-        if (versionOneCookie(item.second)) {
+        if (encode_version_one_cookie(item.second)) {
             stream << item.second;
         } else {
             stream << url_encode(item.second);
@@ -49,12 +47,9 @@ std::string Cookies::encode() const
 }
 
 
-/** \brief Check if cookies are set.
- */
-Cookies::operator bool() const
+cookies_t::operator bool() const
 {
     return !empty();
 }
-
 
 }   /* lattice */

@@ -5,20 +5,20 @@
  *  \brief Simple GET request with cookies.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters cookies = {
+    lattice::cookies_t cookies = {
         {"name", "value"},
     };
-    auto cache = lattice::CreateDnsCache();
+    auto cache = lattice::create_dns_cache();
     lattice::Url url = {"http://httpbin.org/cookies/set"};
-    lattice::Timeout timeout(1000);
-    lattice::Redirects redirects(5);
+    lattice::timeout_t timeout(1000);
+    lattice::redirects_t redirects(5);
 
     // set cookies
     auto response = lattice::Get(url, cookies, timeout, redirects, cache);

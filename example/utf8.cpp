@@ -5,7 +5,7 @@
  *  \brief Simple GET request with internationalized domain names.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         115, 46, 106, 111, 115, 101, 102, 115, 115, 111,
         110, 46, 111, 114, 103, 47
     };
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Get(url, timeout);
 
     if (response.ok()) {

@@ -17,7 +17,7 @@
 #include <sstream>
 
 #if defined(_WIN32)
-#   include "wincrypt.h"
+#   include <wincrypt.h>
 #endif
 
 PYCPP_USING_NAMESPACE
@@ -28,9 +28,7 @@ namespace lattice
 // -------
 
 
-/** \brief Get name for HTTP request.
- */
-std::string Request::methodName() const
+std::string request_t::method_name() const
 {
     switch (method) {
         case GET:
@@ -57,9 +55,7 @@ std::string Request::methodName() const
 }
 
 
-/** \brief Get headers for an initial HTTP request.
- */
-std::stringstream Request::messageHeader() const
+std::stringstream request_t::method_header() const
 {
     std::stringstream data;
     data << header.string();
@@ -67,7 +63,7 @@ std::stringstream Request::messageHeader() const
         // specify a default host
         data << "Host: " + url.host() + "\r\n";
     }
-    if (!header.userAgent()) {
+    if (!header.user_agent()) {
         // specify a default user agent
         data << "User-Agent: lattice/" + VERSION + "\r\n";
     }
@@ -83,7 +79,7 @@ std::stringstream Request::messageHeader() const
         // give a dummy cookie
         data << "Cookie: fake=fake_value\r\n";
     }
-    if (!header.contentType() && is_unicode(parameters)) {
+    if (!header.content_type() && is_unicode(parameters)) {
         // parameters must be UTF-8, are added to body
         data << "Content-Type: text/x-www-form-urlencoded; charset=utf-8\r\n";
     }
@@ -92,18 +88,17 @@ std::stringstream Request::messageHeader() const
 }
 
 
-/** \brief Get headers for a follow up response to an HTTP request.
- *
+/**
  *  Currently used only for digest authentication.
  */
-std::stringstream Request::messageHeader(const Response &response) const
+std::stringstream request_t::method_header(const response_t& response) const
 {
-    auto data = messageHeader();
+    auto data = method_header();
     if (digest) {
         try {
             auto string = response.headers().at("www-authenticate");
-            DigestChallenge challenge(string);
-            data << challenge.header(url, parameters, digest, response.body(), methodName());
+            digest_challenge_t challenge(string);
+            data << challenge.header(url, parameters, digest, response.body(), method_name());
         } catch(std::exception) {
         }
     }
@@ -112,106 +107,83 @@ std::stringstream Request::messageHeader(const Response &response) const
 }
 
 
-/** \brief Set HTTP method.
- */
-void Request::setMethod(const Method method)
+void request_t::set_method(method_t method)
 {
     this->method = method;
 }
 
 
-/** \brief Set URL for session.
- *
+/**
  *  \warning HTTP1.1 **requires** a host for the session, so the URL
  *  must be absolute.
  */
-void Request::setUrl(const Url &url)
+void request_t::set_url(const Url& url)
 {
     this->url = url;
     if (this->url .relative()) {
-        throw RelativeUrlError();
+        throw std::runtime_error("Cannot establish connection with relative URL.");
     }
 }
 
 
-/** \brief Set URL for session.
- */
-void Request::setUrl(Url &&url)
+void request_t::set_url(Url&& url)
 {
     this->url = std::move(url);
     if (this->url .relative()) {
-        throw RelativeUrlError();
+        throw std::runtime_error("Cannot establish connection with relative URL.");
     }
 }
 
 
-/** \brief Set parameters for session.
- */
-void Request::setParameters(const Parameters &parameters)
+void request_t::set_parameters(const parameters_t& parameters)
 {
     this->parameters = parameters;
 }
 
 
-/** \brief Set parameters for session.
- */
-void Request::setParameters(Parameters &&parameters)
+void request_t::set_parameters(parameters_t&& parameters)
 {
     this->parameters = std::move(parameters);
 }
 
 
-/** \brief Set header for session.
- */
-void Request::setHeader(const Header &header)
+void request_t::set_header(const Header& header)
 {
     this->header = header;
 }
 
 
-/** \brief Set timeout for session.
- */
-void Request::setTimeout(const Timeout &timeout)
+void request_t::set_timeout(const timeout_t& timeout)
 {
     this->timeout = timeout;
 }
 
 
-/** \brief Set basic auth for session.
- */
-void Request::setAuth(const Authentication &auth)
+void request_t::set_auth(const authentication_t& auth)
 {
     header["Authorization"] = "Basic " + base64_encode(auth.string());
 }
 
 
-/** \brief Set digest auth for session.
- */
-void Request::setDigest(const Digest &digest)
+void request_t::set_digest(const Digest& digest)
 {
     this->digest = digest;
 }
 
 
-/** \brief Set proxy for socket.
- */
-void Request::setProxy(const Proxy &proxy)
+void request_t::set_proxy(const Proxy& proxy)
 {
     this->proxy = proxy;
 }
 
 
-/** \brief Set proxy for socket.
- */
-void Request::setProxy(Proxy &&proxy)
+void request_t::set_proxy(Proxy&& proxy)
 {
     this->proxy = std::move(proxy);
 }
 
 
-/** \brief Set multipart message body.
- */
-void Request::setMultipart(const Multipart &multipart)
+void request_t::set_multipart(const multipart_t& multipart)
 {
     this->multipart = multipart;
     if (this->multipart) {
@@ -220,9 +192,7 @@ void Request::setMultipart(const Multipart &multipart)
 }
 
 
-/** \brief Set multipart message body.
- */
-void Request::setMultipart(Multipart &&multipart)
+void request_t::set_multipart(multipart_t&& multipart)
 {
     this->multipart = std::move(multipart);
     if (this->multipart) {
@@ -231,434 +201,325 @@ void Request::setMultipart(Multipart &&multipart)
 }
 
 
-/** \brief Set body for a POST request.
- */
-void Request::setBody(const Body &body)
+void request_t::set_body(const body_t& body)
 {
-    this->parameters = static_cast<Parameters>(body);
+    this->parameters = static_cast<parameters_t>(body);
     method = POST;
 }
 
 
-/** \brief Set body for a POST request.
- */
-void Request::setBody(Body &&body)
+void request_t::set_body(body_t&& body)
 {
-    this->parameters = std::move(static_cast<Parameters>(body));
+    this->parameters = std::move(static_cast<parameters_t>(body));
     method = POST;
 }
 
 
-/** \brief Set payload for a POST request.
- */
-void Request::setPayload(const Payload &payload)
+void request_t::set_payload(const payload_t& payload)
 {
-    this->parameters = static_cast<Parameters>(payload);
+    this->parameters = static_cast<parameters_t>(payload);
     method = POST;
 }
 
 
-/** \brief Set payload for a POST request.
- */
-void Request::setPayload(Payload &&payload)
+void request_t::set_payload(payload_t&& payload)
 {
-    this->parameters = std::move(static_cast<Parameters>(payload));
+    this->parameters = std::move(static_cast<parameters_t>(payload));
     method = POST;
 }
 
 
 
-/** \brief Set cookies for session.
- */
-void Request::setCookies(const Cookies &cookies)
+void request_t::set_cookies(const cookies_t& c)
 {
-    header["Cookie"] = cookies.encode();
+    header["Cookie"] = c.encode();
 }
 
 
-/** \brief Set maximum redirects for request.
- */
-void Request::setRedirects(const Redirects &redirects)
+void request_t::set_redirects(const redirects_t& redirects)
 {
     this->redirects = redirects;
 }
 
 
-/** \brief Set certificate file for SSL encryption.
- */
-void Request::setCertificateFile(const CertificateFile &certificate)
+void request_t::set_certificate_file(const CertificateFile& certificate)
 {
     this->certificate = certificate;
 }
 
-/** \brief Set certificate file for SSL encryption.
- */
-void Request::setCertificateFile(CertificateFile &&certificate)
+void request_t::set_certificate_file(CertificateFile&& certificate)
 {
     this->certificate = std::move(certificate);
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void Request::setRevocationLists(const RevocationLists &revoke)
+void request_t::set_revocation_lists(const RevocationLists& revoke)
 {
     this->revoke = revoke;
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void Request::setRevocationLists(RevocationLists &&revoke)
+void request_t::set_revocation_lists(RevocationLists&& revoke)
 {
     this->revoke = std::move(revoke);
 }
 
 
-/** \brief Set protocol for SSL encryption.
- */
-void Request::setSslProtocol(const SslProtocol ssl)
+void request_t::set_ssl_protocol(ssl_protocol_t ssl)
 {
     this->ssl = ssl;
 }
 
 
-/** \brief Change peer certificate validation.
- */
-void Request::setVerifyPeer(const VerifyPeer &peer)
+void request_t::set_verify_peer(const verify_peer_t& peer)
 {
     this->verifypeer = verifypeer;
 }
 
 
-/** \brief Change peer certificate validation.
- */
-void Request::setVerifyPeer(VerifyPeer &&peer)
+void request_t::set_verify_peer(verify_peer_t&& peer)
 {
     this->verifypeer = verifypeer;
 }
 
 
-/** \brief Set the DNS cache.
- */
-void Request::setCache(const DnsCache &cache)
+void request_t::set_cache(const dns_cache_t& cache)
 {
     this->cache = cache;
 }
 
 
-/** \brief Set HTTP method.
- */
-void Request::setOption(const Method method)
+void request_t::set_option(method_t method)
 {
     this->method = method;
 }
 
 
-/** \brief Set URL for session.
- */
-void Request::setOption(const Url &url)
+void request_t::set_option(const Url &url)
 {
-    setUrl(url);
+    set_url(url);
 }
 
 
-/** \brief Set URL for session.
- */
-void Request::setOption(Url &&url)
+void request_t::set_option(Url &&url)
 {
-    setUrl(LATTICE_FWD(url));
+    set_url(std::forward<Url>(url));
 }
 
 
-/** \brief Set parameters for session.
- */
-void Request::setOption(const Parameters &parameters)
+void request_t::set_option(const parameters_t &parameters)
 {
     this->parameters = parameters;
 }
 
 
-/** \brief Set parameters for session.
- */
-void Request::setOption(Parameters &&parameters)
+void request_t::set_option(parameters_t&& parameters)
 {
     this->parameters = std::move(parameters);
 }
 
 
-/** \brief Set header for session.
- */
-void Request::setOption(const Header &header)
+void request_t::set_option(const Header &header)
 {
     this->header = header;
 }
 
 
-/** \brief Set timeout for session.
- */
-void Request::setOption(const Timeout &timeout)
+void request_t::set_option(const timeout_t &timeout)
 {
     this->timeout = timeout;
 }
 
 
-/** \brief Set basic auth for session.
- */
-void Request::setOption(const Authentication &auth)
+void request_t::set_option(const authentication_t& auth)
 {
     header["Authorization"] = "Basic " + base64_encode(auth.string());
 }
 
 
-/** \brief Set digest auth for session.
- */
-void Request::setOption(const Digest &digest)
+void request_t::set_option(const Digest &digest)
 {
     this->digest = digest;
 }
 
 
-/** \brief Set proxy for socket.
- */
-void Request::setOption(const Proxy &proxy)
+void request_t::set_option(const Proxy &proxy)
 {
     this->proxy = proxy;
 }
 
 
-/** \brief Set proxy for socket.
- */
-void Request::setOption(Proxy &&proxy)
+void request_t::set_option(Proxy&& proxy)
 {
     this->proxy = std::move(proxy);
 }
 
 
-/** \brief Set multipart message body.
- */
-void Request::setOption(const Multipart &multipart)
+void request_t::set_option(const multipart_t& multipart)
 {
-    setMultipart(multipart);
+    set_multipart(multipart);
 }
 
 
-/** \brief Set multipart message body.
- */
-void Request::setOption(Multipart &&multipart)
+void request_t::set_option(multipart_t&& multipart)
 {
-    setMultipart(LATTICE_FWD(multipart));
+    set_multipart(std::forward<multipart_t>(multipart));
 }
 
 
-/** \brief Set body for a POST request.
- */
-void Request::setOption(const Body &body)
+void request_t::set_option(const body_t &body)
 {
-    setBody(body);
+    set_body(body);
 }
 
 
-/** \brief Set body for a POST request.
- */
-void Request::setOption(Body &&body)
+void request_t::set_option(body_t&& body)
 {
-    setBody(LATTICE_FWD(body));
+    set_body(std::forward<body_t>(body));
 }
 
 
-/** \brief Set payload for a POST request.
- */
-void Request::setOption(const Payload &payload)
+void request_t::set_option(const payload_t &payload)
 {
-    setPayload(payload);
+    set_payload(payload);
 }
 
 
-/** \brief Set payload for a POST request.
- */
-void Request::setOption(Payload &&payload)
+void request_t::set_option(payload_t&& payload)
 {
-    setPayload(LATTICE_FWD(payload));
+    set_payload(std::forward<payload_t>(payload));
 }
 
 
-/** \brief Set cookies for session.
- */
-void Request::setOption(const Cookies &cookies)
+void request_t::set_option(const cookies_t& c)
 {
-    header["Cookie"] = cookies.encode();
+    header["Cookie"] = c.encode();
 }
 
 
-/** \brief Set maximum redirects for request.
- */
-void Request::setOption(const Redirects &redirects)
+void request_t::set_option(const redirects_t& redirects)
 {
     this->redirects = redirects;
 }
 
 
-/** \brief Set certificate file for SSL encryption.
- */
-void Request::setOption(const CertificateFile &certificate)
+void request_t::set_option(const CertificateFile &certificate)
 {
     this->certificate = certificate;
 }
 
 
-/** \brief Set certificate file for SSL encryption.
- */
-void Request::setOption(CertificateFile &&certificate)
+void request_t::set_option(CertificateFile &&certificate)
 {
     this->certificate = std::move(certificate);
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void Request::setOption(const RevocationLists &revoke)
+void request_t::set_option(const RevocationLists &revoke)
 {
     this->revoke = revoke;
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void Request::setOption(RevocationLists &&revoke)
+void request_t::set_option(RevocationLists &&revoke)
 {
     this->revoke = std::move(revoke);
 }
 
 
-/** \brief Set protocol for SSL encryption.
- */
-void Request::setOption(const SslProtocol ssl)
+void request_t::set_option(ssl_protocol_t ssl)
 {
     this->ssl = ssl;
 }
 
 
-/** \brief Change peer certificate validation.
- */
-void Request::setOption(const VerifyPeer &peer)
+void request_t::set_option(const verify_peer_t& peer)
 {
     this->verifypeer = verifypeer;
 }
 
 
-/** \brief Change peer certificate validation.
- */
-void Request::setOption(VerifyPeer &&peer)
+void request_t::set_option(verify_peer_t&& peer)
 {
     this->verifypeer = verifypeer;
 }
 
 
-/** \brief Set the DNS cache.
- */
-void Request::setOption(const DnsCache &cache)
+void request_t::set_option(const dns_cache_t& cache)
 {
     this->cache = cache;
 }
 
 
-/** \brief Get HTTP method.
- */
-const Method Request::getMethod() const
+method_t request_t::get_method() const
 {
     return method;
 }
 
 
-/** \brief Get URL for session.
- */
-const Url & Request::getUrl() const
+const Url & request_t::get_url() const
 {
     return url;
 }
 
 
-/** \brief Set parameters for session.
- */
-const Parameters & Request::getParameters() const
+const parameters_t & request_t::get_parameters() const
 {
     return parameters;
 }
 
 
-/** \brief Set header for session.
- */
-const Header & Request::getHeader() const
+const Header & request_t::get_header() const
 {
     return header;
 }
 
 
-/** \brief Get timeout for session.
- */
-const Timeout & Request::getTimeout() const
+const timeout_t & request_t::get_timeout() const
 {
     return timeout;
 }
 
 
-/** \brief Get digest auth for session.
- */
-const Digest & Request::getDigest() const
+const Digest & request_t::get_digest() const
 {
     return digest;
 }
 
 
-/** \brief Set maximum redirects for request.
- */
-const Redirects & Request::getRedirects() const
+const redirects_t & request_t::get_redirects() const
 {
     return redirects;
 }
 
 
-/** \brief Set certificate file for SSL encryption.
- */
-const CertificateFile & Request::getCertificateFile() const
+const CertificateFile & request_t::get_certificate_file() const
 {
     return certificate;
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-const RevocationLists & Request::getRevocationLists() const
+const RevocationLists & request_t::get_revocation_lists() const
 {
     return revoke;
 }
 
 
-/** \brief Set protocol for SSL encryption.
- */
-const SslProtocol Request::getSslProtocol() const
+ssl_protocol_t request_t::get_ssl_protocol() const
 {
     return ssl;
 }
 
 
-/** \brief Get peer certificate validation.
- */
-const VerifyPeer Request::getVerifyPeer() const
+const verify_peer_t& request_t::get_verify_peer() const
 {
     return verifypeer;
 }
 
 
-/** \brief Get the DNS cache.
- */
-const DnsCache Request::getDnsCache() const
+const dns_cache_t request_t::get_dns_cache() const
 {
     return cache;
 }
 
-
-
 }   /* lattice */
-

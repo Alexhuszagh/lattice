@@ -6,7 +6,6 @@
  */
 
 #include <lattice/dns.hpp>
-#include <lattice/util/exception.hpp>
 
 #include <cstdlib>
 #include <cstring>
@@ -23,58 +22,55 @@ namespace lattice
 // -------
 
 
-/** \brief Initializer list constructor.
- */
-AddressIterator::AddressIterator(value_type *value):
-    value(value)
+address_iterator_t::address_iterator_t(pointer ptr):
+    ptr(ptr)
 {}
 
 
-/** \brief Dereference iterator.
- */
-auto AddressIterator::operator*() const
-    -> const value_type &
+auto address_iterator_t::operator*() -> reference
 {
-    return *value;
+    return *ptr;
 }
 
 
-/** \brief Get pointer from iterator.
- */
-auto AddressIterator::operator->() const
-    -> const value_type *
+auto address_iterator_t::operator*() const -> const_reference
 {
-    return value;
+    return *ptr;
 }
 
 
-/** \brief Pre-increment iterator.
- */
-auto AddressIterator::operator++()
-    -> AddressIterator &
+auto address_iterator_t::operator->() -> pointer
 {
-    value = value->ai_next;
+    return ptr;
+}
+
+
+auto address_iterator_t::operator->() const -> const_pointer
+{
+    return ptr;
+}
+
+
+auto address_iterator_t::operator++() -> address_iterator_t &
+{
+    ptr = ptr->ai_next;
     return *this;
 }
 
 
-/** \brief Post-increment iterator.
- */
-auto AddressIterator::operator++(int)
-    -> AddressIterator
+auto address_iterator_t::operator++(int)
+    -> address_iterator_t
 {
-    AddressIterator copy(*this);
-    ++(*this);
+    address_iterator_t copy(*this);
+    operator++();
 
     return copy;
 }
 
 
-/** \brief Equality operator.
- */
-bool AddressIterator::operator==(const AddressIterator& other) const
+bool address_iterator_t::operator==(const address_iterator_t& other) const
 {
-    short sum = bool(value) + bool(other.value);
+    short sum = bool(ptr) + bool(other.ptr);
     switch (sum) {
         case 0:
             return true;
@@ -84,30 +80,26 @@ bool AddressIterator::operator==(const AddressIterator& other) const
             /* fallthrough */
         default: {
             return (
-                value->ai_flags == other.value->ai_flags &&
-                value->ai_family == other.value->ai_family &&
-                value->ai_socktype == other.value->ai_socktype &&
-                value->ai_protocol == other.value->ai_protocol &&
-                value->ai_addrlen == other.value->ai_addrlen &&
-                value->ai_addr == other.value->ai_addr &&
-                value->ai_canonname == other.value->ai_canonname
+                ptr->ai_flags == other.ptr->ai_flags &&
+                ptr->ai_family == other.ptr->ai_family &&
+                ptr->ai_socktype == other.ptr->ai_socktype &&
+                ptr->ai_protocol == other.ptr->ai_protocol &&
+                ptr->ai_addrlen == other.ptr->ai_addrlen &&
+                ptr->ai_addr == other.ptr->ai_addr &&
+                ptr->ai_canonname == other.ptr->ai_canonname
             );
         }
     }
 }
 
 
-/** \brief Inequality operator.
- */
-bool AddressIterator::operator!=(const AddressIterator& other) const
+bool address_iterator_t::operator!=(const address_iterator_t& other) const
 {
     return !operator==(other);
 }
 
 
-/** \brief Initializer list constructor.
- */
-Address::Address(const addrinfo &info):
+address_t::address_t(const addrinfo &info):
     family(info.ai_family),
     socket_type(info.ai_socktype),
     protocol(info.ai_protocol),
@@ -116,9 +108,7 @@ Address::Address(const addrinfo &info):
 {}
 
 
-/** \brief Convert to addrinfo for connection.
- */
-Address::operator addrinfo() const
+address_t::operator addrinfo() const
 {
     addrinfo info;
     info.ai_family = family;
@@ -131,10 +121,7 @@ Address::operator addrinfo() const
 }
 
 
-/** \brief Initializer list constructor.
- */
-DnsLookup::DnsLookup(const std::string &host,
-    const std::string &service)
+dns_lookup_t::dns_lookup_t(const std::string &host, const std::string &service)
 {
     // initialize our hints
     struct addrinfo hints, *result;
@@ -155,16 +142,14 @@ DnsLookup::DnsLookup(const std::string &host,
     }
 
     if (getaddrinfo(node, port, &hints, &result)) {
-        throw AddressError(host, service);
+        throw std::runtime_error("Unable to get address from getaddrinfo(): " + host + service);
     }
 
     info = result;
 }
 
 
-/** \brief Destructor.
- */
-DnsLookup::~DnsLookup()
+dns_lookup_t::~dns_lookup_t()
 {
     if (info) {
         freeaddrinfo(info);
@@ -173,19 +158,15 @@ DnsLookup::~DnsLookup()
 }
 
 
-/** \brief Get iterator at first address.
- */
-AddressIterator DnsLookup::begin() const
+address_iterator_t dns_lookup_t::begin() const
 {
-    return AddressIterator(info);
+    return address_iterator_t(info);
 }
 
 
-/** \brief Get iterator past end of addresses.
- */
-AddressIterator DnsLookup::end() const
+address_iterator_t dns_lookup_t::end() const
 {
-    return AddressIterator(nullptr);
+    return address_iterator_t(nullptr);
 }
 
 

@@ -22,38 +22,38 @@ namespace lattice
 // -------
 
 
-/** \brief Adapter for Win32 sockets.
+/**
+ *  \brief Adaptor for Win32 sockets.
  */
-class Win32SocketAdapter
+class win32_socket_adaptor_t
 {
-protected:
-    SOCKET sock = INVALID_SOCKET;
-
 public:
-    Win32SocketAdapter();
-    Win32SocketAdapter(const Win32SocketAdapter &other) = delete;
-    ~Win32SocketAdapter();
+    typedef win32_socket_adaptor_t self;
+
+    win32_socket_adaptor_t();
+    win32_socket_adaptor_t(const self&) = delete;
+    self& operator=(const self&) = delete;
+    ~win32_socket_adaptor_t();
 
     // REQUESTS
-    bool open(const addrinfo &info,
-        const std::string &/*host*/);
+    bool open(const addrinfo& info, const std::string&);
     bool close();
-    size_t write(const char *buf,
-        size_t len);
-    size_t read(char *buf,
-        size_t count);
+    size_t write(const char *buf, size_t len);
+    size_t read(char *buf, size_t count);
 
     // OPTIONS
-    void setReuseAddress();
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol ssl);
+    void set_reuse_address();
+    void set_timeout(const timeout_t& timeout);
+    void set_certificate_file(const CertificateFile& certificate);
+    void set_revocation_lists(const RevocationLists& revoke);
+    void set_ssl_protocol(const ssl_protocol_t ssl);
 
     // DATA
     const SOCKET fd() const;
-};
 
+protected:
+    SOCKET sock = INVALID_SOCKET;
+};
 
 }   /* lattice */
 

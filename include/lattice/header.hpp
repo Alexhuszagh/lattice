@@ -18,40 +18,36 @@ namespace lattice
 // -------
 
 
-/** \brief Case-insensitive comparison for ASCII.
+/**
+ *  \brief Case-insensitive std::less for ASCII.
  */
-struct CaseInsensitiveCompare
+struct lowercase_less
 {
-    bool operator()(const std::string &left,
-        const std::string &right) const noexcept;
+    bool operator()(const std::string&, const std::string&) const noexcept;
 };
 
 
-/** \brief Custom headers for the request.
+/**
+ *  \brief Custom headers for the request.
  */
-class Header: public std::map<std::string, std::string, CaseInsensitiveCompare>
+struct Header: std::map<std::string, std::string, lowercase_less>
 {
-protected:
-    typedef std::map<std::string, std::string, CaseInsensitiveCompare> Base;
-
-public:
-    using Base::Base;
+    typedef std::map<std::string, std::string, lowercase_less> base;
+    using base::base;
 
     std::string string() const;
     bool accept() const;
     bool cookie() const;
     bool host() const;
-    bool userAgent() const;
+    bool user_agent() const;
     bool authorization() const;
     bool wwwauthenticate() const;
     bool connection() const;
-    bool closeConnection() const;
-    bool contentType() const;
+    bool close_connection() const;
+    bool content_type() const;
 
-    friend std::ostream & operator<<(std::ostream &os,
-        const Header &header);
+    friend std::ostream & operator<<(std::ostream &os, const Header &header);
     explicit operator bool() const;
 };
-
 
 }   /* lattice */

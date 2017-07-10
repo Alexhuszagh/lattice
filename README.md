@@ -37,8 +37,8 @@ Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded U
 
 int main(int argc, char *argv[])
 {
-    lattice::Url url = {"http://httpbin.org/basic-auth/user/pass"};
-    lattice::Authentication auth = {"user", "pass"};
+    lattice::url_t url = {"http://httpbin.org/basic-auth/user/pass"};
+    lattice::authentication_t auth = {"user", "pass"};
     auto response = lattice::Get(url, auth);
 
     std::cout << response.body() << std::endl;

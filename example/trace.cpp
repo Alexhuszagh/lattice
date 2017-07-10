@@ -5,16 +5,16 @@
  *  \brief Simple HTTP TRACE requests.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    auto cache = lattice::CreateDnsCache();
+    auto cache = lattice::create_dns_cache();
     lattice::Url url = {"http://httpbin.org/"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Trace(url, timeout, cache);
 
     if (response.status() == 405) {

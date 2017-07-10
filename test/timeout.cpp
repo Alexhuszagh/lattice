@@ -5,7 +5,7 @@
  *  \brief Timeout unittests.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <gtest/gtest.h>
 
@@ -14,14 +14,14 @@
 // -----
 
 
-TEST(Timeout, Timeout)
+TEST(timeout_t, timeout_t)
 {
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     EXPECT_EQ(timeout.seconds(), 1);
     EXPECT_EQ(timeout.milliseconds(), 1000);
     EXPECT_EQ(timeout.microseconds(), 1000000);
     EXPECT_TRUE(bool(timeout));
 
-    lattice::Timeout empty;
+    lattice::timeout_t empty;
     EXPECT_FALSE(bool(empty));
 }

@@ -7,7 +7,6 @@
  */
 
 #include <lattice/parameter.hpp>
-#include <lattice/util/define.hpp>
 
 #include <pycpp/url.h>
 
@@ -19,27 +18,19 @@ namespace lattice
 // -------
 
 
-/** \brief Initializer list constructor.
- */
-Parameter::Parameter(std::string &&key,
-        std::string &&value):
-    key(LATTICE_FWD(key)),
-    value(LATTICE_FWD(value))
+parameter_t::parameter_t(std::string&& key, std::string&& value):
+    key(std::forward<std::string>(key)),
+    value(std::forward<std::string>(value))
 {}
 
 
-/** \brief Initializer list constructor.
- */
-Parameter::Parameter(const std::string &key,
-        const std::string &value):
+parameter_t::parameter_t(const std::string& key, const std::string& value):
     key(key),
     value(value)
 {}
 
 
-/** \brief Initializer list initializer.
- */
-Parameters::Parameters(const std::initializer_list<Parameter>& parameters)
+parameters_t::parameters_t(const std::initializer_list<parameter_t>& parameters)
 {
     for (const auto &parameter: parameters) {
         add(parameter);
@@ -47,9 +38,7 @@ Parameters::Parameters(const std::initializer_list<Parameter>& parameters)
 }
 
 
-/** \brief Add parameter.
- */
-Parameters & Parameters::add(const Parameter &parameter)
+parameters_t & parameters_t::add(const parameter_t &parameter)
 {
     // add delimiter
     if (!empty()) {
@@ -67,9 +56,7 @@ Parameters & Parameters::add(const Parameter &parameter)
 }
 
 
-/** \brief Format parameters for GET request.
- */
-std::string Parameters::get() const
+std::string parameters_t::get() const
 {
     if (empty()) {
         return static_cast<const std::string&>(*this);
@@ -78,20 +65,15 @@ std::string Parameters::get() const
 }
 
 
-/** \brief Format parameters for POST request.
- */
-const std::string & Parameters::post() const
+const std::string& parameters_t::post() const
 {
     return static_cast<const std::string&>(*this);
 }
 
 
-/** \brief Check if any parameters have been set.
- */
-Parameters::operator bool() const
+parameters_t::operator bool() const
 {
     return !empty();
 }
-
 
 }   /* lattice */

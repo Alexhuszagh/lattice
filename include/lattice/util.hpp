@@ -8,9 +8,6 @@
 
 #pragma once
 
-#include <lattice/util/define.hpp>
-#include <lattice/util/enum.hpp>
-#include <lattice/util/exception.hpp>
 #include <lattice/util/mutex.hpp>
 #include <lattice/util/sfinae.hpp>
 #include <lattice/util/string.hpp>

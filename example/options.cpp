@@ -5,7 +5,7 @@
  *  \brief Simple HTTP OPTIONS request.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
     lattice::Url url = {"http://httpbin.org/"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Options(url, timeout);
 
     if (response.ok()) {

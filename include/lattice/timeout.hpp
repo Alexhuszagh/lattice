@@ -27,31 +27,32 @@ namespace lattice
 // -------
 
 
-/** \brief Timeout for a request object.
+/**
+ *  \brief Timeout for a request object.
  */
-class Timeout
+class timeout_t
 {
-protected:
-    std::chrono::milliseconds timeout = std::chrono::milliseconds(0);
-
-    template <typename Duration>
-    void checkLimits(const Duration &duration) const;
-
 public:
-    Timeout() = default;
-    Timeout(const Timeout &other) = default;
-    Timeout & operator=(const Timeout&) = default;
-    Timeout(Timeout&&) = default;
-    Timeout & operator=(Timeout&&) = default;
+    timeout_t() = default;
+    timeout_t(const timeout_t &other) = default;
+    timeout_t & operator=(const timeout_t&) = default;
+    timeout_t(timeout_t&&) = default;
+    timeout_t & operator=(timeout_t&&) = default;
 
-    Timeout(const std::chrono::milliseconds &timeout);
-    Timeout(const long ms);
+    timeout_t(const std::chrono::milliseconds &timeout);
+    timeout_t(const long ms);
 
     long seconds() const;
     long milliseconds() const;
     long microseconds() const;
 
     explicit operator bool() const;
+
+protected:
+    std::chrono::milliseconds timeout = std::chrono::milliseconds(0);
+
+    template <typename Duration>
+    void check_limits(const Duration &duration) const;
 };
 
 
@@ -59,10 +60,11 @@ public:
 // --------------
 
 
-/** \brief Throw overflow or underflow if outside of numeric limits.
+/**
+ *  \brief Throw overflow or underflow if outside of numeric limits.
  */
 template <typename Duration>
-void Timeout::checkLimits(const Duration &duration) const
+void timeout_t::check_limits(const Duration &duration) const
 {
     if (duration.count() > std::numeric_limits<long>::max()) {
         throw std::overflow_error("Timeout value overflow.\n");

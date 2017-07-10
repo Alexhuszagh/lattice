@@ -13,7 +13,6 @@
 #include <lattice/ssl.hpp>
 #include <lattice/timeout.hpp>
 #include <lattice/url.hpp>
-#include <lattice/util/exception.hpp>
 #include <lattice/util/mutex.hpp>
 
 #include <openssl/asn1.h>
@@ -43,51 +42,51 @@ static X509_STORE *STORE = nullptr;
 // -------
 
 
-/** \brief Socket adapter for OpenSSL.
+/**
+ *  \brief Socket adapter for OpenSSL.
  */
 template <typename HttpAdapter>
-class OpenSslAdapter
+class open_ssl_adaptor_t
 {
+public:
+    typedef open_ssl_adaptor_t<HttpAdapter> self;
+
+    open_ssl_adaptor_t();
+    open_ssl_adaptor_t(const self&) = delete;
+    self& operator=(const self&) = delete;
+    ~open_ssl_adaptor_t();
+
+    // REQUESTS
+    bool open(const addrinfo& info, const std::string& host);
+    void close();
+    size_t write(const char *buf, size_t len);
+    size_t read(char *buf, size_t count);
+
+    // OPTIONS
+    void set_reuse_address();
+    void set_timeout(const timeout_t& timeout);
+    void set_certificate_file(const CertificateFile& certificate);
+    void set_revocation_lists(const RevocationLists& revoke);
+    void set_ssl_protocol(ssl_protocol_t protocol);
+    void set_verify_peer(const verify_peer_t& peer);
+
 protected:
-    typedef OpenSslAdapter<HttpAdapter> This;
     HttpAdapter adapter;
     CertificateFile certificate;
     RevocationLists revoke;
-    SslProtocol protocol = TLS;
-    VerifyPeer verifypeer;
+    ssl_protocol_t protocol = TLS;
+    verify_peer_t verifypeer;
 
     SSL_CTX *ctx = nullptr;
     SSL *ssl = nullptr;
 
     static void initialize();
     static void cleanup();
-    void setContext();
-    void setCertificate();
-    void setRevoke();
-    void setVerify(const std::string &host);
-    void sslConnect();
-
-public:
-    OpenSslAdapter();
-    OpenSslAdapter(const This &other) = delete;
-    ~OpenSslAdapter();
-
-    // REQUESTS
-    bool open(const addrinfo &info,
-        const std::string &host);
-    void close();
-    size_t write(const char *buf,
-        size_t len);
-    size_t read(char *buf,
-        size_t count);
-
-    // OPTIONS
-    void setReuseAddress();
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol protocol);
-    void setVerifyPeer(const VerifyPeer &peer);
+    void set_context();
+    void set_certificate();
+    void set_revoke();
+    void set_verify(const std::string& host);
+    void ssl_connect();
 };
 
 
@@ -95,10 +94,11 @@ public:
 // --------------
 
 
-/** \brief Initialize OpenSSL.
+/**
+ *  \brief Initialize OpenSSL.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::initialize()
+void open_ssl_adaptor_t<HttpAdapter>::initialize()
 {
     SSL_load_error_strings();
     SSL_library_init();
@@ -106,17 +106,19 @@ void OpenSslAdapter<HttpAdapter>::initialize()
 }
 
 
-/** \brief Cleanup OpenSSL (noop).
+/**
+ *  \brief Cleanup OpenSSL (noop).
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::cleanup()
+void open_ssl_adaptor_t<HttpAdapter>::cleanup()
 {}
 
 
-/** \brief Set the SSL connection context.
+/**
+ *  \brief Set the SSL connection context.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setContext()
+void open_ssl_adaptor_t<HttpAdapter>::set_context()
 {
     // initialize SSL methods
     switch (protocol) {
@@ -142,16 +144,17 @@ void OpenSslAdapter<HttpAdapter>::setContext()
             break;
     }
     if (!ctx) {
-        throw SSlContextError();
+        throw std::runtime_error("Unable to initialize SSL context.");
     }
     SSL_CTX_set_options(ctx, SSL_OP_SINGLE_DH_USE);
 }
 
 
-/** \brief Set certificate file for the store.
+/**
+ *  \brief Set certificate file for the store.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setCertificate()
+void open_ssl_adaptor_t<HttpAdapter>::set_certificate()
 {
     int ok = 1;
     const char *data = certificate.data();
@@ -174,15 +177,16 @@ void OpenSslAdapter<HttpAdapter>::setCertificate()
     }
 
     if (ok != 1) {
-        throw CertificateLoadingError();
+        throw std::runtime_error("Unable to load certificates from file.");
     }
 }
 
 
-/** \brief Set revocation lists for the store.
+/**
+ *  \brief Set revocation lists for the store.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setRevoke()
+void open_ssl_adaptor_t<HttpAdapter>::set_revoke()
 {
     if (revoke.empty()) {
         return;
@@ -193,7 +197,7 @@ void OpenSslAdapter<HttpAdapter>::setRevoke()
     X509_LOOKUP *lookup = X509_STORE_add_lookup(store, X509_LOOKUP_file());
     int format = X509_FILETYPE_PEM;
     if (!lookup || !(X509_load_crl_file(lookup, revoke.data(), format))) {
-        throw CertificateLoadingError();
+        throw std::runtime_error("Unable to load certificates from file.");
     } else {
         int flags = X509_V_FLAG_CRL_CHECK | X509_V_FLAG_CRL_CHECK_ALL;
         X509_STORE_set_flags(store, flags);
@@ -201,10 +205,11 @@ void OpenSslAdapter<HttpAdapter>::setRevoke()
 }
 
 
-/** \brief Verify untrusted certificate with certificate bundle.
+/**
+ *  \brief Verify untrusted certificate with certificate bundle.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setVerify(const std::string &host)
+void open_ssl_adaptor_t<HttpAdapter>::set_verify(const std::string& host)
 {
     // set verification context
     int mode = verifypeer ? SSL_VERIFY_PEER : SSL_VERIFY_NONE;
@@ -228,7 +233,7 @@ void OpenSslAdapter<HttpAdapter>::setVerify(const std::string &host)
     // initalize content with bundle
     if (certificate) {
         if (!SSL_CTX_load_verify_locations(ctx, certificate.data(), nullptr)) {
-            throw CertificateLoadingError();
+            throw std::runtime_error("Unable to load certificates from file.");
         }
     } else {
         SSL_CTX_set_default_verify_paths(ctx);
@@ -236,7 +241,8 @@ void OpenSslAdapter<HttpAdapter>::setVerify(const std::string &host)
 }
 
 
-/** \brief Connect to the remote host via SSL connect.
+/**
+ *  \brief Connect to the remote host via SSL connect.
  *
  *  Process read and write descriptors.
  *
@@ -245,7 +251,7 @@ void OpenSslAdapter<HttpAdapter>::setVerify(const std::string &host)
  *  handshake errors otherwise.
  */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::sslConnect()
+void open_ssl_adaptor_t<HttpAdapter>::ssl_connect()
 {
     while (SSL_connect(ssl) == -1) {
         fd_set desriptors;
@@ -271,27 +277,24 @@ void OpenSslAdapter<HttpAdapter>::sslConnect()
                     return;
                 }
             default:
-                throw SslHandshakeError();
+                throw std::runtime_error("Unable to complete SSL handshake.");
         }
     }
 }
 
 
-/** \brief Destructor.
- */
 template <typename HttpAdapter>
-OpenSslAdapter<HttpAdapter>::~OpenSslAdapter()
+open_ssl_adaptor_t<HttpAdapter>::~open_ssl_adaptor_t()
 {
     close();
 }
 
 
-/** \brief Null constructor.
- *
+/**
  *  If not initialized, initialize SSL.
  */
 template <typename HttpAdapter>
-OpenSslAdapter<HttpAdapter>::OpenSslAdapter()
+open_ssl_adaptor_t<HttpAdapter>::open_ssl_adaptor_t()
 {
     std::lock_guard<std::mutex> lock(MUTEX);
     if (!SSL_INITIALIZED) {
@@ -302,36 +305,31 @@ OpenSslAdapter<HttpAdapter>::OpenSslAdapter()
 }
 
 
-/** \brief Open socket.
- */
 template <typename HttpAdapter>
-bool OpenSslAdapter<HttpAdapter>::open(const addrinfo &info,
-    const std::string &host)
+bool open_ssl_adaptor_t<HttpAdapter>::open(const addrinfo& info, const std::string& host)
 {
-    setContext();
+    set_context();
     ssl = SSL_new(ctx);
-    setVerify(host);
+    set_verify(host);
     if (certificate) {
-        setCertificate();
+        set_certificate();
     }
     if (revoke) {
-        setRevoke();
+        set_revoke();
     }
 
     // open socket and create SSL
     SSL_set_connect_state(ssl);
     adapter.open(info, host);
     SSL_set_fd(ssl, adapter.fd());
-    sslConnect();
+    ssl_connect();
 
     return true;
 }
 
 
-/** \brief Close socket.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::close()
+void open_ssl_adaptor_t<HttpAdapter>::close()
 {
     if (ssl) {
         SSL_shutdown(ssl);
@@ -346,79 +344,60 @@ void OpenSslAdapter<HttpAdapter>::close()
 }
 
 
-/** \brief Write data to socket.
- */
 template <typename HttpAdapter>
-size_t OpenSslAdapter<HttpAdapter>::write(const char *buf,
-    size_t len)
+size_t open_ssl_adaptor_t<HttpAdapter>::write(const char *buf, size_t len)
 {
     return SSL_write(ssl, buf, len);
 }
 
 
-/** \brief Read data from socket.
- */
 template <typename HttpAdapter>
-size_t OpenSslAdapter<HttpAdapter>::read(char *buf,
-    size_t count)
+size_t open_ssl_adaptor_t<HttpAdapter>::read(char *buf, size_t count)
 {
     return SSL_read(ssl, buf, count);
 }
 
 
-/** \brief Allow socket address reuse.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setReuseAddress()
+void open_ssl_adaptor_t<HttpAdapter>::set_reuse_address()
 {
-    adapter.setReuseAddress();
+    adapter.set_reuse_address();
 }
 
 
-/** \brief Set the max time for socket requests.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setTimeout(const Timeout &timeout)
+void open_ssl_adaptor_t<HttpAdapter>::set_timeout(const timeout_t& timeout)
 {
-    adapter.setTimeout(timeout);
+    adapter.set_timeout(timeout);
 }
 
 
-/** \brief Set file to validate certificates.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setCertificateFile(const CertificateFile &certificate)
+void open_ssl_adaptor_t<HttpAdapter>::set_certificate_file(const CertificateFile& certificate)
 {
     this->certificate = certificate;
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setRevocationLists(const RevocationLists &revoke)
+void open_ssl_adaptor_t<HttpAdapter>::set_revocation_lists(const RevocationLists& revoke)
 {
     this->revoke = revoke;
 }
 
 
-/** \brief Set SSL protocol.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setSslProtocol(const SslProtocol protocol)
+void open_ssl_adaptor_t<HttpAdapter>::set_ssl_protocol(ssl_protocol_t protocol)
 {
     this->protocol = protocol;
 }
 
 
-/** \brief Change peer certificate validation.
- */
 template <typename HttpAdapter>
-void OpenSslAdapter<HttpAdapter>::setVerifyPeer(const VerifyPeer &peer)
+void open_ssl_adaptor_t<HttpAdapter>::set_verify_peer(const verify_peer_t& peer)
 {
     this->verifypeer = verifypeer;
 }
-
 
 }   /* lattice */
 

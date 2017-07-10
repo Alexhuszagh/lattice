@@ -9,15 +9,16 @@
 #include <lattice/digest.hpp>
 #include <lattice/parameter.hpp>
 #include <lattice/url.hpp>
-#include <lattice/util/exception.hpp>
 #include <lattice/util/string.hpp>
 
+#include <pycpp/casemap.h>
 #include <pycpp/hashlib.h>
 #include <pycpp/hex.h>
 #include <pycpp/random.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
+#include <sstream>
 
 PYCPP_USING_NAMESPACE
 
@@ -45,18 +46,21 @@ static std::string md5_hex(const std::string& str)
 // -------
 
 
-/** \brief Hash lower-case version of string.
- */
-size_t CaseInsensitiveHash::operator()(std::string string) const
+size_t lowercase_hash::operator()(const std::string& str) const
 {
-    ::lattice::tolower(string);
-    return std::hash<std::string>()(string);
+    return std::hash<std::string>()(ascii_tolower(str));
 }
 
 
-/** \brief Initialize from a quality of protection code.
- */
-QualityOfProtection::QualityOfProtection(const std::string &qop)
+bool lowercase_equal_to::operator()(const std::string& lhs, const std::string& rhs) const
+{
+    return lhs.size() == rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin(), [](char l, char r) {
+        return ascii_tolower(l) == ascii_tolower(r);
+    });
+}
+
+
+quality_of_protection_t::quality_of_protection_t(const std::string& qop)
 {
     auto data = split(qop, ",");
     insert(begin(), data.begin(), data.end());
@@ -66,37 +70,29 @@ QualityOfProtection::QualityOfProtection(const std::string &qop)
 }
 
 
-/** \brief Check if the QOP's directive includes "auth".
- */
-bool QualityOfProtection::auth() const
+bool quality_of_protection_t::auth() const
 {
-    return std::any_of(begin(), end(), [](const value_type &data) {
+    return std::any_of(begin(), end(), [](const value_type& data) {
         return data == "auth";
     });
 }
 
 
-/** \brief Check if the QOP's directive includes "auth-int".
- */
-bool QualityOfProtection::authInt() const
+bool quality_of_protection_t::authint() const
 {
-    return std::any_of(begin(), end(), [](const value_type &data) {
+    return std::any_of(begin(), end(), [](const value_type& data) {
         return data == "auth-int";
     });
 }
 
 
-/** \brief Check if any quality of protection codes have been set.
- */
-QualityOfProtection::operator bool() const
+quality_of_protection_t::operator bool() const
 {
     return !empty();
 }
 
 
-/** \brief Initialize digest from challenge string.
- */
-DigestChallenge::DigestChallenge(const std::string &string)
+digest_challenge_t::digest_challenge_t(const std::string& string)
 {
     auto data = safesplit(string.substr(7), ',', '"', '\\');
     for (auto &value: data) {
@@ -120,109 +116,95 @@ DigestChallenge::DigestChallenge(const std::string &string)
 }
 
 
-/** \brief Get realm for challenge.
- */
-const std::string & DigestChallenge::realm() const
+const std::string & digest_challenge_t::realm() const
 {
     return at("realm");
 }
 
 
-/** \brief Get nonce for challenge.
- */
-const std::string & DigestChallenge::nonce() const
+const std::string & digest_challenge_t::nonce() const
 {
     return at("nonce");
 }
 
 
-/** \brief Get client nonce for challenge.
- */
-const std::string & DigestChallenge::cnonce()
+const std::string & digest_challenge_t::cnonce()
 {
-    if (clientNonce.empty()) {
-        clientNonce = hex_i32(sysrandom(8));
+    if (client_nonce.empty()) {
+        client_nonce = hex_i32(sysrandom(8));
     }
-    return clientNonce;
+    return client_nonce;
 }
 
 
-/** \brief Get nonce counter (request number).
- */
-std::string DigestChallenge::nc() const
+std::string digest_challenge_t::nc() const
 {
     std::ostringstream stream;
-    stream << std::setfill('0') << std::setw(8) << std::hex << nonceCounter;
+    stream << std::setfill('0') << std::setw(8) << std::hex << nonce_counter;
 
     return stream.str();
 }
 
 
-/** \brief Get hashing algorithm for challenge.
- */
-DigestAlgorithm DigestChallenge::algorithm() const
+digest_algorithm_t digest_challenge_t::algorithm() const
 {
     auto it = find("algorithm");
     if (it == end()) {
-        return MD5_DIGEST;
+        return md5_digest_algorithm;
     }
 
-    std::string data = it->second;
-    ::lattice::tolower(data);
+    std::string data = ascii_tolower(it->second);
 
     if (data == "md5") {
-        return MD5_DIGEST;
+        return md5_digest_algorithm;
     } else if (data == "md5-sess") {
-        return MD5_SESS_DIGEST;
+        return md5_sess_digest_algorithm;
     } else if (data == "sha") {
-        return SHA1_DIGEST;
+        return sha1_digest_algorithm;
     }
-    throw UnknownDigestAlgorithm();
+
+    throw std::runtime_error("Unknown hashing algorithm for digest authentication.");
 }
 
 
-/** \brief Get quality of protection directives.
- */
-QualityOfProtection DigestChallenge::qop() const
+quality_of_protection_t digest_challenge_t::qop() const
 {
     auto it = find("qop");
     if (it != end()) {
-        return QualityOfProtection(it->second);
+        return quality_of_protection_t(it->second);
     }
-    return QualityOfProtection{};
+    return quality_of_protection_t{};
 }
 
 
-/** \brief Create header from digest auth and challenge.
- */
-std::string DigestChallenge::header(const Url &url,
-    const Parameters &parameters,
-    const Digest &digest,
-    const std::string &body,
-    const std::string &method)
+std::string digest_challenge_t::header(const Url& url,
+    const parameters_t& parameters,
+    const Digest& digest,
+    const std::string& body,
+    const std::string& method)
 {
     // get string to hash
     auto quality = qop();
     auto path = url.path() + parameters.get();
     std::string a1 = digest.username + ":" + realm() + ":" + digest.password;
     std::string a2 = method + ":" + path;
-    if (quality.authInt()) {
+    if (quality.authint()) {
         a2 += ":" + body;
     }
 
     // get our initial hash values
     auto algo = algorithm();
-    auto hasher = (algo == SHA1_DIGEST) ? sha1_hex : md5_hex;
+    auto hasher = (algo == sha1_digest_algorithm) ? sha1_hex : md5_hex;
     std::string ha1 = hasher(a1);
     std::string ha2 = hasher(a2);
 
     // MD5 session digests also hash the nonce
-    if (algo == MD5_SESS_DIGEST) {
+    if (algo == md5_sess_digest_algorithm) {
         ha1 = hasher(ha1 + ":" + nonce() + ":" + cnonce());
     }
 
     // create the hex digest
-    ++nonceCounter;
+    ++nonce_counter;
     std::string response;
     if (quality.empty()) {
         response = hasher(ha1 + ":" + nonce() + ":" + ha2);
@@ -257,12 +239,9 @@ std::string DigestChallenge::header(const Url &url,
 }
 
 
-/** \brief Check if a challenge has been set.
- */
-DigestChallenge::operator bool() const
+digest_challenge_t::operator bool() const
 {
     return !empty();
 }
-
 
 }   /* lattice */

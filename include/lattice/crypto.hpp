@@ -14,13 +14,14 @@ namespace lattice
 // -------
 
 
-/** \brief Various digest algorithms for digest authentication.
+/**
+ *  \brief Various digest algorithms for digest authentication.
  */
-enum DigestAlgorithm
+enum digest_algorithm_t
 {
-    MD5_DIGEST          = 0,
-    MD5_SESS_DIGEST     = 1,
-    SHA1_DIGEST         = 2,
+    md5_digest_algorithm        = 0,
+    md5_sess_digest_algorithm   = 1,
+    sha1_digest_algorithm       = 2,
 };
 
 }   /* lattice */

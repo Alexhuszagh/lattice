@@ -17,65 +17,64 @@ namespace lattice
 // -------
 
 
-/** \brief Request parameter.
+/**
+ *  \brief request_t parameter.
  */
-struct Parameter
+struct parameter_t
 {
     std::string key;
     std::string value;
 
-    Parameter() = default;
-    Parameter(const Parameter &other) = default;
-    Parameter & operator=(const Parameter&) = default;
-    Parameter(Parameter&&) = default;
-    Parameter & operator=(Parameter&&) = default;
+    parameter_t() = default;
+    parameter_t(const parameter_t &other) = default;
+    parameter_t & operator=(const parameter_t&) = default;
+    parameter_t(parameter_t&&) = default;
+    parameter_t & operator=(parameter_t&&) = default;
 
-    Parameter(std::string &&key,
-        std::string &&value);
-    Parameter(const std::string &key,
-        const std::string &value);
+    parameter_t(std::string&& key, std::string&& value);
+    parameter_t(const std::string& key, const std::string& value);
 };
 
 
-/** \brief HTTP parameters object.
+/**
+ *  \brief HTTP parameters object.
  */
-class Parameters: public std::string
+struct parameters_t: std::string
 {
-protected:
-    typedef std::string Base;
+    typedef std::string base;
 
-public:
-    Parameters() = default;
-    Parameters(const Parameters &other) = default;
-    Parameters & operator=(const Parameters&) = default;
-    Parameters(Parameters&&) = default;
-    Parameters & operator=(Parameters&&) = default;
+    parameters_t() = default;
+    parameters_t(const parameters_t &other) = default;
+    parameters_t & operator=(const parameters_t&) = default;
+    parameters_t(parameters_t&&) = default;
+    parameters_t & operator=(parameters_t&&) = default;
 
-    using Base::Base;
-    Parameters(const std::initializer_list<Parameter>& parameters);
+    using base::base;
+    parameters_t(const std::initializer_list<parameter_t>& parameters);
 
-    Parameters & add(const Parameter &parameter);
+    parameters_t & add(const parameter_t &parameter);
 
     std::string get() const;
-    const std::string & post() const;
+    const std::string& post() const;
     explicit operator bool() const;
 };
 
 
-/** \brief HTTP parameters object for a POST request.
+/**
+ *  \brief HTTP parameters object for a POST request.
  */
-struct Body: Parameters
+struct body_t: parameters_t
 {
-    using Parameters::Parameters;
+    using parameters_t::parameters_t;
 };
 
 
-/** \brief HTTP parameters object for a POST request.
+/**
+ *  \brief HTTP parameters object for a POST request.
  */
-struct Payload: Parameters
+struct payload_t: parameters_t
 {
-    using Parameters::Parameters;
+    using parameters_t::parameters_t;
 };
-
 
 }   /* lattice */

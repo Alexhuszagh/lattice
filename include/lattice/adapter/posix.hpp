@@ -23,38 +23,38 @@ namespace lattice
 // -------
 
 
-/** \brief Adapter for POSIX sockets.
+/**
+ *  \brief Adapter for POSIX sockets.
  */
-class PosixSocketAdapter
+class posix_socket_adaptor_t
 {
 protected:
     int sock = -1;
 
 public:
-    PosixSocketAdapter();
-    PosixSocketAdapter(const PosixSocketAdapter &other) = delete;
-    ~PosixSocketAdapter();
+    typedef posix_socket_adaptor_t self;
+
+    posix_socket_adaptor_t();
+    posix_socket_adaptor_t(const self&) = delete;
+    self& operator=(const self&) = delete;
+    ~posix_socket_adaptor_t();
 
     // REQUESTS
-    bool open(const addrinfo &info,
-        const std::string &/*host*/);
+    bool open(const addrinfo& info, const std::string&);
     void close();
-    size_t write(const char *buf,
-        size_t len);
-    size_t read(char *buf,
-        size_t count);
+    size_t write(const char *buf, size_t len);
+    size_t read(char *buf, size_t count);
 
     // OPTIONS
-    void setReuseAddress();
-    void setTimeout(const Timeout &timeout);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setSslProtocol(const SslProtocol ssl);
+    void set_reuse_address();
+    void set_timeout(const timeout_t& timeout);
+    void set_certificate_file(const CertificateFile& certificate);
+    void set_revocation_lists(const RevocationLists& revoke);
+    void set_ssl_protocol(ssl_protocol_t ssl);
 
     // DATA
     const int fd() const;
 };
-
 
 }   /* lattice */
 

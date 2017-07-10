@@ -34,16 +34,15 @@ static bool WSA_INITIALIZED = false;
 // -------
 
 
-/** \brief Null constructor.
- *
+/**
  *  If not initialized, start the Winsock API and register cleanup.
  */
-Win32SocketAdapter::Win32SocketAdapter()
+win32_socket_adaptor_t::win32_socket_adaptor_t()
 {
     std::lock_guard<std::mutex> lock(MUTEX);
     if (!WSA_INITIALIZED) {
         if (WSAStartup(MAKEWORD(2,2), &SOCK_DATA) != 0){
-            throw WinSockStartupError();
+            throw std::runtime_error("Unable to startup the Windows socket API.");
         }
         std::atexit([]() {
             WSACleanup();
@@ -53,22 +52,17 @@ Win32SocketAdapter::Win32SocketAdapter()
 }
 
 
-/** \brief Destructor.
- */
-Win32SocketAdapter::~Win32SocketAdapter()
+win32_socket_adaptor_t::~win32_socket_adaptor_t()
 {}
 
 
-/** \brief Open socket.
- */
-bool Win32SocketAdapter::open(const addrinfo &info,
-    const std::string & /*host*/)
+bool win32_socket_adaptor_t::open(const addrinfo& info, const std::string&)
 {
     sock = ::socket(info.ai_family, info.ai_socktype, info.ai_protocol);
     if (sock == INVALID_SOCKET) {
         return false;
     }
-    setReuseAddress();
+    set_reuse_address();
     if (!::connect(sock, info.ai_addr, info.ai_addrlen)) {
         return true;
     }
@@ -78,9 +72,7 @@ bool Win32SocketAdapter::open(const addrinfo &info,
 }
 
 
-/** \brief Close socket.
- */
-bool Win32SocketAdapter::close()
+bool win32_socket_adaptor_t::close()
 {
     if (sock != INVALID_SOCKET) {
         ::closesocket(sock);
@@ -91,40 +83,30 @@ bool Win32SocketAdapter::close()
 }
 
 
-/** \brief Write data to socket.
- */
-size_t Win32SocketAdapter::write(const char *buf,
-    size_t len)
+size_t win32_socket_adaptor_t::write(const char *buf, size_t len)
 {
     return ::send(sock, buf, len, 0);
 }
 
 
-/** \brief Read data from socket.
- */
-size_t Win32SocketAdapter::read(char *buf,
-    size_t count)
+size_t win32_socket_adaptor_t::read(char *buf, size_t count)
 {
     return ::recv(sock, buf, count, 0);
 }
 
 
-/** \brief Allow socket address reuse.
- */
-void Win32SocketAdapter::setReuseAddress()
+void win32_socket_adaptor_t::set_reuse_address()
 {
     int reuse = 1;
     char *option = reinterpret_cast<char*>(&reuse);
     int size = sizeof(reuse);
     if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
 }
 
 
-/** \brief Set the max time for socket requests.
- */
-void Win32SocketAdapter::setTimeout(const Timeout &timeout)
+void win32_socket_adaptor_t::set_timeout(const timeout_t& timeout)
 {
     // create timeout
     int ms = timeout.milliseconds();
@@ -133,41 +115,35 @@ void Win32SocketAdapter::setTimeout(const Timeout &timeout)
 
     // set options
     if (::setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
     if (::setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
 }
 
 
-/** \brief Associate a certificate file with the socket.
- */
-void Win32SocketAdapter::setCertificateFile(const CertificateFile &certificate)
+void win32_socket_adaptor_t::set_certificate_file(const CertificateFile& certificate)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void Win32SocketAdapter::setRevocationLists(const RevocationLists &revoke)
+void win32_socket_adaptor_t::set_revocation_lists(const RevocationLists& revoke)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
-/** \brief Set SSL protocol.
- */
-void Win32SocketAdapter::setSslProtocol(const SslProtocol ssl)
+void win32_socket_adaptor_t::set_ssl_protocol(ssl_protocol_t ssl)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
 /** \brief Get socket descriptor.
  */
-const SOCKET Win32SocketAdapter::fd() const
+const SOCKET win32_socket_adaptor_t::fd() const
 {
     return sock;
 }

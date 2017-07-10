@@ -7,9 +7,10 @@
  */
 
 #include <lattice/multipart.hpp>
-#include <lattice/util/define.hpp>
 
 #include <pycpp/filesystem.h>
+#include <pycpp/hashlib.h>
+#include <pycpp/random.h>
 #include <pycpp/unicode.h>
 #include <fstream>
 #include <sstream>
@@ -24,7 +25,8 @@ namespace detail
 // CONSTANTS
 // ---------
 
-/** \brief Lookup table for common application types.
+/**
+ *  \brief Lookup table for common application types.
  */
 std::unordered_map<std::string, std::string> CONTENT_TYPES = {
     // TEXT
@@ -87,14 +89,24 @@ std::unordered_map<std::string, std::string> CONTENT_TYPES = {
 // ---------
 
 
-/** \brief Read a file on a POSIX system.
+std::string get_boundary()
+{
+    auto bytes = pseudorandom(8);
+    secure_string_view view(bytes.data(), bytes.size());
+    auto hex = sha1_hash(view).hexdigest();
+    return std::string(hex.data(), hex.size());
+}
+
+
+/**
+ *  \brief Read a file on a POSIX system.
  *
  *  POSIX systems require a null terminating byte for filenames, so
  *  all Unicode-supporting POSIX systems typically use UTF8 for
  *  filename encoding. This is easy, since it's our internal
  *  representation.
  */
-std::string readNarrow(const std::string &filename)
+static std::string read_narrow(const std::string &filename)
 {
     auto *name = filename.data();
     std::ifstream file(name, std::ios_base::in | std::ios_base::binary);
@@ -105,8 +117,8 @@ std::string readNarrow(const std::string &filename)
 }
 
 
-
-/** \brief Read a file on a Win32 system.
+/**
+ *  \brief Read a file on a Win32 system.
  *
  *  Windows systems support two APIs: a legacy, narrow API, for
  *  backwards compatibility with the local code page, and a
@@ -114,11 +126,11 @@ std::string readNarrow(const std::string &filename)
  *  overload for std::ifstream, MinGW does not, so the file must
  *  be opened with std::wifstream.
  */
-std::string readWide(const std::string &filename)
+static std::string read_wide(const std::string &filename)
 {
     if (!is_unicode(filename)) {
         // ascii only filename, narrow API works.
-        return readNarrow(filename);
+        return read_narrow(filename);
     }
 
     auto utf16 = utf8_to_utf16(filename);
@@ -135,9 +147,7 @@ std::string readWide(const std::string &filename)
 }
 
 
-/** \brief Detect the content type (if not provided).
- */
-std::string detectContentType(const std::string &filename)
+static std::string detect_content_type(const std::string &filename)
 {
     std::string suffix = splitext(filename)[1];
     auto it = CONTENT_TYPES.find(suffix);
@@ -153,72 +163,59 @@ std::string detectContentType(const std::string &filename)
 // -------
 
 
-/** \brief Initializer copy constructor.
- */
-PartValue::PartValue(const std::string &filename,
-        const std::string &contentType):
+part_value_t::part_value_t(const std::string& filename, const std::string& content_type):
     filename(filename)
 {
-    if (contentType.empty()) {
-        this->contentType_ = detectContentType(this->filename);
+    if (content_type.empty()) {
+        this->content_type_ = detect_content_type(this->filename);
     } else {
-        this->contentType_ = contentType;
+        this->content_type_ = content_type;
     }
 }
 
 
-/** \brief Initializer move constructor.
- */
-PartValue::PartValue(std::string &&path,
-        std::string &&contentType):
-    filename(LATTICE_FWD(filename))
+part_value_t::part_value_t(std::string&& path, std::string&& content_type):
+    filename(std::forward<std::string>(filename))
 {
-    if (contentType.empty()) {
-        this->contentType_ = detectContentType(this->filename);
+    if (content_type.empty()) {
+        this->content_type_ = detect_content_type(this->filename);
     } else {
-        this->contentType_ = contentType;
+        this->content_type_ = content_type;
     }
 }
 
 
-/** \brief Get basename for file.
- */
-std::string PartValue::basename() const
+std::string part_value_t::basename() const
 {
     return ::base_name(filename);
 }
 
 
-/** \brief Get name (without extension).
- */
-std::string PartValue::name() const
+std::string part_value_t::name() const
 {
     return splitext(basename())[0];
 }
 
 
-/** \brief Get contentType property for file.
- */
-const std::string & PartValue::contentType() const
+const std::string & part_value_t::content_type() const
 {
-    return contentType_;
+    return content_type_;
 }
 
 
-/** \brief Get multipartition data for upload.
- *
+/**
  *  RFC-7231 clearly states, if the content type is unknown, do not
  *  send it.
  */
-std::string PartValue::string() const
+std::string part_value_t::string() const
 {
     std::ostringstream stream;
     stream << "Content-Disposition: form-data; "
            << "name=\"" <<  name() << "\"; "
            << "filename=\"" << basename() << "\"\r\n";
 
-    if (!contentType().empty()) {
-       stream << "Content-Type: " << contentType() << "\r\n";
+    if (!content_type().empty()) {
+       stream << "Content-Type: " << content_type() << "\r\n";
     }
     stream << "\r\n";
 
@@ -226,64 +223,52 @@ std::string PartValue::string() const
 }
 
 
-/** \brief Get data contents from file.
- */
-std::string FileValue::buffer() const
+std::string file_value_t::buffer() const
 {
     #ifdef _WIN32
         // WIN32 has the wide API for files, using UTF-16
-        return readWide(filename);
+        return read_wide(filename);
     #else
-        return readNarrow(filename);
+        return read_narrow(filename);
     #endif
 }
 
 
-/** \brief Get multipartition data for upload.
- */
-std::string FileValue::string() const
+std::string file_value_t::string() const
 {
     std::ostringstream stream;
-    stream << PartValue::string() << buffer() << "\r\n";
+    stream << part_value_t::string() << buffer() << "\r\n";
 
     return stream.str();
 }
 
 
-/** \brief Initializer copy constructor.
- */
-BufferValue::BufferValue(const std::string &filename,
+buffer_value_t::buffer_value_t(const std::string &filename,
         const std::string &buffer,
-        const std::string &contentType):
-    PartValue(filename, contentType),
+        const std::string &content_type):
+    part_value_t(filename, content_type),
     buffer_(buffer)
 {}
 
 
-/** \brief Initializer move constructor.
- */
-BufferValue::BufferValue(std::string &&filename,
+buffer_value_t::buffer_value_t(std::string &&filename,
         std::string &&buffer,
-        std::string &&contentType):
-    PartValue(LATTICE_FWD(filename), LATTICE_FWD(contentType)),
-    buffer_(LATTICE_FWD(buffer))
+        std::string &&content_type):
+    part_value_t(std::forward<std::string>(filename), std::forward<std::string>(content_type)),
+    buffer_(std::forward<std::string>(buffer))
 {}
 
 
-/** \brief Get data contents from file.
- */
-const std::string & BufferValue::buffer() const
+const std::string & buffer_value_t::buffer() const
 {
     return buffer_;
 }
 
 
-/** \brief Get multipartition data for upload.
- */
-std::string BufferValue::string() const
+std::string buffer_value_t::string() const
 {
     std::ostringstream stream;
-    stream << PartValue::string() << buffer() << "\r\n";
+    stream << part_value_t::string() << buffer() << "\r\n";
 
     return stream.str();
 }
@@ -291,33 +276,25 @@ std::string BufferValue::string() const
 }   /* detail */
 
 
-/** \brief Get boundary for the multipartition.
- */
-const std::string & Multipart::boundary() const
+const std::string & multipart_t::boundary() const
 {
     return boundary_;
 }
 
 
-/** \brief Add part to multipart detail.
- */
-void Multipart::add(const detail::PartPtr &part)
+void multipart_t::add(const detail::part_ptr_t &part)
 {
     push_back(part);
 }
 
 
-/** \brief Add part to multipart detail.
- */
-void Multipart::add(detail::PartPtr &&part)
+void multipart_t::add(detail::part_ptr_t&& part)
 {
-    emplace_back(LATTICE_FWD(part));
+    emplace_back(std::forward<detail::part_ptr_t>(part));
 }
 
 
-/** \brief Get bytes for multipart upload.
- */
-std::string Multipart::string() const
+std::string multipart_t::string() const
 {
     std::ostringstream stream;
     for (const auto &item: *this) {
@@ -333,20 +310,15 @@ std::string Multipart::string() const
 }
 
 
-/** \brief Get header for multipart upload.
- */
-std::string Multipart::header() const
+std::string multipart_t::header() const
 {
     return "multipart/form-data; boundary=" + boundary();
 }
 
 
-/** \brief Check if data left to return.
- */
-Multipart::operator bool() const
+multipart_t::operator bool() const
 {
     return !empty();
 }
-
 
 }   /* lattice */

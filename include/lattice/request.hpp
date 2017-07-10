@@ -24,8 +24,8 @@
 #include <lattice/ssl.hpp>
 #include <lattice/timeout.hpp>
 #include <lattice/url.hpp>
-#include <lattice/util/define.hpp>
 
+#include <sstream>
 
 namespace lattice
 {
@@ -33,124 +33,124 @@ namespace lattice
 // -------
 
 
-/** \brief HTTP request object.
+/**
+ *  \brief HTTP request object.
  */
-class Request
+class request_t
 {
-protected:
-    Url url;
-    Parameters parameters;
-    Header header;
-    Digest digest;
-    Multipart multipart;
-    Proxy proxy;
-    Timeout timeout;
-    Redirects redirects;
-    CertificateFile certificate;
-    RevocationLists revoke;
-    Method method = static_cast<Method>(0);
-    SslProtocol ssl = static_cast<SslProtocol>(0);
-    VerifyPeer verifypeer;
-    DnsCache cache = nullptr;
-
-    std::stringstream messageHeader() const;
-    std::stringstream messageHeader(const Response &response) const;
-
 public:
-    Request() = default;
-    Request(const Request &other) = default;
-    Request & operator=(const Request&) = default;
-    Request(Request&&) = default;
-    Request & operator=(Request&&) = default;
+    request_t() = default;
+    request_t(const request_t &other) = default;
+    request_t & operator=(const request_t&) = default;
+    request_t(request_t&&) = default;
+    request_t & operator=(request_t&&) = default;
 
     // EXPLICIT OPTIONS
-    void setMethod(const Method method);
-    void setUrl(const Url &url);
-    void setUrl(Url &&url);
-    void setParameters(const Parameters &parameters);
-    void setParameters(Parameters &&parameters);
-    void setHeader(const Header &header);
-    void setTimeout(const Timeout &timeout);
-    void setAuth(const Authentication &auth);
-    void setDigest(const Digest &digest);
-    void setMultipart(const Multipart &multipart);
-    void setMultipart(Multipart &&multipart);
-    void setProxy(const Proxy &proxy);
-    void setProxy(Proxy &&proxy);
-    void setBody(const Body &body);
-    void setBody(Body &&body);
-    void setPayload(const Payload &payload);
-    void setPayload(Payload &&payload);
-    void setCookies(const Cookies &cookies);
-    void setRedirects(const Redirects &redirects);
-    void setCertificateFile(const CertificateFile &certificate);
-    void setCertificateFile(CertificateFile &&certificate);
-    void setRevocationLists(const RevocationLists &revoke);
-    void setRevocationLists(RevocationLists &&revoke);
-    void setSslProtocol(const SslProtocol ssl);
-    void setVerifyPeer(const VerifyPeer &peer);
-    void setVerifyPeer(VerifyPeer &&peer);
-    void setCache(const DnsCache &cache);
+    void set_method(method_t);
+    void set_url(const Url&);
+    void set_url(Url&&);
+    void set_parameters(const parameters_t&);
+    void set_parameters(parameters_t&&);
+    void set_header(const Header&);
+    void set_timeout(const timeout_t&);
+    void set_auth(const authentication_t&);
+    void set_digest(const Digest&);
+    void set_multipart(const multipart_t&);
+    void set_multipart(multipart_t&&);
+    void set_proxy(const Proxy&);
+    void set_proxy(Proxy&&);
+    void set_body(const body_t&);
+    void set_body(body_t&&);
+    void set_payload(const payload_t&);
+    void set_payload(payload_t&&);
+    void set_cookies(const cookies_t&);
+    void set_redirects(const redirects_t&);
+    void set_certificate_file(const CertificateFile&);
+    void set_certificate_file(CertificateFile&&);
+    void set_revocation_lists(const RevocationLists&);
+    void set_revocation_lists(RevocationLists&&);
+    void set_ssl_protocol(ssl_protocol_t);
+    void set_verify_peer(const verify_peer_t&);
+    void set_verify_peer(verify_peer_t&&);
+    void set_cache(const dns_cache_t&);
 
     // LATTICE_FWDING OPTIONS
-    void setOption(const Method method);
-    void setOption(const Url &url);
-    void setOption(Url &&url);
-    void setOption(const Parameters &parameters);
-    void setOption(Parameters &&parameters);
-    void setOption(const Header &header);
-    void setOption(const Timeout &timeout);
-    void setOption(const Authentication &auth);
-    void setOption(const Digest &digest);
-    void setOption(const Multipart &multipart);
-    void setOption(Multipart &&multipart);
-    void setOption(const Proxy &proxy);
-    void setOption(Proxy &&proxy);
-    void setOption(const Body &body);
-    void setOption(Body &&body);
-    void setOption(const Payload &payload);
-    void setOption(Payload &&payload);
-    void setOption(const Cookies &cookies);
-    void setOption(const Redirects &redirects);
-    void setOption(const CertificateFile &certificate);
-    void setOption(CertificateFile &&certificate);
-    void setOption(const RevocationLists &revoke);
-    void setOption(RevocationLists &&revoke);
-    void setOption(const SslProtocol ssl);
-    void setOption(const VerifyPeer &peer);
-    void setOption(VerifyPeer &&peer);
-    void setOption(const DnsCache &cache);
+    void set_option(method_t);
+    void set_option(const Url&);
+    void set_option(Url&&);
+    void set_option(const parameters_t&);
+    void set_option(parameters_t&&);
+    void set_option(const Header&);
+    void set_option(const timeout_t&);
+    void set_option(const authentication_t&);
+    void set_option(const Digest&);
+    void set_option(const multipart_t&);
+    void set_option(multipart_t&&);
+    void set_option(const Proxy&);
+    void set_option(Proxy&&);
+    void set_option(const body_t&);
+    void set_option(body_t&&);
+    void set_option(const payload_t&);
+    void set_option(payload_t&&);
+    void set_option(const cookies_t&);
+    void set_option(const redirects_t&);
+    void set_option(const CertificateFile&);
+    void set_option(CertificateFile&&);
+    void set_option(const RevocationLists&);
+    void set_option(RevocationLists&&);
+    void set_option(ssl_protocol_t);
+    void set_option(const verify_peer_t&);
+    void set_option(verify_peer_t&&);
+    void set_option(const dns_cache_t&);
 
     // ACCESS
-    const Method getMethod() const;
-    const Url & getUrl() const;
-    const Parameters & getParameters() const;
-    const Header & getHeader() const;
-    const Timeout & getTimeout() const;
-    const Digest & getDigest() const;
-    const Redirects & getRedirects() const;
-    const CertificateFile & getCertificateFile() const;
-    const RevocationLists & getRevocationLists() const;
-    const SslProtocol getSslProtocol() const;
-    const VerifyPeer getVerifyPeer() const;
-    const DnsCache getDnsCache() const;
+    method_t get_method() const;
+    const Url& get_url() const;
+    const parameters_t& get_parameters() const;
+    const Header& get_header() const;
+    const timeout_t& get_timeout() const;
+    const Digest& get_digest() const;
+    const redirects_t& get_redirects() const;
+    const CertificateFile& get_certificate_file() const;
+    const RevocationLists& get_revocation_lists() const;
+    ssl_protocol_t get_ssl_protocol() const;
+    const verify_peer_t& get_verify_peer() const;
+    const dns_cache_t get_dns_cache() const;
 
     // CONNECTIONS
     template <typename... Ts>
     std::string message(Ts&&... ts) const;
-    std::string methodName() const;
+    std::string method_name() const;
 
-    Response exec();
-
-    template <typename Connection>
-    void open(Connection &connection) const;
+    response_t exec();
 
     template <typename Connection>
-    void reset(Connection &connection,
-        const Response &response);
+    void open(Connection&) const;
 
     template <typename Connection>
-    Response exec(Connection &connection);
+    void reset(Connection&, const response_t&);
+
+    template <typename Connection>
+    response_t exec(Connection&);
+
+protected:
+    Url url;
+    parameters_t parameters;
+    Header header;
+    Digest digest;
+    multipart_t multipart;
+    Proxy proxy;
+    timeout_t timeout;
+    redirects_t redirects;
+    CertificateFile certificate;
+    RevocationLists revoke;
+    method_t method = static_cast<method_t>(0);
+    ssl_protocol_t ssl = static_cast<ssl_protocol_t>(0);
+    verify_peer_t verifypeer;
+    dns_cache_t cache = nullptr;
+
+    std::stringstream method_header() const;
+    std::stringstream method_header(const response_t&) const;
 };
 
 
@@ -158,121 +158,96 @@ public:
 // ---------
 
 
-/** \brief Set option for HTTP request.
- */
 template <typename T>
-void setOption(Request& request, T&& t)
+void set_option(request_t& request, T&& t)
 {
-    request.setOption(LATTICE_FWD(t));
+    request.set_option(std::forward<T>(t));
 }
 
 
-/** \brief Set options for HTTP request.
- */
-template <
-    typename T,
-    typename... Ts
->
-void setOption(Request& request,
-    T &&t,
-    Ts&&... ts)
+template <typename T, typename... Ts>
+void set_option(request_t& request, T&& t, Ts&&... ts)
 {
-    setOption(request, LATTICE_FWD(t));
-    setOption(request, LATTICE_FWD(ts)...);
+    set_option(request, std::forward<T>(t));
+    set_option(request, std::forward<Ts>(ts)...);
 }
 
 
-/** \brief Wrapper for HTTP DELETE request.
- */
 template <typename... Ts>
-Response Delete(Ts&&... ts)
+response_t Delete(Ts&&... ts)
 {
-    Request request;
-    setOption(request, DELETE, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, DELETE, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP GET request.
- */
 template <typename... Ts>
-Response Get(Ts&&... ts)
+response_t Get(Ts&&... ts)
 {
-    Request request;
-    setOption(request, GET, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, GET, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP HEAD request.
- */
 template <typename... Ts>
-Response Head(Ts&&... ts)
+response_t Head(Ts&&... ts)
 {
-    Request request;
-    setOption(request, HEAD, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, HEAD, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP OPTIONS request.
- */
 template <typename... Ts>
-Response Options(Ts&&... ts)
+response_t Options(Ts&&... ts)
 {
-    Request request;
-    setOption(request, OPTIONS, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, OPTIONS, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP PATCH request.
- */
 template <typename... Ts>
-Response Patch(Ts&&... ts)
+response_t Patch(Ts&&... ts)
 {
-    Request request;
-    setOption(request, PATCH, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, PATCH, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP GET request.
- */
 template <typename... Ts>
-Response Post(Ts&&... ts)
+response_t Post(Ts&&... ts)
 {
-    Request request;
-    setOption(request, POST, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, POST, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP PUT request.
- */
 template <typename... Ts>
-Response Put(Ts&&... ts)
+response_t Put(Ts&&... ts)
 {
-    Request request;
-    setOption(request, PUT, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, PUT, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
 
 
-/** \brief Wrapper for HTTP TRACE request.
- */
 template <typename... Ts>
-Response Trace(Ts&&... ts)
+response_t Trace(Ts&&... ts)
 {
-    Request request;
-    setOption(request, TRACE, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, TRACE, std::forward<Ts>(ts)...);
 
     return request.exec();
 }
@@ -282,10 +257,8 @@ Response Trace(Ts&&... ts)
 // --------------
 
 
-/** \brief Get message for request.
- */
 template <typename... Ts>
-std::string Request::message(Ts&&... ts) const
+std::string request_t::message(Ts&&... ts) const
 {
     std::stringstream stream;
 
@@ -298,19 +271,19 @@ std::string Request::message(Ts&&... ts) const
     }
 
     // get formatted headers
-    auto headers = messageHeader(LATTICE_FWD(ts)...);
+    auto headers = method_header(std::forward<Ts>(ts)...);
     if (!body.empty()) {
         headers << "Content-Length: " << body.size() << "\r\n";
     }
 
     // get first line
     if (method == POST) {
-        stream << methodName() << " " << url.path()
+        stream << method_name() << " " << url.path()
                << " HTTP/1.1\r\n"
                << headers.str()
                << "\r\n" << body;
     } else {
-        stream << methodName() << " " << url.path() << parameters.get()
+        stream << method_name() << " " << url.path() << parameters.get()
                << " HTTP/1.1\r\n"
                << headers.str()
                << "\r\n" << body;
@@ -326,42 +299,41 @@ std::string Request::message(Ts&&... ts) const
 }
 
 
-/** \brief Make request to server.
+/**
+ *  \brief Make request to server.
  *
  *  To avoid compiling external libraries into lattice, misuse inline
  *  to keep this in the header.
  */
-inline Response Request::exec()
+inline response_t request_t::exec()
 {
     auto service = url.service();
     if (service == "http") {
-        HttpConnection connection;
+        http_connection_t connection;
         return exec(connection);
     } else if (service == "https") {
-        HttpsConnection connection;
+        https_connection_t connection;
         return exec(connection);
     } else {
-        throw NetworkSchemeError(service);
+        throw std::runtime_error("Network scheme " + service + " is not supported.");
     }
 
-    return Response();
+    return response_t();
 }
 
 
-/** \brief Execute request to server.
- */
 template <typename Connection>
-Response Request::exec(Connection &connection)
+response_t request_t::exec(Connection& connection)
 {
     open(connection);
-    Response response;
+    response_t response;
     do {
         connection.write(message());
-        response = Response(connection);
+        response = response_t(connection);
         if (response.unauthorized() && digest) {
             // using digest authentication
             connection.write(message(response));
-            response = Response(connection);
+            response = response_t(connection);
             return response;
         } else if ((method = response.redirect(method)) != STOP) {
             reset(connection, response);
@@ -374,24 +346,22 @@ Response Request::exec(Connection &connection)
 }
 
 
-/** \brief Open connection to server.
- */
 template <typename Connection>
-void Request::open(Connection &connection) const
+void request_t::open(Connection& connection) const
 {
     // set options
-    connection.setVerifyPeer(verifypeer);
+    connection.set_verify_peer(verifypeer);
     if (certificate) {
-        connection.setCertificateFile(certificate);
+        connection.set_certificate_file(certificate);
     }
     if (revoke) {
-        connection.setRevocationLists(revoke);
+        connection.set_revocation_lists(revoke);
     }
-    if (FROM_ENUM(ssl)) {
-        connection.setSslProtocol(ssl);
+    if (int_t(ssl)) {
+        connection.set_ssl_protocol(ssl);
     }
     if (cache) {
-        connection.setCache(cache);
+        connection.set_cache(cache);
     }
 
     // open and set timeout
@@ -401,20 +371,17 @@ void Request::open(Connection &connection) const
         connection.open(Url(proxy));
     }
     if (timeout) {
-        connection.setTimeout(timeout);
+        connection.set_timeout(timeout);
     }
 }
 
 
-/** \brief Reset parameters and connection to server.
- */
 template <typename Connection>
-void Request::reset(Connection &connection,
-    const Response &response)
+void request_t::reset(Connection& connection, const response_t& response)
 {
     // check if we need to reset connection
-    bool reconnect = header.closeConnection();
-    reconnect |= response.headers().closeConnection();
+    bool reconnect = header.close_connection();
+    reconnect |= response.headers().close_connection();
 
     Url newurl(response.headers().at("location"));
     if (newurl.absolute()) {
@@ -423,7 +390,7 @@ void Request::reset(Connection &connection,
         reconnect |= url.host() != newurl.host();
         url = newurl;
     } else {
-        url.setPath(newurl.path());
+        url.set_path(newurl.path());
     }
 
     // reset connection
@@ -432,6 +399,5 @@ void Request::reset(Connection &connection,
         open(connection);
     }
 }
-
 
 }   /* lattice */

@@ -25,46 +25,57 @@ namespace lattice
 // TYPES
 // -----
 
-class Cache;
-typedef std::shared_ptr<Cache> DnsCache;
+class address_cache_t;
+typedef std::shared_ptr<address_cache_t> dns_cache_t;
 
 // OBJECTS
 // -------
 
 
-/** \brief Iterator over addresses.
+/**
+ *  \brief Iterator over addresses.
  */
-class AddressIterator: public std::iterator<
-        std::forward_iterator_tag,
-        addrinfo*
-    >
+struct address_iterator_t: std::iterator<std::forward_iterator_tag, addrinfo>
 {
-protected:
-    typedef addrinfo value_type;
+    // MEMBER TYPES
+    // ------------
+    typedef address_iterator_t self;
+    typedef std::iterator<std::forward_iterator_tag, addrinfo> base;
+    using typename base::value_type;
+    typedef addrinfo& reference;
+    typedef const addrinfo& const_reference;
+    typedef addrinfo* pointer;
+    typedef const addrinfo* const_pointer;
 
-    value_type *value = nullptr;
+    // MEMBER FUNCTIONS
+    // ----------------
 
-public:
-    AddressIterator() = default;
-    AddressIterator(const AddressIterator &other) = default;
-    AddressIterator & operator=(const AddressIterator&) = default;
-    AddressIterator(AddressIterator&&) = default;
-    AddressIterator & operator=(AddressIterator&&) = default;
+    address_iterator_t() = default;
+    address_iterator_t(const self&) = default;
+    self& operator=(const self&) = default;
+    address_iterator_t(self&&) = default;
+    self& operator=(self&&) = default;
 
-    AddressIterator(value_type *value);
+    address_iterator_t(pointer ptr);
 
-    const value_type & operator*() const;
-    const value_type * operator->() const;
-    AddressIterator & operator++();
-    AddressIterator operator++(int);
-    bool operator==(const AddressIterator& other) const;
-    bool operator!=(const AddressIterator& other) const;
+    reference operator*();
+    const_reference operator*() const;
+    pointer operator->();
+    const_pointer operator->() const;
+    address_iterator_t & operator++();
+    address_iterator_t operator++(int);
+    bool operator==(const address_iterator_t& other) const;
+    bool operator!=(const address_iterator_t& other) const;
+
+private:
+    pointer ptr = nullptr;
 };
 
 
-/** \brief Host address information.
+/**
+ *  \brief Host address information.
  */
-struct Address
+struct address_t
 {
     int family;
     int socket_type;
@@ -72,73 +83,71 @@ struct Address
     sockaddr address;
     size_t length;
 
-    Address() = default;
-    Address(const Address &other) = default;
-    Address & operator=(const Address&) = default;
-    Address(Address&&) = default;
-    Address & operator=(Address&&) = default;
+    address_t() = default;
+    address_t(const address_t &other) = default;
+    address_t & operator=(const address_t&) = default;
+    address_t(address_t&&) = default;
+    address_t & operator=(address_t&&) = default;
 
-    Address(const addrinfo &info);
+    address_t(const addrinfo &info);
 
     explicit operator addrinfo() const;
 };
 
 
-/** \brief Cache for DNS lookups.
+/**
+ *  \brief Cache for DNS lookups.
  */
-class Cache: public std::unordered_multimap<std::string, Address>
+struct address_cache_t: std::unordered_multimap<std::string, address_t>
 {
-protected:
-    typedef std::unordered_multimap<std::string, Address> Base;
-
-public:
-    using Base::Base;
+    typedef std::unordered_multimap<std::string, address_t> base;
+    using base::base;
 
     template <typename ...Args>
-    friend DnsCache CreateDnsCache(Args&& ...args);
+    friend dns_cache_t create_dns_cache(Args&& ...args);
 };
 
 
-/** \brief DNS lookup for a server host.
+/**
+ *  \brief DNS lookup for a server host.
  *
  *  \param host             Base url of host address, "example.com"
  *  \param service          Service for connection, "http"
  */
-class DnsLookup
+class dns_lookup_t
 {
 protected:
     addrinfo *info = nullptr;
 
 public:
-    DnsLookup() = default;
-    DnsLookup(const DnsLookup &other) = delete;
-    DnsLookup & operator=(const DnsLookup&) = delete;
-    DnsLookup(DnsLookup&&) = default;
-    DnsLookup & operator=(DnsLookup&&) = default;
-    ~DnsLookup();
+    dns_lookup_t() = default;
+    dns_lookup_t(const dns_lookup_t &other) = delete;
+    dns_lookup_t & operator=(const dns_lookup_t&) = delete;
+    dns_lookup_t(dns_lookup_t&&) = default;
+    dns_lookup_t & operator=(dns_lookup_t&&) = default;
+    ~dns_lookup_t();
 
-    DnsLookup(const std::string &host,
-        const std::string &service);
+    dns_lookup_t(const std::string &host, const std::string &service);
 
     // ITERATORS
-    AddressIterator begin() const;
-    AddressIterator end() const;
+    address_iterator_t begin() const;
+    address_iterator_t end() const;
 };
 
 // IMPLEMENTATION
 // --------------
 
 
-/** \brief Only expose cache creator for lifetime management.
+/**
+ *  \brief Only expose cache creator for lifetime management.
  *
- *  Expose only the `CreateDnsCache` function call to set automatic
+ *  Expose only the `create_dns_cache` function call to set automatic
  *  lifetime management for the API.
  */
-template <typename ...Args>
-DnsCache CreateDnsCache(Args&& ...args)
+template <typename... Ts>
+dns_cache_t create_dns_cache(Ts&& ...ts)
 {
-    return std::make_shared<Cache>(LATTICE_FWD(args)...);
+    return std::make_shared<address_cache_t>(std::forward<Ts>(ts)...);
 }
-
 
 }   /* lattice */

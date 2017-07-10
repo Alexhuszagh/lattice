@@ -9,7 +9,6 @@
 
 #include <lattice/request.hpp>
 #include <lattice/response.hpp>
-#include <lattice/util.hpp>
 
 #include <chrono>
 #include <deque>
@@ -23,59 +22,47 @@ namespace lattice
 // OBJECTS
 // -------
 
-typedef std::deque<Response> ResponseList;
+typedef std::deque<response_t> response_list_t;
 
 
-/** \brief Thread pool for asynchronous requests.
+/**
+ *  \brief Thread pool for asynchronous requests.
  *
  *  \warning The asynchronous approach is rudimentary, with a
  *  single thread per socket. This is not intended to replace
  *  a true, asynchronous library like Boost::asio or Casablanca.
  */
-class Pool
+class pool_t
 {
-protected:
-    std::deque<std::future<Response>> futures;
-
 public:
-    Pool() = default;
-    Pool(const Pool &other) = delete;
-    Pool & operator=(const Pool&) = delete;
-    Pool(Pool&&) = default;
-    Pool & operator=(Pool&&) = default;
+    pool_t() = default;
+    pool_t(const pool_t &other) = delete;
+    pool_t & operator=(const pool_t&) = delete;
+    pool_t(pool_t&&) = default;
+    pool_t & operator=(pool_t&&) = default;
 
-    template <typename... Ts>
-    void get(Ts&&... ts);
+    template <typename... Ts> void get(Ts&&... ts);
+    template <typename... Ts> void head(Ts&&... ts);
+    template <typename... Ts> void options(Ts&&... ts);
+    template <typename... Ts> void patch(Ts&&... ts);
+    template <typename... Ts> void post(Ts&&... ts);
+    template <typename... Ts> void put(Ts&&... ts);
+    template <typename... Ts> void trace(Ts&&... ts);
 
-    template <typename... Ts>
-    void head(Ts&&... ts);
-
-    template <typename... Ts>
-    void options(Ts&&... ts);
-
-    template <typename... Ts>
-    void patch(Ts&&... ts);
-
-    template <typename... Ts>
-    void post(Ts&&... ts);
-
-    template <typename... Ts>
-    void put(Ts&&... ts);
-
-    template <typename... Ts>
-    void trace(Ts&&... ts);
-
-    ResponseList perform();
+    response_list_t perform();
 
     template <typename Duration>
-    typename std::enable_if<std::is_integral<Duration>::value, Response>::type
+    typename std::enable_if<std::is_integral<Duration>::value, response_t>::type
     next(const Duration seconds = 1);
 
     template <typename Duration>
-    typename std::enable_if<IsDerived<std::chrono::duration, Duration>::value, Response>::type
+    typename std::enable_if<is_derived<std::chrono::duration, Duration>::value, response_t>::type
     next(const Duration &duration = std::chrono::seconds(1));
 
     explicit operator bool() const;
+
+protected:
+    std::deque<std::future<response_t>> futures;
 };
 
 
@@ -83,131 +70,140 @@ public:
 // --------------
 
 
-/** \brief Initialize thread with GET request.
+/**
+ *  \brief Initialize thread with GET request.
  */
 template <typename... Ts>
-void Pool::get(Ts&&... ts)
+void pool_t::get(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(GET);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(GET);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with HEAD request.
+/**
+ *  \brief Initialize thread with HEAD request.
  */
 template <typename... Ts>
-void Pool::head(Ts&&... ts)
+void pool_t::head(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(HEAD);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(HEAD);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with OPTIONS request.
+/**
+ *  \brief Initialize thread with OPTIONS request.
  */
 template <typename... Ts>
-void Pool::options(Ts&&... ts)
+void pool_t::options(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(OPTIONS);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(OPTIONS);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with PATCH request.
+/**
+ *  \brief Initialize thread with PATCH request.
  */
 template <typename... Ts>
-void Pool::patch(Ts&&... ts)
+void pool_t::patch(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(PATCH);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(PATCH);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with POST request.
+/**
+ *  \brief Initialize thread with POST request.
  */
 template <typename... Ts>
-void Pool::post(Ts&&... ts)
+void pool_t::post(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(POST);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(POST);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with PUT request.
+/**
+ *  \brief Initialize thread with PUT request.
  */
 template <typename... Ts>
-void Pool::put(Ts&&... ts)
+void pool_t::put(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(PUT);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(PUT);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Initialize thread with TRACE request.
+/**
+ *  \brief Initialize thread with TRACE request.
  */
 template <typename... Ts>
-void Pool::trace(Ts&&... ts)
+void pool_t::trace(Ts&&... ts)
 {
-    Request request;
-    setOption(request, LATTICE_FWD(ts)...);
+    request_t request;
+    set_option(request, std::forward<Ts>(ts)...);
 
-    futures.emplace_back(std::async(std::launch::async, [](Request &&request) {
-        request.setMethod(TRACE);
+    futures.emplace_back(std::async(std::launch::async, [](request_t &&request) {
+        request.set_method(TRACE);
         return request.exec();
     }, std::move(request)));
 }
 
 
-/** \brief Block until next query is ready (using a seconds overload).
+/**
+ *  \brief Block until next query is ready (using a seconds overload).
  */
 template <typename Duration>
-typename std::enable_if<std::is_integral<Duration>::value, Response>::type
-Pool::next(const Duration seconds)
+typename std::enable_if<std::is_integral<Duration>::value, response_t>::type
+pool_t::next(const Duration seconds)
 {
     return next(std::chrono::seconds(seconds));
 }
 
 
-/** \brief Block until next query is ready.
+/**
+ *  \brief Block until next query is ready.
  */
 template <typename Duration>
-typename std::enable_if<IsDerived<std::chrono::duration, Duration>::value, Response>::type
-Pool::next(const Duration &duration)
+typename std::enable_if<is_derived<std::chrono::duration, Duration>::value, response_t>::type
+pool_t::next(const Duration &duration)
 {
     // set our starting timepoint
-    typedef std::chrono::high_resolution_clock Clock;
+    typedef std::chrono::high_resolution_clock highres_clock;
 
-    auto now = Clock::now();
+    auto now = highres_clock::now();
     auto stop = now + duration;
 
     auto it = futures.begin();
@@ -220,15 +216,14 @@ Pool::next(const Duration &duration)
         }
 
         // increment our conditions
-        now = Clock::now();
+        now = highres_clock::now();
         ++it;
         if (it == futures.end()) {
             it = futures.begin();
         }
     }
 
-    return Response();
+    return response_t();
 }
-
 
 }   /* lattice */

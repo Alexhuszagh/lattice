@@ -18,9 +18,10 @@ namespace lattice
 // -------
 
 
-/** \brief HTTP request methods.
+/**
+ *  \brief HTTP request methods.
  */
-enum Method: unsigned int
+enum method_t: unsigned int
 {
     STOP    = 0,
     GET     = 1,
@@ -33,6 +34,5 @@ enum Method: unsigned int
     TRACE   = 8,
     CONNECT = 9,
 };
-
 
 }   /* lattice */

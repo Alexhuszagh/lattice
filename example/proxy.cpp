@@ -16,7 +16,7 @@
  *  [2] https://github.com/nodejitsu/node-http-proxy
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     lattice::Proxy proxy = {"http://127.0.0.1:8008/"};
     lattice::Url url = {"http://httpbin.org/get"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
 
     auto response = lattice::Get(url, proxy, timeout);
     if (response.ok()) {

@@ -5,16 +5,16 @@
  *  \brief Simple GET request with basic auth.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Authentication auth = {"user", "passwd"};
+    lattice::authentication_t auth = {"user", "passwd"};
     lattice::Url url = {"http://httpbin.org/basic-auth/user/passwd"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
 
     // set cookies
     auto response = lattice::Get(url, auth, timeout);

@@ -19,25 +19,22 @@ namespace lattice
 
 /** \brief Authorization string for requests.
  */
-struct Authentication
+struct authentication_t
 {
     std::string username;
     std::string password;
 
-    Authentication() = default;
-    Authentication(const Authentication&) = default;
-    Authentication & operator=(const Authentication&) = default;
-    Authentication(Authentication&&) = default;
-    Authentication & operator=(Authentication&&) = default;
+    authentication_t() = default;
+    authentication_t(const authentication_t&) = default;
+    authentication_t & operator=(const authentication_t&) = default;
+    authentication_t(authentication_t&&) = default;
+    authentication_t & operator=(authentication_t&&) = default;
 
-    Authentication(std::string &&username,
-        std::string &&password);
-    Authentication(const std::string &username,
-        const std::string &password);
+    authentication_t(std::string &&username, std::string &&password);
+    authentication_t(const std::string &username, const std::string &password);
 
     const std::string string() const noexcept;
     explicit operator bool() const;
 };
-
 
 }   /* lattice */

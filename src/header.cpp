@@ -7,6 +7,7 @@
  */
 
 #include <lattice/header.hpp>
+#include <pycpp/casemap.h>
 
 #include <algorithm>
 #include <cctype>
@@ -19,19 +20,14 @@ namespace lattice
 // -------
 
 
-/** \brief Case-insensitive comparison for ASCII.
- */
-bool CaseInsensitiveCompare::operator()(const std::string &left,
-    const std::string &right) const noexcept
+bool lowercase_less::operator()(const std::string &lhs, const std::string &rhs) const noexcept
 {
-    return std::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end(), [](unsigned char l, unsigned char r) {
-            return std::tolower(l) < std::tolower(r);
+    return std::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end(), [](unsigned char l, unsigned char r) {
+            return ascii_tolower(l) < ascii_tolower(r);
     });
 }
 
 
-/** \brief Print headers to string.
- */
 std::string Header::string() const
 {
     std::stringstream stream;
@@ -47,57 +43,43 @@ std::string Header::string() const
 }
 
 
-/** \brief Check if the header specifies what types it accepts.
- */
 bool Header::accept() const
 {
     return find("accept") != end();
 }
 
 
-/** \brief Check if the header contains cookies.
- */
 bool Header::cookie() const
 {
     return find("cookie") != end();
 }
 
 
-/** \brief Check if the header specifies a host.
- */
 bool Header::host() const
 {
     return find("host") != end();
 }
 
 
-/** \brief Check if the header has an authorization protocol.
- */
 bool Header::authorization() const
 {
     return find("authorization") != end();
 }
 
 
-/** \brief Check if the header has an "www-authenticate" data.
- */
 bool Header::wwwauthenticate() const
 {
     return find("www-authenticate") != end();
 }
 
 
-/** \brief Check if the header specifies a User-Agent.
- */
-bool Header::userAgent() const
+bool Header::user_agent() const
 {
     return find("user-agent") != end();
 }
 
 
-/** \brief Check if the connection should be closed.
- */
-bool Header::closeConnection() const
+bool Header::close_connection() const
 {
     auto it = find("connection");
     if (it != end()) {
@@ -107,24 +89,18 @@ bool Header::closeConnection() const
 }
 
 
-/** \brief Check if the header specifies a connection.
- */
 bool Header::connection() const
 {
     return find("connection") != end();
 }
 
 
-/** \brief Check if the header specifies a Content-Type.
- */
-bool Header::contentType() const
+bool Header::content_type() const
 {
     return find("content-Type") != end();
 }
 
 
-/** \brief Print headers to stream.
- */
 std::ostream & operator<<(std::ostream &os,
     const Header &header)
 {
@@ -134,13 +110,9 @@ std::ostream & operator<<(std::ostream &os,
 }
 
 
-/** \brief Check if any header data exists.
- */
 Header::operator bool() const
 {
     return !empty();
 }
-
-
 
 }   /* lattice */

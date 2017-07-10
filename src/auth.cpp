@@ -7,7 +7,6 @@
  */
 
 #include <lattice/auth.hpp>
-#include <lattice/util/define.hpp>
 
 
 namespace lattice
@@ -16,38 +15,27 @@ namespace lattice
 // -------
 
 
-/** \brief Initializer list nove constructor.
- */
-Authentication::Authentication(std::string &&username,
-        std::string &&password):
-    username(LATTICE_FWD(username)),
-    password(LATTICE_FWD(password))
+authentication_t::authentication_t(std::string &&username, std::string &&password):
+    username(std::forward<std::string>(username)),
+    password(std::forward<std::string>(password))
 {}
 
 
-/** \brief Initializer list copy constructor.
- */
-Authentication::Authentication(const std::string &username,
-        const std::string &password):
+authentication_t::authentication_t(const std::string &username, const std::string &password):
     username(username),
     password(password)
 {}
 
 
-/** \brief Get authorization string.
- */
-const std::string Authentication::string() const noexcept
+const std::string authentication_t::string() const noexcept
 {
     return username + ":" + password;
 }
 
 
-/** \brief Check if basic auth set.
- */
-Authentication::operator bool() const
+authentication_t::operator bool() const
 {
     return !(username.empty() || password.empty());
 }
-
 
 }   /* lattice */

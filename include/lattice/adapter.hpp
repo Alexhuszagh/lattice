@@ -28,17 +28,16 @@ namespace lattice
 
 // HTTP ADAPTERS
 #ifdef _WIN32
-    typedef Win32SocketAdapter HttpAdapter;
+    typedef win32_socket_adaptor_t http_adaptor_t;
 #else
-    typedef PosixSocketAdapter HttpAdapter;
+    typedef posix_socket_adaptor_t http_adaptor_t;
 #endif
 
 // HTTPS ADAPTERS
 #if defined(HAVE_SSL) && defined(LATTICE_HAVE_OPENSSL)
-    typedef OpenSslAdapter<HttpAdapter> SslAdapter;
+    typedef open_ssl_adaptor_t<http_adaptor_t> ssl_adaptor_t;
 #else
-    typedef NoSslAdapter<HttpAdapter> SslAdapter;
+    typedef no_ssl_adaptor_t<http_adaptor_t> ssl_adaptor_t;
 #endif
-
 
 }   /* lattice */

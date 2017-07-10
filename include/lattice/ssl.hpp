@@ -16,9 +16,10 @@ namespace lattice
 // -------
 
 
-/** SSL encryption protocl.
+/**
+ *  \brief SSL encryption protocl.
  */
-enum SslProtocol
+enum ssl_protocol_t
 {
     TLS     = 0,
     SSL_V23 = 1,
@@ -29,7 +30,8 @@ enum SslProtocol
 };
 
 
-/** \brief Various file formats for the certificate chain.
+/**
+ *  \brief Various file formats for the certificate chain.
  */
 enum CertificateFormat
 {
@@ -41,15 +43,13 @@ enum CertificateFormat
 };
 
 
-/** \brief Holds path to certificate bundle.
+/**
+ *  \brief Holds path to certificate bundle.
  */
-class CertificateFile: public std::string
+struct CertificateFile: std::string
 {
-protected:
-    typedef std::string Base;
-
-public:
-    using Base::Base;
+    typedef std::string base;
+    using base::base;
 
     std::string suffix() const;
     CertificateFormat format() const;
@@ -58,33 +58,32 @@ public:
 };
 
 
-/** \brief Holds path to certificate revocation lists.
+/**
+ *  \brief Holds path to certificate revocation lists.
  */
-class RevocationLists: public std::string
+struct RevocationLists: std::string
 {
-protected:
-    typedef std::string Base;
-
-public:
-    using Base::Base;
+    typedef std::string base;
+    using base::base;
 
     explicit operator bool() const;
 };
 
 
-/** \brief Verify peer for SSL/TLS connections.
+/**
+ *  \brief Verify peer for SSL/TLS connections.
  */
-struct VerifyPeer
+struct verify_peer_t
 {
     bool verify = true;
 
-    VerifyPeer() = default;
-    VerifyPeer(const VerifyPeer &other) = default;
-    VerifyPeer & operator=(const VerifyPeer&) = default;
-    VerifyPeer(VerifyPeer&&) = default;
-    VerifyPeer & operator=(VerifyPeer&&) = default;
+    verify_peer_t() = default;
+    verify_peer_t(const verify_peer_t&) = default;
+    verify_peer_t & operator=(const verify_peer_t&) = default;
+    verify_peer_t(verify_peer_t&&) = default;
+    verify_peer_t & operator=(verify_peer_t&&) = default;
 
-    VerifyPeer(const bool verify);
+    verify_peer_t(const bool verify);
 
     explicit operator bool() const;
 };

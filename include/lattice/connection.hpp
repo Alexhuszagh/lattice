@@ -28,42 +28,41 @@ namespace lattice
 // CONSTANTS
 // ---------
 
-static const size_t BUFFER_SIZE = 8092;
-
+static constexpr size_t BUFFER_SIZE = 8092;
 
 // FUNCTION
 // --------
 
 
-/** \brief Open connection without a cache.
+/**
+ *  \brief Open connection without a cache.
  */
 template <typename Adapter>
-void openConnection(Adapter &adapter,
-    const std::string &host,
-    const std::string &service)
+void open_connection(Adapter& adapter, const std::string& host, const std::string& service)
 {
     // perform DNS lookup
-    for (auto &&info: DnsLookup(host, service)) {
+    for (auto &&info: dns_lookup_t(host, service)) {
         if (adapter.open(info, host)) {
             return;
         }
     }
 
     // no suitable addresses found
-    throw ConnectionError();
+    throw std::runtime_error("Unable to establish a connection.");
 }
 
 
-/** \brief Open connection with DNS cache.
+/**
+ *  \brief Open connection with DNS cache.
  */
 template <typename Adapter>
-void openConnection(Adapter &adapter,
-    const std::string &host,
-    const std::string &service,
-    Cache &cache)
+void open_connection(Adapter& adapter,
+    const std::string& host,
+    const std::string& service,
+    address_cache_t& cache)
 {
     // try cached results
-    Cache::iterator it;
+    typename address_cache_t::iterator it;
     if ((it = cache.find(host)) != cache.end()) {
         if (adapter.open(addrinfo(it->second), host)) {
             return;
@@ -71,14 +70,14 @@ void openConnection(Adapter &adapter,
     }
 
     // perform DNS lookup
-    for (auto &&info: DnsLookup(host, service)) {
+    for (auto &&info: dns_lookup_t(host, service)) {
         if (adapter.open(info, host)) {
             cache.emplace(host, info);
             return;
         }
     }
 
-    throw ConnectionError();
+    throw std::runtime_error("Unable to establish a connection.");
 }
 
 
@@ -86,33 +85,33 @@ void openConnection(Adapter &adapter,
 // -------
 
 
-/** \brief Socket connection.
+/**
+ *  \brief Socket connection.
  *
  *  Establish and maintain connection over socket.
  */
 template <typename Adapter>
-class Connection
+class connection_t
 {
 protected:
     Adapter adapter;
-    DnsCache cache = nullptr;
+    dns_cache_t cache = nullptr;
 
-    long readn(char *dst,
-        long bytes);
+    long readn(char *dst, long bytes);
 
 public:
-    Connection();
-    Connection(const Connection &other) = delete;
-    Connection & operator=(const Connection&) = delete;
-    Connection(Connection&&) = default;
-    Connection & operator=(Connection&&) = default;
-    ~Connection();
+    connection_t();
+    connection_t(const connection_t&) = delete;
+    connection_t & operator=(const connection_t&) = delete;
+    connection_t(connection_t&&) = default;
+    connection_t & operator=(connection_t&&) = default;
+    ~connection_t();
 
     // REQUESTS
-    void open(const Url &url);
+    void open(const Url& url);
     void close();
-    void write(const std::string &data);
-    void setCache(const DnsCache &cache);
+    void write(const std::string& data);
+    void set_cache(const dns_cache_t& cache);
 
     // RESPONSE
     std::string headers();
@@ -122,44 +121,44 @@ public:
 
     // OPTIONAL
     template <typename T = Adapter>
-    typename std::enable_if<(HasSetTimeout<T>::value), void>::type
-    setTimeout(const Timeout &timeout);
+    typename std::enable_if<(has_set_timeout<T>::value), void>::type
+    set_timeout(const timeout_t& timeout);
 
     template <typename T = Adapter>
-    typename std::enable_if<(!HasSetTimeout<T>::value), void>::type
-    setTimeout(const Timeout &timeout);
+    typename std::enable_if<(!has_set_timeout<T>::value), void>::type
+    set_timeout(const timeout_t& timeout);
 
     template <typename T = Adapter>
-    typename std::enable_if<(HasSetCertificateFile<T>::value), void>::type
-    setCertificateFile(const CertificateFile &certificate);
+    typename std::enable_if<(has_set_certificate_file<T>::value), void>::type
+    set_certificate_file(const CertificateFile& certificate);
 
     template <typename T = Adapter>
-    typename std::enable_if<(!HasSetCertificateFile<T>::value), void>::type
-    setCertificateFile(const CertificateFile &certificate);
+    typename std::enable_if<(!has_set_certificate_file<T>::value), void>::type
+    set_certificate_file(const CertificateFile& certificate);
 
     template <typename T = Adapter>
-    typename std::enable_if<(HasSetRevocationLists<T>::value), void>::type
-    setRevocationLists(const RevocationLists &revoke);
+    typename std::enable_if<(has_set_revocation_lists<T>::value), void>::type
+    set_revocation_lists(const RevocationLists& revoke);
 
     template <typename T = Adapter>
-    typename std::enable_if<(!HasSetRevocationLists<T>::value), void>::type
-    setRevocationLists(const RevocationLists &revoke);
+    typename std::enable_if<(!has_set_revocation_lists<T>::value), void>::type
+    set_revocation_lists(const RevocationLists& revoke);
 
     template <typename T = Adapter>
-    typename std::enable_if<(HasSetSslProtocol<T>::value), void>::type
-    setSslProtocol(const SslProtocol ssl);
+    typename std::enable_if<(has_set_ssl_protocol<T>::value), void>::type
+    set_ssl_protocol(ssl_protocol_t ssl);
 
     template <typename T = Adapter>
-    typename std::enable_if<(!HasSetSslProtocol<T>::value), void>::type
-    setSslProtocol(const SslProtocol ssl);
+    typename std::enable_if<(!has_set_ssl_protocol<T>::value), void>::type
+    set_ssl_protocol(ssl_protocol_t ssl);
 
     template <typename T = Adapter>
-    typename std::enable_if<(HasSetVerifyPeer<T>::value), void>::type
-    setVerifyPeer(const VerifyPeer &peer);
+    typename std::enable_if<(has_set_verify_peer<T>::value), void>::type
+    set_verify_peer(const verify_peer_t& peer);
 
     template <typename T = Adapter>
-    typename std::enable_if<(!HasSetVerifyPeer<T>::value), void>::type
-    setVerifyPeer(const VerifyPeer &peer);
+    typename std::enable_if<(!has_set_verify_peer<T>::value), void>::type
+    set_verify_peer(const verify_peer_t& peer);
 };
 
 
@@ -167,15 +166,13 @@ public:
 // --------------
 
 
-/** \brief Read N-bytes from the socket.
- *
+/**
  *  Sockets guarantee at least 1 byte will be read, while valid, but do
  *  not guarantee N-bytes will be successfully read. Read until all
  *  data have been extracted.
  */
 template <typename Adapter>
-long Connection<Adapter>::readn(char *dst,
-    long bytes)
+long connection_t<Adapter>::readn(char *dst, long bytes)
 {
     long count = 0;
     while (bytes) {
@@ -192,171 +189,161 @@ long Connection<Adapter>::readn(char *dst,
 }
 
 
-/** \brief Null constructor.
- */
 template <typename Adapter>
-Connection<Adapter>::Connection()
+connection_t<Adapter>::connection_t()
 {}
 
 
-/** \brief Destructor.
- */
 template <typename Adapter>
-Connection<Adapter>::~Connection()
+connection_t<Adapter>::~connection_t()
 {
     close();
 }
 
 
-/** \brief Open connection.
- */
 template <typename Adapter>
-void Connection<Adapter>::open(const Url &url)
+void connection_t<Adapter>::open(const Url& url)
 {
     if (cache) {
-        openConnection(adapter, url.host(), url.service(), *cache);
+        open_connection(adapter, url.host(), url.service(), *cache);
     } else {
-        openConnection(adapter, url.host(), url.service());
+        open_connection(adapter, url.host(), url.service());
     }
 }
 
 
-/** \brief Close connection.
- */
 template <typename Adapter>
-void Connection<Adapter>::close()
+void connection_t<Adapter>::close()
 {
     adapter.close();
 }
 
 
-/** \brief Set timeout for socket requests.
- */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(HasSetTimeout<T>::value), void>::type
-Connection<Adapter>::setTimeout(const Timeout &timeout)
+typename std::enable_if<(has_set_timeout<T>::value), void>::type
+connection_t<Adapter>::set_timeout(const timeout_t& timeout)
 {
-    adapter.setTimeout(timeout);
+    adapter.set_timeout(timeout);
 }
 
 
-/** \brief Set timeout for socket requests (noop).
- */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(!HasSetTimeout<T>::value), void>::type
-Connection<Adapter>::setTimeout(const Timeout &timeout)
+typename std::enable_if<(!has_set_timeout<T>::value), void>::type
+connection_t<Adapter>::set_timeout(const timeout_t& timeout)
 {}
 
 
-/** \brief Set certificate file for SSL/TLS.
- */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(HasSetCertificateFile<T>::value), void>::type
-Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
+typename std::enable_if<(has_set_certificate_file<T>::value), void>::type
+connection_t<Adapter>::set_certificate_file(const CertificateFile& certificate)
 {
-    adapter.setCertificateFile(certificate);
+    adapter.set_certificate_file(certificate);
 }
 
 
-/** \brief Set certificate file for SSL/TLS (noop).
- */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(!HasSetCertificateFile<T>::value), void>::type
-Connection<Adapter>::setCertificateFile(const CertificateFile &certificate)
+typename std::enable_if<(!has_set_certificate_file<T>::value), void>::type
+connection_t<Adapter>::set_certificate_file(const CertificateFile& certificate)
 {}
 
 
-/** \brief Set file to manually revoke certificates.
- */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(HasSetRevocationLists<T>::value), void>::type
-Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
+typename std::enable_if<(has_set_revocation_lists<T>::value), void>::type
+connection_t<Adapter>::set_revocation_lists(const RevocationLists& revoke)
 {
-    adapter.setRevocationLists(revoke);
+    adapter.set_revocation_lists(revoke);
 }
 
 
-/** \brief Set file to manually revoke certificates (noop).
+/**
+ *  \brief Set file to manually revoke certificates (noop).
  */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(!HasSetRevocationLists<T>::value), void>::type
-Connection<Adapter>::setRevocationLists(const RevocationLists &revoke)
+typename std::enable_if<(!has_set_revocation_lists<T>::value), void>::type
+connection_t<Adapter>::set_revocation_lists(const RevocationLists& revoke)
 {}
 
 
-/** \brief Set SSL protocol.
+/**
+ *  \brief Set SSL protocol.
  */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(HasSetSslProtocol<T>::value), void>::type
-Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
+typename std::enable_if<(has_set_ssl_protocol<T>::value), void>::type
+connection_t<Adapter>::set_ssl_protocol(ssl_protocol_t ssl)
 {
-    adapter.setSslProtocol(ssl);
+    adapter.set_ssl_protocol(ssl);
 }
 
 
-/** \brief Set SSL protocol (noop).
+/**
+ *  \brief Set SSL protocol (noop).
  */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(!HasSetSslProtocol<T>::value), void>::type
-Connection<Adapter>::setSslProtocol(const SslProtocol ssl)
+typename std::enable_if<(!has_set_ssl_protocol<T>::value), void>::type
+connection_t<Adapter>::set_ssl_protocol(ssl_protocol_t ssl)
 {}
 
 
-/** \brief Change peer certificate validation.
+/**
+ *  \brief Change peer certificate validation.
  */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(HasSetVerifyPeer<T>::value), void>::type
-Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
+typename std::enable_if<(has_set_verify_peer<T>::value), void>::type
+connection_t<Adapter>::set_verify_peer(const verify_peer_t& peer)
 {
-    adapter.setVerifyPeer(peer);
+    adapter.set_verify_peer(peer);
 }
 
 
-/** \brief Change peer certificate validation (noop).
+/**
+ *  \brief Change peer certificate validation (noop).
  */
 template <typename Adapter>
 template <typename T>
-typename std::enable_if<(!HasSetVerifyPeer<T>::value), void>::type
-Connection<Adapter>::setVerifyPeer(const VerifyPeer &peer)
+typename std::enable_if<(!has_set_verify_peer<T>::value), void>::type
+connection_t<Adapter>::set_verify_peer(const verify_peer_t& peer)
 {}
 
 
-/** \brief Set DNS cache.
+/**
+ *  \brief Set DNS cache.
  */
 template <typename Adapter>
-void Connection<Adapter>::setCache(const DnsCache &cache)
+void connection_t<Adapter>::set_cache(const dns_cache_t& cache)
 {
     this->cache = cache;
 }
 
 
-/** \brief Send data through socket.
+/**
+ *  \brief Send data through socket.
  */
 template <typename Adapter>
-void Connection<Adapter>::write(const std::string &data)
+void connection_t<Adapter>::write(const std::string& data)
 {
     int sent = adapter.write(data.data(), data.size());
     if (sent != static_cast<int>(data.size())) {
-        throw RequestError(sent, data.size());
+        throw std::runtime_error("Unable to make request, sent " + std::to_string(sent) + " bytes.");
     }
 }
 
 
-/** \brief Read headers data from server.
+/**
+ *  \brief Read headers data from server.
  *
  *  Slowly read from buffer until a double carriage return is found.
  */
 template <typename Adapter>
-std::string Connection<Adapter>::headers()
+std::string connection_t<Adapter>::headers()
 {
     std::string string;
     int result;
@@ -373,13 +360,14 @@ std::string Connection<Adapter>::headers()
 }
 
 
-/** \brief Read chunked transfer encoding.
+/**
+ *  \brief Read chunked transfer encoding.
  *
  *  Each message is prefixed with a single line denoting how
  *  long the message is, in hex.
  */
 template <typename Adapter>
-std::string Connection<Adapter>::chunked()
+std::string connection_t<Adapter>::chunked()
 {
     // initialize alloc
     std::string hex;
@@ -419,27 +407,29 @@ std::string Connection<Adapter>::chunked()
 }
 
 
-/** \brief Read non-chunked content of fixed length.
+/**
+ *  \brief Read non-chunked content of fixed length.
  */
 template <typename Adapter>
-std::string Connection<Adapter>::body(const long length)
+std::string connection_t<Adapter>::body(const long length)
 {
     std::string string;
     if (length > 0) {
         string.resize(length);
         adapter.read(const_cast<char*>(&string[0]), length);
     } else if (length) {
-        throw NegativeReadError();
+        throw std::runtime_error("Asked to read negative bytes.");
     }
 
     return string;
 }
 
 
-/** \brief Read non-chunked content of unknown length.
+/**
+ *  \brief Read non-chunked content of unknown length.
  */
 template <typename Adapter>
-std::string Connection<Adapter>::read()
+std::string connection_t<Adapter>::read()
 {
     // read from connection
     int result, offset = 0;
@@ -462,9 +452,8 @@ std::string Connection<Adapter>::read()
 // TYPES
 // -----
 
-typedef Connection<HttpAdapter> HttpConnection;
-typedef Connection<SslAdapter> HttpsConnection;
-
+typedef connection_t<http_adaptor_t> http_connection_t;
+typedef connection_t<ssl_adaptor_t> https_connection_t;
 
 }   /* lattice */
 

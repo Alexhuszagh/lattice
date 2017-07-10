@@ -24,28 +24,21 @@ namespace lattice
 // -------
 
 
-/** \brief Null constructor.
- */
-PosixSocketAdapter::PosixSocketAdapter()
+posix_socket_adaptor_t::posix_socket_adaptor_t()
 {}
 
 
-/** \brief Destructor.
- */
-PosixSocketAdapter::~PosixSocketAdapter()
+posix_socket_adaptor_t::~posix_socket_adaptor_t()
 {}
 
 
-/** \brief Open socket.
- */
-bool PosixSocketAdapter::open(const addrinfo &info,
-    const std::string & /*host*/)
+bool posix_socket_adaptor_t::open(const addrinfo& info, const std::string&)
 {
     sock = ::socket(info.ai_family, info.ai_socktype, info.ai_protocol);
     if (sock < 0) {
         return false;
     }
-    setReuseAddress();
+    set_reuse_address();
     if (::connect(sock, info.ai_addr, info.ai_addrlen) >= 0) {
         return true;
     }
@@ -55,9 +48,7 @@ bool PosixSocketAdapter::open(const addrinfo &info,
 }
 
 
-/** \brief Close socket.
- */
-void PosixSocketAdapter::close()
+void posix_socket_adaptor_t::close()
 {
     if (sock >= 0) {
         ::close(sock);
@@ -66,50 +57,41 @@ void PosixSocketAdapter::close()
 }
 
 
-/** \brief Write data to socket.
- */
-size_t PosixSocketAdapter::write(const char *buf,
-    size_t len)
+size_t posix_socket_adaptor_t::write(const char *buf, size_t len)
 {
     return ::send(sock, buf, len, 0);
 }
 
 
-/** \brief Read data from socket.
- */
-size_t PosixSocketAdapter::read(char *buf,
-    size_t count)
+size_t posix_socket_adaptor_t::read(char *buf, size_t count)
 {
     return ::recv(sock, buf, count, 0);
 }
 
 
-/** \brief Allow socket address reuse.
- */
-void PosixSocketAdapter::setReuseAddress()
+void posix_socket_adaptor_t::set_reuse_address()
 {
     int reuse = 1;
     char *option = reinterpret_cast<char*>(&reuse);
     int size = sizeof(reuse);
     if (::setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
 
     #ifdef SO_REUSEPORT
         // use reuseport if available
         if (::setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, option, size)) {
-            throw SocketOptionError();
+            throw std::runtime_error("Unable to set socket option via setsockopt().");
         }
     #endif
 }
 
 
-/** \brief Set the max time for socket requests.
- *
+/**
  *  \warning Microseconds are not set since it causes stoichastic
  *  errors.
  */
-void PosixSocketAdapter::setTimeout(const Timeout &timeout)
+void posix_socket_adaptor_t::set_timeout(const timeout_t& timeout)
 {
     // create timeout, do not set microseconds as it causes errors
     struct timeval value;
@@ -120,45 +102,36 @@ void PosixSocketAdapter::setTimeout(const Timeout &timeout)
     char *option = reinterpret_cast<char*>(&value);
     socklen_t size = sizeof(timeval);
     if (::setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
     if (::setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, option, size)) {
-        throw SocketOptionError();
+        throw std::runtime_error("Unable to set socket option via setsockopt().");
     }
 }
 
 
-/** \brief Associate a certificate file with the socket.
- */
-void PosixSocketAdapter::setCertificateFile(const CertificateFile &certificate)
+void posix_socket_adaptor_t::set_certificate_file(const CertificateFile& certificate)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
-/** \brief Set file to manually revoke certificates.
- */
-void PosixSocketAdapter::setRevocationLists(const RevocationLists &revoke)
+void posix_socket_adaptor_t::set_revocation_lists(const RevocationLists& revoke)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
-/** \brief Set SSL protocol.
- */
-void PosixSocketAdapter::setSslProtocol(const SslProtocol ssl)
+void posix_socket_adaptor_t::set_ssl_protocol(ssl_protocol_t ssl)
 {
-    encryptionWarning();
+    encryption_warning();
 }
 
 
-/** \brief Get socket descriptor.
- */
-const int PosixSocketAdapter::fd() const
+const int posix_socket_adaptor_t::fd() const
 {
     return sock;
 }
-
 
 }   /* lattice */
 

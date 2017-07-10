@@ -7,7 +7,8 @@
 
 #include <lattice/dns.hpp>
 #include <lattice/ssl.hpp>
-#include <lattice/util/exception.hpp>
+
+#include <cassert>
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -21,27 +22,24 @@ namespace lattice
 // -------
 
 
-/** \brief No-opt SSL socket adapter.
+/**
+ *  \brief No-opt SSL socket adapter.
  */
 template <typename HttpAdapter>
-class NoSslAdapter
+struct no_ssl_adaptor_t
 {
-protected:
-    typedef NoSslAdapter<HttpAdapter> This;
+    typedef no_ssl_adaptor_t<HttpAdapter> self;
 
-public:
-    NoSslAdapter();
-    NoSslAdapter(const This &other) = delete;
-    ~NoSslAdapter();
+    no_ssl_adaptor_t();
+    no_ssl_adaptor_t(const self&) = delete;
+    self & operator=(const self&) = delete;
+    ~no_ssl_adaptor_t();
 
     // REQUESTS
-    bool open(const addrinfo &info,
-        const std::string &host);
+    bool open(const addrinfo& info, const std::string& host);
     void close();
-    size_t write(const char *buf,
-        size_t len);
-    size_t read(char *buf,
-        size_t count);
+    size_t write(const char *buf, size_t len);
+    size_t read(char *buf, size_t count);
 };
 
 
@@ -49,58 +47,45 @@ public:
 // --------------
 
 
-/** \brief Null constructor.
- */
 template <typename HttpAdapter>
-NoSslAdapter<HttpAdapter>::NoSslAdapter()
+no_ssl_adaptor_t<HttpAdapter>::no_ssl_adaptor_t()
 {}
 
 
-/** \brief Destructor.
- */
 template <typename HttpAdapter>
-NoSslAdapter<HttpAdapter>::~NoSslAdapter()
+no_ssl_adaptor_t<HttpAdapter>::~no_ssl_adaptor_t()
 {}
 
 
-/** \brief Open socket.
- */
 template <typename HttpAdapter>
-bool NoSslAdapter<HttpAdapter>::open(const addrinfo &info,
+bool no_ssl_adaptor_t<HttpAdapter>::open(const addrinfo &info,
     const std::string &host)
 {
-    throw MissingSslError();
+    assert(false);
     return false;
 }
 
 
-/** \brief Close socket.
- */
 template <typename HttpAdapter>
-void NoSslAdapter<HttpAdapter>::close()
+void no_ssl_adaptor_t<HttpAdapter>::close()
 {
-    throw MissingSslError();
+    assert(false);
 }
 
 
-/** \brief Write data to socket.
- */
 template <typename HttpAdapter>
-size_t NoSslAdapter<HttpAdapter>::write(const char *buf,
+size_t no_ssl_adaptor_t<HttpAdapter>::write(const char *buf,
     size_t len)
 {
-    throw MissingSslError();
+    assert(false);
     return 0;
 }
 
 
-/** \brief Read data from socket.
- */
 template <typename HttpAdapter>
-size_t NoSslAdapter<HttpAdapter>::read(char *buf,
-    size_t count)
+size_t no_ssl_adaptor_t<HttpAdapter>::read(char *buf, size_t count)
 {
-    throw MissingSslError();
+    assert(false);
     return 0;
 }
 

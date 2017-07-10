@@ -5,19 +5,19 @@
  *  \brief Connect to server with a certificate signed by a root CA.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
+    lattice::parameters_t parameters = {
         {"param1", "value1"},
         {"param2", "value2"},
     };
     lattice::Url url = {"https://httpbin.org/get"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     lattice::CertificateFile certificate("client.crt");
     auto response = lattice::Get(url, timeout, certificate);
 

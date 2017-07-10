@@ -5,19 +5,19 @@
  *  \brief Simple HTTP POST request.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
+    lattice::parameters_t parameters = {
         {"param1", "value1"},
         {"param2", "value2"},
     };
     lattice::Url url = {"http://httpbin.org/post"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Post(url, parameters, timeout);
 
     if (response.ok()) {

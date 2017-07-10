@@ -5,20 +5,20 @@
  *  \brief Simple HTTP GET request with an IP address.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
 
 int main(int argc, char *argv[])
 {
-    lattice::Parameters parameters = {
+    lattice::parameters_t parameters = {
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    auto cache = lattice::CreateDnsCache();
+    auto cache = lattice::create_dns_cache();
     lattice::Url url = {"23.22.14.18/get"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Get(url, parameters, timeout, cache);
 
     if (response.ok()) {

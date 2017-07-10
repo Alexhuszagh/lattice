@@ -14,11 +14,9 @@ namespace lattice
 // -------
 
 
-/** \brief Block and return all queries.
- */
-ResponseList Pool::perform()
+response_list_t pool_t::perform()
 {
-    ResponseList list;
+    response_list_t list;
     for (auto &&future: futures) {
         if (future.valid()) {
             list.emplace_back(future.get());
@@ -29,9 +27,7 @@ ResponseList Pool::perform()
 }
 
 
-/** \brief Check if more items can be returns.
- */
-Pool::operator bool() const
+pool_t::operator bool() const
 {
     return !futures.empty();
 }

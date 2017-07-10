@@ -11,9 +11,9 @@
  *  Lattice expects all arguments passed to it are UTF-8 encoded.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
-#include <unicode.h>
+#include <pycpp/unicode.h>
 #include <cassert>
 #include <iostream>
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     #endif
 
 
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
     auto response = lattice::Get(url, timeout);
 
     if (response.ok()) {

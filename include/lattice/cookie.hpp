@@ -18,15 +18,13 @@ namespace lattice
 // -------
 
 
-/** \brief Cookies to store user data for persistent sessions.
+/**
+ *  \brief Cookies to store user data for persistent sessions.
  */
-class Cookies: public std::map<std::string, std::string>
+struct cookies_t: std::map<std::string, std::string>
 {
-protected:
-    typedef std::map<std::string, std::string> Base;
-
-public:
-    using Base::Base;
+    typedef std::map<std::string, std::string> base;
+    using base::base;
 
     std::string encode() const;
     explicit operator bool() const;

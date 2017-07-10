@@ -5,7 +5,7 @@
  *  \brief Follow relative redirects from GET request.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
@@ -13,8 +13,8 @@
 int main(int argc, char *argv[])
 {
     lattice::Url url = {"http://httpbin.org/redirect/1"};
-    lattice::Timeout timeout(1000);
-    lattice::Redirects redirects(5);
+    lattice::timeout_t timeout(1000);
+    lattice::redirects_t redirects(5);
     auto response = lattice::Get(url, timeout, redirects);
 
     if (response.ok()) {

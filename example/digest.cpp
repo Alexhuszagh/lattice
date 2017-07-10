@@ -5,7 +5,7 @@
  *  \brief Simple GET request with digest auth.
  */
 
-#include "lattice.hpp"
+#include <lattice.hpp>
 
 #include <iostream>
 
@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 {
     lattice::Digest digest = {"user", "pass"};
     lattice::Url url = {"http://httpbin.org/digest-auth/auth/user/pass"};
-    lattice::Timeout timeout(1000);
+    lattice::timeout_t timeout(1000);
 
     // set cookies
     auto response = lattice::Get(url, digest, timeout);

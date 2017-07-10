@@ -23,87 +23,93 @@ namespace lattice
 // FORWARD
 // -------
 
-class Parameters;
+class parameters_t;
 struct Url;
 
 // OBJECTS
 // -------
 
 
-/** \brief Case-insensitive hash for ASCII.
+/**
+ *  \brief Case-insensitive hash for ASCII.
  */
-struct CaseInsensitiveHash
+struct lowercase_hash
 {
-    size_t operator()(std::string string) const;
+    size_t operator()(const std::string& string) const;
+};
+
+
+/**
+ *  \brief Case-insensitive key_equal for ASCII.
+ */
+struct lowercase_equal_to
+{
+    bool operator()(const std::string&, const std::string&) const;
 };
 
 
 /** \brief Authorization string for requests.
  */
-struct Digest: public Authentication
+struct Digest: authentication_t
 {
-    using Authentication::Authentication;
+    using authentication_t::authentication_t;
 };
 
 
 /** \brief Quality of protection directive.
  */
-class QualityOfProtection: public std::vector<std::string>
+class quality_of_protection_t: public std::vector<std::string>
 {
 protected:
     typedef std::vector<std::string> Base;
 
 public:
     using Base::Base;
-    QualityOfProtection(const std::string &qop);
+    quality_of_protection_t(const std::string &qop);
 
     bool auth() const;
-    bool authInt() const;
+    bool authint() const;
 
     explicit operator bool() const;
 };
 
 
-/** \brief Authenticate challenge sent from the server.
+/**
+ *  \brief Authenticate challenge sent from the server.
  *
  *  \format
  *      Digest nonce="42148a112dd92b7e5b6ac4769c2a6693", opaque="35fa82343c10f5a83c7d9b8bb29d8518", realm="me@kennethreitz.com", qop=auth
  */
-class DigestChallenge: public std::unordered_map<
+class digest_challenge_t: public std::unordered_map<
         std::string,
         std::string,
-        CaseInsensitiveHash
+        lowercase_hash,
+        lowercase_equal_to
     >
 {
-protected:
-    typedef std::unordered_map<
-        std::string,
-        std::string,
-        CaseInsensitiveHash
-    > Base;
-
-    uint64_t nonceCounter = 0;
-    std::string clientNonce;
-
 public:
-    using Base::Base;
-    DigestChallenge(const std::string &string);
+    typedef std::unordered_map<std::string, std::string, lowercase_hash, lowercase_equal_to> base;
+    using base::base;
+    digest_challenge_t(const std::string& string);
 
     // DATA
     const std::string & realm() const;
     const std::string & nonce() const;
     const std::string & cnonce();
     std::string nc() const;
-    DigestAlgorithm algorithm() const;
-    QualityOfProtection qop() const;
-    std::string header(const Url &url,
-        const Parameters &parameters,
-        const Digest &digest,
-        const std::string &body,
-        const std::string &method);
+    digest_algorithm_t algorithm() const;
+    quality_of_protection_t qop() const;
+    std::string header(const Url& url,
+        const parameters_t& parameters,
+        const Digest& digest,
+        const std::string& body,
+        const std::string& method);
 
     explicit operator bool() const;
-};
 
+protected:
+    uint64_t nonce_counter = 0;
+    std::string client_nonce;
+};
 
 }   /* lattice */

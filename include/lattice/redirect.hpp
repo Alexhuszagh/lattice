@@ -15,24 +15,25 @@ namespace lattice
 // -------
 
 
-/** \brief Tracks redirects from the original URL.
+/**
+ *  \brief Tracks redirects from the original URL.
  */
-struct Redirects
+struct redirects_t
 {
     long count = 0;
 
-    Redirects() = default;
-    Redirects(const Redirects &other) = default;
-    Redirects & operator=(const Redirects&) = default;
-    Redirects(Redirects&&) = default;
-    Redirects & operator=(Redirects&&) = default;
+    redirects_t() = default;
+    redirects_t(const redirects_t &other) = default;
+    redirects_t & operator=(const redirects_t&) = default;
+    redirects_t(redirects_t&&) = default;
+    redirects_t & operator=(redirects_t&&) = default;
 
-    Redirects(const long count);
+    redirects_t(const long count);
 
-    Redirects & operator++();
-    Redirects operator++(int);
-    Redirects & operator--();
-    Redirects operator--(int);
+    redirects_t & operator++();
+    redirects_t operator++(int);
+    redirects_t & operator--();
+    redirects_t operator--(int);
     explicit operator bool() const;
 };
 
