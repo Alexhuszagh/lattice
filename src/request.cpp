@@ -117,7 +117,7 @@ void request_t::set_method(method_t method)
  *  \warning HTTP1.1 **requires** a host for the session, so the URL
  *  must be absolute.
  */
-void request_t::set_url(const Url& url)
+void request_t::set_url(const url_t& url)
 {
     this->url = url;
     if (this->url .relative()) {
@@ -126,7 +126,7 @@ void request_t::set_url(const Url& url)
 }
 
 
-void request_t::set_url(Url&& url)
+void request_t::set_url(url_t&& url)
 {
     this->url = std::move(url);
     if (this->url .relative()) {
@@ -147,7 +147,7 @@ void request_t::set_parameters(parameters_t&& parameters)
 }
 
 
-void request_t::set_header(const Header& header)
+void request_t::set_header(const header_t& header)
 {
     this->header = header;
 }
@@ -165,19 +165,19 @@ void request_t::set_auth(const authentication_t& auth)
 }
 
 
-void request_t::set_digest(const Digest& digest)
+void request_t::set_digest(const digest_t& digest)
 {
     this->digest = digest;
 }
 
 
-void request_t::set_proxy(const Proxy& proxy)
+void request_t::set_proxy(const proxy_t& proxy)
 {
     this->proxy = proxy;
 }
 
 
-void request_t::set_proxy(Proxy&& proxy)
+void request_t::set_proxy(proxy_t&& proxy)
 {
     this->proxy = std::move(proxy);
 }
@@ -242,24 +242,24 @@ void request_t::set_redirects(const redirects_t& redirects)
 }
 
 
-void request_t::set_certificate_file(const CertificateFile& certificate)
+void request_t::set_certificate_file(const certificate_file_t& certificate)
 {
     this->certificate = certificate;
 }
 
-void request_t::set_certificate_file(CertificateFile&& certificate)
+void request_t::set_certificate_file(certificate_file_t&& certificate)
 {
     this->certificate = std::move(certificate);
 }
 
 
-void request_t::set_revocation_lists(const RevocationLists& revoke)
+void request_t::set_revocation_lists(const revocation_lists_t& revoke)
 {
     this->revoke = revoke;
 }
 
 
-void request_t::set_revocation_lists(RevocationLists&& revoke)
+void request_t::set_revocation_lists(revocation_lists_t&& revoke)
 {
     this->revoke = std::move(revoke);
 }
@@ -295,19 +295,19 @@ void request_t::set_option(method_t method)
 }
 
 
-void request_t::set_option(const Url &url)
+void request_t::set_option(const url_t& url)
 {
     set_url(url);
 }
 
 
-void request_t::set_option(Url &&url)
+void request_t::set_option(url_t&& url)
 {
-    set_url(std::forward<Url>(url));
+    set_url(std::forward<url_t>(url));
 }
 
 
-void request_t::set_option(const parameters_t &parameters)
+void request_t::set_option(const parameters_t& parameters)
 {
     this->parameters = parameters;
 }
@@ -319,13 +319,13 @@ void request_t::set_option(parameters_t&& parameters)
 }
 
 
-void request_t::set_option(const Header &header)
+void request_t::set_option(const header_t& header)
 {
     this->header = header;
 }
 
 
-void request_t::set_option(const timeout_t &timeout)
+void request_t::set_option(const timeout_t& timeout)
 {
     this->timeout = timeout;
 }
@@ -337,19 +337,19 @@ void request_t::set_option(const authentication_t& auth)
 }
 
 
-void request_t::set_option(const Digest &digest)
+void request_t::set_option(const digest_t& digest)
 {
     this->digest = digest;
 }
 
 
-void request_t::set_option(const Proxy &proxy)
+void request_t::set_option(const proxy_t& proxy)
 {
     this->proxy = proxy;
 }
 
 
-void request_t::set_option(Proxy&& proxy)
+void request_t::set_option(proxy_t&& proxy)
 {
     this->proxy = std::move(proxy);
 }
@@ -367,7 +367,7 @@ void request_t::set_option(multipart_t&& multipart)
 }
 
 
-void request_t::set_option(const body_t &body)
+void request_t::set_option(const body_t& body)
 {
     set_body(body);
 }
@@ -379,7 +379,7 @@ void request_t::set_option(body_t&& body)
 }
 
 
-void request_t::set_option(const payload_t &payload)
+void request_t::set_option(const payload_t& payload)
 {
     set_payload(payload);
 }
@@ -403,25 +403,25 @@ void request_t::set_option(const redirects_t& redirects)
 }
 
 
-void request_t::set_option(const CertificateFile &certificate)
+void request_t::set_option(const certificate_file_t& certificate)
 {
     this->certificate = certificate;
 }
 
 
-void request_t::set_option(CertificateFile &&certificate)
+void request_t::set_option(certificate_file_t&& certificate)
 {
     this->certificate = std::move(certificate);
 }
 
 
-void request_t::set_option(const RevocationLists &revoke)
+void request_t::set_option(const revocation_lists_t& revoke)
 {
     this->revoke = revoke;
 }
 
 
-void request_t::set_option(RevocationLists &&revoke)
+void request_t::set_option(revocation_lists_t&& revoke)
 {
     this->revoke = std::move(revoke);
 }
@@ -457,49 +457,49 @@ method_t request_t::get_method() const
 }
 
 
-const Url & request_t::get_url() const
+const url_t& request_t::get_url() const
 {
     return url;
 }
 
 
-const parameters_t & request_t::get_parameters() const
+const parameters_t& request_t::get_parameters() const
 {
     return parameters;
 }
 
 
-const Header & request_t::get_header() const
+const header_t& request_t::get_header() const
 {
     return header;
 }
 
 
-const timeout_t & request_t::get_timeout() const
+const timeout_t& request_t::get_timeout() const
 {
     return timeout;
 }
 
 
-const Digest & request_t::get_digest() const
+const digest_t& request_t::get_digest() const
 {
     return digest;
 }
 
 
-const redirects_t & request_t::get_redirects() const
+const redirects_t& request_t::get_redirects() const
 {
     return redirects;
 }
 
 
-const CertificateFile & request_t::get_certificate_file() const
+const certificate_file_t& request_t::get_certificate_file() const
 {
     return certificate;
 }
 
 
-const RevocationLists & request_t::get_revocation_lists() const
+const revocation_lists_t& request_t::get_revocation_lists() const
 {
     return revoke;
 }

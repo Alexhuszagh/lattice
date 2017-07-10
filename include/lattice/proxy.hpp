@@ -15,12 +15,12 @@ namespace lattice
 // -------
 
 
-/** \brief Proxy to tunnel communications to server.
+/**
+ *  \brief Proxy to tunnel communications to server.
  */
-class Proxy: public Url
+struct proxy_t: url_t
 {
-public:
-    using Url::Url;
+    using url_t::url_t;
 
     explicit operator bool() const;
 };

@@ -28,7 +28,7 @@ bool lowercase_less::operator()(const std::string &lhs, const std::string &rhs) 
 }
 
 
-std::string Header::string() const
+std::string header_t::string() const
 {
     std::stringstream stream;
     for (const auto &pair: *this) {
@@ -43,43 +43,43 @@ std::string Header::string() const
 }
 
 
-bool Header::accept() const
+bool header_t::accept() const
 {
     return find("accept") != end();
 }
 
 
-bool Header::cookie() const
+bool header_t::cookie() const
 {
     return find("cookie") != end();
 }
 
 
-bool Header::host() const
+bool header_t::host() const
 {
     return find("host") != end();
 }
 
 
-bool Header::authorization() const
+bool header_t::authorization() const
 {
     return find("authorization") != end();
 }
 
 
-bool Header::wwwauthenticate() const
+bool header_t::wwwauthenticate() const
 {
     return find("www-authenticate") != end();
 }
 
 
-bool Header::user_agent() const
+bool header_t::user_agent() const
 {
     return find("user-agent") != end();
 }
 
 
-bool Header::close_connection() const
+bool header_t::close_connection() const
 {
     auto it = find("connection");
     if (it != end()) {
@@ -89,28 +89,26 @@ bool Header::close_connection() const
 }
 
 
-bool Header::connection() const
+bool header_t::connection() const
 {
     return find("connection") != end();
 }
 
 
-bool Header::content_type() const
+bool header_t::content_type() const
 {
     return find("content-Type") != end();
 }
 
 
-std::ostream & operator<<(std::ostream &os,
-    const Header &header)
+std::ostream & operator<<(std::ostream &os, const header_t &header)
 {
     os << header.string();
-
     return os;
 }
 
 
-Header::operator bool() const
+header_t::operator bool() const
 {
     return !empty();
 }

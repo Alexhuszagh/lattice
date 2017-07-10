@@ -10,6 +10,7 @@
 
 #include <pycpp/casemap.h>
 #include <pycpp/getline.h>
+#include <pycpp/stringlib.h>
 #include <cctype>
 #include <cstring>
 #include <sstream>
@@ -180,19 +181,19 @@ const int response_t::status() const
 }
 
 
-const std::string & response_t::body() const
+const std::string& response_t::body() const
 {
     return body_;
 }
 
 
-const Header & response_t::headers() const
+const header_t& response_t::headers() const
 {
     return headers_;
 }
 
 
-const cookies_t & response_t::cookies() const
+const cookies_t& response_t::cookies() const
 {
     return cookies_;
 }

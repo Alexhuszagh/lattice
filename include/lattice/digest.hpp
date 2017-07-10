@@ -24,7 +24,7 @@ namespace lattice
 // -------
 
 class parameters_t;
-struct Url;
+struct url_t;
 
 // OBJECTS
 // -------
@@ -48,15 +48,17 @@ struct lowercase_equal_to
 };
 
 
-/** \brief Authorization string for requests.
+/**
+ *  \brief Authorization string for requests.
  */
-struct Digest: authentication_t
+struct digest_t: authentication_t
 {
     using authentication_t::authentication_t;
 };
 
 
-/** \brief Quality of protection directive.
+/**
+ *  \brief Quality of protection directive.
  */
 class quality_of_protection_t: public std::vector<std::string>
 {
@@ -99,9 +101,9 @@ public:
     std::string nc() const;
     digest_algorithm_t algorithm() const;
     quality_of_protection_t qop() const;
-    std::string header(const Url& url,
+    std::string header(const url_t& url,
         const parameters_t& parameters,
-        const Digest& digest,
+        const digest_t& digest,
         const std::string& body,
         const std::string& method);
 

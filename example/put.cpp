@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    lattice::Url url = {"http://httpbin.org/put"};
+    lattice::url_t url = {"http://httpbin.org/put"};
     lattice::timeout_t timeout(1000);
     auto response = lattice::Put(url, parameters, timeout);
 

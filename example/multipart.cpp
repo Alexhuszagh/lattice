@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
         lattice::create_file("c.xml"),
         lattice::create_buffer("d.csv", "A,B\nC,D"),
     };
-    lattice::Url url = {"http://httpbin.org/post"};
+    lattice::url_t url = {"http://httpbin.org/post"};
     lattice::timeout_t timeout(1000);
     auto response = lattice::Post(url, multipart, timeout);
 

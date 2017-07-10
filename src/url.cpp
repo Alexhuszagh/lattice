@@ -6,9 +6,9 @@
  */
 
 #include <lattice/url.hpp>
-#include <lattice/util/string.hpp>
 
 #include <pycpp/punycode.h>
+#include <pycpp/stringlib.h>
 #include <pycpp/unicode.h>
 #include <cassert>
 
@@ -26,7 +26,7 @@ inline bool is_relative(const std::string &string) noexcept
 }
 
 
-void puny_encoded_url(Url &url)
+void puny_encoded_url(url_t& url)
 {
     if (url.absolute()) {
         auto names = split(url.host(), ".");
@@ -44,35 +44,35 @@ void puny_encoded_url(Url &url)
 // -------
 
 
-Url::Url(const char *cstring):
+url_t::url_t(const char *cstring):
     std::string(cstring)
 {
     puny_encoded_url(*this);
 }
 
 
-Url::Url(const char *array, size_t size):
+url_t::url_t(const char *array, size_t size):
     std::string(array, size)
 {
     puny_encoded_url(*this);
 }
 
 
-Url::Url(const std::string &string):
+url_t::url_t(const std::string &string):
     std::string(string.data(), string.size())
 {
     puny_encoded_url(*this);
 }
 
 
-Url::Url(std::initializer_list<char> list):
+url_t::url_t(std::initializer_list<char> list):
     std::string(list.begin())
 {
     puny_encoded_url(*this);
 }
 
 
-std::string Url::service() const noexcept
+std::string url_t::service() const noexcept
 {
     assert(absolute());
     size_t index = find("://");
@@ -87,7 +87,7 @@ std::string Url::service() const noexcept
 }
 
 
-std::string Url::host() const noexcept
+std::string url_t::host() const noexcept
 {
     assert(absolute());
     size_t start = find("://");
@@ -102,7 +102,7 @@ std::string Url::host() const noexcept
 }
 
 
-std::string Url::path() const noexcept
+std::string url_t::path() const noexcept
 {
     if (relative()) {
         return *this;
@@ -122,7 +122,7 @@ std::string Url::path() const noexcept
 }
 
 
-std::string Url::directory() const noexcept
+std::string url_t::directory() const noexcept
 {
     auto data = path();
     const size_t separator = data.find_last_of('/');
@@ -134,7 +134,7 @@ std::string Url::directory() const noexcept
 }
 
 
-std::string Url::file() const noexcept
+std::string url_t::file() const noexcept
 {
     auto data = path();
     const size_t separator = data.find_last_of('/');
@@ -146,7 +146,7 @@ std::string Url::file() const noexcept
 }
 
 
-void Url::set_service(const std::string &service)
+void url_t::set_service(const std::string &service)
 {
     assert(absolute());
     size_t index = find("://");
@@ -160,7 +160,7 @@ void Url::set_service(const std::string &service)
 }
 
 
-void Url::set_host(const std::string &host)
+void url_t::set_host(const std::string &host)
 {
     size_t start = find("://");
     if (start == std::string::npos) {
@@ -172,7 +172,7 @@ void Url::set_host(const std::string &host)
 }
 
 
-void Url::set_path(const std::string &path)
+void url_t::set_path(const std::string &path)
 {
     if (relative()) {
         assign(path);
@@ -187,7 +187,7 @@ void Url::set_path(const std::string &path)
 }
 
 
-void Url::set_directory(const std::string &directory)
+void url_t::set_directory(const std::string &directory)
 {
     size_t separator, start, end;
     end = find_last_of('/');
@@ -204,7 +204,7 @@ void Url::set_directory(const std::string &directory)
 }
 
 
-void Url::set_file(const std::string &file)
+void url_t::set_file(const std::string &file)
 {
     size_t index = find_last_of('/');
     replace(index + 1, std::string::npos, file);
@@ -212,19 +212,19 @@ void Url::set_file(const std::string &file)
 
 
 
-bool Url::relative() const noexcept
+bool url_t::relative() const noexcept
 {
     return is_relative(*this);
 }
 
 
-bool Url::absolute() const noexcept
+bool url_t::absolute() const noexcept
 {
     return !relative();
 }
 
 
-Url::operator bool() const
+url_t::operator bool() const
 {
     return !empty();
 }

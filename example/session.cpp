@@ -19,7 +19,7 @@ void send_request(lattice::http_connection_t& connection)
     lattice::parameters_t parameters = {
         {"url", "http://httpbin.org/get"},
     };
-    lattice::Url url {"http://httpbin.org/redirect-to"};
+    lattice::url_t url {"http://httpbin.org/redirect-to"};
     lattice::timeout_t timeout(1000);
 
     // create our request
@@ -37,7 +37,7 @@ void send_request(lattice::http_connection_t& connection)
 void send_redirect(lattice::http_connection_t& connection, lattice::response_t &response)
 {
     // create our options
-    lattice::Url url(response.headers().at("location"));
+    lattice::url_t url(response.headers().at("location"));
     lattice::timeout_t timeout(1000);
 
     // create our request
@@ -65,7 +65,7 @@ void check_code(lattice::response_t& response, int code)
 int main(int argc, char *argv[])
 {
     // initialize connection
-    lattice::Url url = {"http://httpbin.org"};
+    lattice::url_t url = {"http://httpbin.org"};
     lattice::http_connection_t connection;
     connection.open(url);
 

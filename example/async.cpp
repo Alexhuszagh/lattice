@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
         {"param2", "value2"},
     };
     auto cache = lattice::create_dns_cache();
-    lattice::Url get = {"http://httpbin.org/get"};
-    lattice::Url post = {"http://httpbin.org/post"};
+    lattice::url_t get = {"http://httpbin.org/get"};
+    lattice::url_t post = {"http://httpbin.org/post"};
 
     lattice::pool_t pool;
     lattice::timeout_t timeout(1000);

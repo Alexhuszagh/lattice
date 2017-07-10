@@ -12,9 +12,9 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Url url = {"https://xn--rksmrgs-5wao1o.josefsson.org"};
+    lattice::url_t url = {"https://xn--rksmrgs-5wao1o.josefsson.org"};
     lattice::timeout_t timeout(1000);
-    lattice::CertificateFile certificate("/usr/lib/python3/dist-packages/websocket/cacert.pem");
+    lattice::certificate_file_t certificate("/usr/lib/python3/dist-packages/websocket/cacert.pem");
     auto response = lattice::Get(url, timeout, certificate);
 
     if (response.status() == 200) {

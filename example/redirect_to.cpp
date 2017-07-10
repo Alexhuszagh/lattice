@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     lattice::parameters_t parameters = {
         {"url", "http://httpbin.org/get"},
     };
-    lattice::Url url = {"http://httpbin.org/redirect-to"};
+    lattice::url_t url = {"http://httpbin.org/redirect-to"};
     lattice::timeout_t timeout(1000);
     lattice::redirects_t redirects(5);
     auto response = lattice::Get(url, timeout, redirects, parameters);

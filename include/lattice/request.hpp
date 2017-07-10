@@ -47,28 +47,28 @@ public:
 
     // EXPLICIT OPTIONS
     void set_method(method_t);
-    void set_url(const Url&);
-    void set_url(Url&&);
+    void set_url(const url_t&);
+    void set_url(url_t&&);
     void set_parameters(const parameters_t&);
     void set_parameters(parameters_t&&);
-    void set_header(const Header&);
+    void set_header(const header_t&);
     void set_timeout(const timeout_t&);
     void set_auth(const authentication_t&);
-    void set_digest(const Digest&);
+    void set_digest(const digest_t&);
     void set_multipart(const multipart_t&);
     void set_multipart(multipart_t&&);
-    void set_proxy(const Proxy&);
-    void set_proxy(Proxy&&);
+    void set_proxy(const proxy_t&);
+    void set_proxy(proxy_t&&);
     void set_body(const body_t&);
     void set_body(body_t&&);
     void set_payload(const payload_t&);
     void set_payload(payload_t&&);
     void set_cookies(const cookies_t&);
     void set_redirects(const redirects_t&);
-    void set_certificate_file(const CertificateFile&);
-    void set_certificate_file(CertificateFile&&);
-    void set_revocation_lists(const RevocationLists&);
-    void set_revocation_lists(RevocationLists&&);
+    void set_certificate_file(const certificate_file_t&);
+    void set_certificate_file(certificate_file_t&&);
+    void set_revocation_lists(const revocation_lists_t&);
+    void set_revocation_lists(revocation_lists_t&&);
     void set_ssl_protocol(ssl_protocol_t);
     void set_verify_peer(const verify_peer_t&);
     void set_verify_peer(verify_peer_t&&);
@@ -76,28 +76,28 @@ public:
 
     // LATTICE_FWDING OPTIONS
     void set_option(method_t);
-    void set_option(const Url&);
-    void set_option(Url&&);
+    void set_option(const url_t&);
+    void set_option(url_t&&);
     void set_option(const parameters_t&);
     void set_option(parameters_t&&);
-    void set_option(const Header&);
+    void set_option(const header_t&);
     void set_option(const timeout_t&);
     void set_option(const authentication_t&);
-    void set_option(const Digest&);
+    void set_option(const digest_t&);
     void set_option(const multipart_t&);
     void set_option(multipart_t&&);
-    void set_option(const Proxy&);
-    void set_option(Proxy&&);
+    void set_option(const proxy_t&);
+    void set_option(proxy_t&&);
     void set_option(const body_t&);
     void set_option(body_t&&);
     void set_option(const payload_t&);
     void set_option(payload_t&&);
     void set_option(const cookies_t&);
     void set_option(const redirects_t&);
-    void set_option(const CertificateFile&);
-    void set_option(CertificateFile&&);
-    void set_option(const RevocationLists&);
-    void set_option(RevocationLists&&);
+    void set_option(const certificate_file_t&);
+    void set_option(certificate_file_t&&);
+    void set_option(const revocation_lists_t&);
+    void set_option(revocation_lists_t&&);
     void set_option(ssl_protocol_t);
     void set_option(const verify_peer_t&);
     void set_option(verify_peer_t&&);
@@ -105,14 +105,14 @@ public:
 
     // ACCESS
     method_t get_method() const;
-    const Url& get_url() const;
+    const url_t& get_url() const;
     const parameters_t& get_parameters() const;
-    const Header& get_header() const;
+    const header_t& get_header() const;
     const timeout_t& get_timeout() const;
-    const Digest& get_digest() const;
+    const digest_t& get_digest() const;
     const redirects_t& get_redirects() const;
-    const CertificateFile& get_certificate_file() const;
-    const RevocationLists& get_revocation_lists() const;
+    const certificate_file_t& get_certificate_file() const;
+    const revocation_lists_t& get_revocation_lists() const;
     ssl_protocol_t get_ssl_protocol() const;
     const verify_peer_t& get_verify_peer() const;
     const dns_cache_t get_dns_cache() const;
@@ -134,16 +134,16 @@ public:
     response_t exec(Connection&);
 
 protected:
-    Url url;
+    url_t url;
     parameters_t parameters;
-    Header header;
-    Digest digest;
+    header_t header;
+    digest_t digest;
     multipart_t multipart;
-    Proxy proxy;
+    proxy_t proxy;
     timeout_t timeout;
     redirects_t redirects;
-    CertificateFile certificate;
-    RevocationLists revoke;
+    certificate_file_t certificate;
+    revocation_lists_t revoke;
     method_t method = static_cast<method_t>(0);
     ssl_protocol_t ssl = static_cast<ssl_protocol_t>(0);
     verify_peer_t verifypeer;
@@ -368,7 +368,7 @@ void request_t::open(Connection& connection) const
     if (!proxy) {
         connection.open(url);
     } else {
-        connection.open(Url(proxy));
+        connection.open(url_t(proxy));
     }
     if (timeout) {
         connection.set_timeout(timeout);
@@ -383,7 +383,7 @@ void request_t::reset(Connection& connection, const response_t& response)
     bool reconnect = header.close_connection();
     reconnect |= response.headers().close_connection();
 
-    Url newurl(response.headers().at("location"));
+    url_t newurl(response.headers().at("location"));
     if (newurl.absolute()) {
         // reconnect if the service or host changes
         reconnect |= url.service() != newurl.service();

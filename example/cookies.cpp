@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         {"name", "value"},
     };
     auto cache = lattice::create_dns_cache();
-    lattice::Url url = {"http://httpbin.org/cookies/set"};
+    lattice::url_t url = {"http://httpbin.org/cookies/set"};
     lattice::timeout_t timeout(1000);
     lattice::redirects_t redirects(5);
 

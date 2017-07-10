@@ -108,7 +108,7 @@ public:
     ~connection_t();
 
     // REQUESTS
-    void open(const Url& url);
+    void open(const url_t& url);
     void close();
     void write(const std::string& data);
     void set_cache(const dns_cache_t& cache);
@@ -130,19 +130,19 @@ public:
 
     template <typename T = Adapter>
     typename std::enable_if<(has_set_certificate_file<T>::value), void>::type
-    set_certificate_file(const CertificateFile& certificate);
+    set_certificate_file(const certificate_file_t& certificate);
 
     template <typename T = Adapter>
     typename std::enable_if<(!has_set_certificate_file<T>::value), void>::type
-    set_certificate_file(const CertificateFile& certificate);
+    set_certificate_file(const certificate_file_t& certificate);
 
     template <typename T = Adapter>
     typename std::enable_if<(has_set_revocation_lists<T>::value), void>::type
-    set_revocation_lists(const RevocationLists& revoke);
+    set_revocation_lists(const revocation_lists_t& revoke);
 
     template <typename T = Adapter>
     typename std::enable_if<(!has_set_revocation_lists<T>::value), void>::type
-    set_revocation_lists(const RevocationLists& revoke);
+    set_revocation_lists(const revocation_lists_t& revoke);
 
     template <typename T = Adapter>
     typename std::enable_if<(has_set_ssl_protocol<T>::value), void>::type
@@ -202,7 +202,7 @@ connection_t<Adapter>::~connection_t()
 
 
 template <typename Adapter>
-void connection_t<Adapter>::open(const Url& url)
+void connection_t<Adapter>::open(const url_t& url)
 {
     if (cache) {
         open_connection(adapter, url.host(), url.service(), *cache);
@@ -238,7 +238,7 @@ connection_t<Adapter>::set_timeout(const timeout_t& timeout)
 template <typename Adapter>
 template <typename T>
 typename std::enable_if<(has_set_certificate_file<T>::value), void>::type
-connection_t<Adapter>::set_certificate_file(const CertificateFile& certificate)
+connection_t<Adapter>::set_certificate_file(const certificate_file_t& certificate)
 {
     adapter.set_certificate_file(certificate);
 }
@@ -247,14 +247,14 @@ connection_t<Adapter>::set_certificate_file(const CertificateFile& certificate)
 template <typename Adapter>
 template <typename T>
 typename std::enable_if<(!has_set_certificate_file<T>::value), void>::type
-connection_t<Adapter>::set_certificate_file(const CertificateFile& certificate)
+connection_t<Adapter>::set_certificate_file(const certificate_file_t& certificate)
 {}
 
 
 template <typename Adapter>
 template <typename T>
 typename std::enable_if<(has_set_revocation_lists<T>::value), void>::type
-connection_t<Adapter>::set_revocation_lists(const RevocationLists& revoke)
+connection_t<Adapter>::set_revocation_lists(const revocation_lists_t& revoke)
 {
     adapter.set_revocation_lists(revoke);
 }
@@ -266,7 +266,7 @@ connection_t<Adapter>::set_revocation_lists(const RevocationLists& revoke)
 template <typename Adapter>
 template <typename T>
 typename std::enable_if<(!has_set_revocation_lists<T>::value), void>::type
-connection_t<Adapter>::set_revocation_lists(const RevocationLists& revoke)
+connection_t<Adapter>::set_revocation_lists(const revocation_lists_t& revoke)
 {}
 
 

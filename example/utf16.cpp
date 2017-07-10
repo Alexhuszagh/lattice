@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 {
     // "http://räksmörgås.josefsson.org/"
     #if BYTE_ORDER == LITTLE_ENDIAN
-        lattice::Url url = utf16_to_utf8(std::string({
+        lattice::url_t url = utf16_to_utf8(std::string({
             104, 0, 116, 0, 116, 0, 112, 0, 58, 0, 47, 0, 47, 0, 120, 0,
             110, 0, 45, 0, 45, 0, 114, 0, 107, 0, 115, 0, 109, 0, 114, 0,
             103, 0, 115, 0, 45, 0, 53, 0, 119, 0, 97, 0, 111, 0, 49, 0,
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
             47, 0
         }));
     #else
-        lattice::Url url = utf16_to_utf8(std::string({
+        lattice::url_t url = utf16_to_utf8(std::string({
             0, 104, 0, 116, 0, 116, 0, 112, 0, 58, 0, 47, 0, 47, 0, 120,
             0, 110, 0, 45, 0, 45, 0, 114, 0, 107, 0, 115, 0, 109, 0, 114,
             0, 103, 0, 115, 0, 45, 0, 53, 0, 119, 0, 97, 0, 111, 0, 49

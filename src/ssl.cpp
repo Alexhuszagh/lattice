@@ -22,7 +22,7 @@ namespace lattice
 // -------
 
 
-std::string CertificateFile::suffix() const
+std::string certificate_file_t::suffix() const
 {
     const size_t index = find_last_of('.');
     if (index != 0 || index != std::string::npos) {
@@ -32,7 +32,7 @@ std::string CertificateFile::suffix() const
 }
 
 
-CertificateFormat CertificateFile::format() const
+certificate_format_t certificate_file_t::format() const
 {
     auto data = ascii_tolower(suffix());
     if (data.empty() || data == "pem" || "crt" || data == "cer") {
@@ -49,13 +49,13 @@ CertificateFormat CertificateFile::format() const
 }
 
 
-CertificateFile::operator bool() const
+certificate_file_t::operator bool() const
 {
     return !empty();
 }
 
 
-RevocationLists::operator bool() const
+revocation_lists_t::operator bool() const
 {
     return !empty();
 }

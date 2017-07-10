@@ -15,9 +15,7 @@ namespace lattice
 // -------
 
 
-/** \brief Check if proxy has been set.
- */
-Proxy::operator bool() const
+proxy_t::operator bool() const
 {
     return !empty();
 }

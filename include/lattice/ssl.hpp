@@ -33,7 +33,7 @@ enum ssl_protocol_t
 /**
  *  \brief Various file formats for the certificate chain.
  */
-enum CertificateFormat
+enum certificate_format_t
 {
     PEM         = 1,
     ASN1        = 2,
@@ -46,13 +46,13 @@ enum CertificateFormat
 /**
  *  \brief Holds path to certificate bundle.
  */
-struct CertificateFile: std::string
+struct certificate_file_t: std::string
 {
     typedef std::string base;
     using base::base;
 
     std::string suffix() const;
-    CertificateFormat format() const;
+    certificate_format_t format() const;
 
     explicit operator bool() const;
 };
@@ -61,7 +61,7 @@ struct CertificateFile: std::string
 /**
  *  \brief Holds path to certificate revocation lists.
  */
-struct RevocationLists: std::string
+struct revocation_lists_t: std::string
 {
     typedef std::string base;
     using base::base;

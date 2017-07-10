@@ -148,9 +148,9 @@ struct response_t
 
     // DATA
     const int status() const;
-    const std::string & body() const;
-    const Header & headers() const;
-    const cookies_t & cookies() const;
+    const std::string& body() const;
+    const header_t& headers() const;
+    const cookies_t& cookies() const;
 
     // DATA ENCODING
     transfer_encoding_t transfer_encoding() const;
@@ -200,7 +200,7 @@ struct response_t
 
 protected:
     status_code_t status_ = static_cast<status_code_t>(0);
-    Header headers_;
+    header_t headers_;
     cookies_t cookies_;
     transfer_encoding_t transfer = static_cast<transfer_encoding_t>(0);
     mime_t mime;

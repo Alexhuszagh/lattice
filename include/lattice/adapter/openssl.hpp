@@ -65,15 +65,15 @@ public:
     // OPTIONS
     void set_reuse_address();
     void set_timeout(const timeout_t& timeout);
-    void set_certificate_file(const CertificateFile& certificate);
-    void set_revocation_lists(const RevocationLists& revoke);
+    void set_certificate_file(const certificate_file_t& certificate);
+    void set_revocation_lists(const revocation_lists_t& revoke);
     void set_ssl_protocol(ssl_protocol_t protocol);
     void set_verify_peer(const verify_peer_t& peer);
 
 protected:
     HttpAdapter adapter;
-    CertificateFile certificate;
-    RevocationLists revoke;
+    certificate_file_t certificate;
+    revocation_lists_t revoke;
     ssl_protocol_t protocol = TLS;
     verify_peer_t verifypeer;
 
@@ -373,14 +373,14 @@ void open_ssl_adaptor_t<HttpAdapter>::set_timeout(const timeout_t& timeout)
 
 
 template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_certificate_file(const CertificateFile& certificate)
+void open_ssl_adaptor_t<HttpAdapter>::set_certificate_file(const certificate_file_t& certificate)
 {
     this->certificate = certificate;
 }
 
 
 template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_revocation_lists(const RevocationLists& revoke)
+void open_ssl_adaptor_t<HttpAdapter>::set_revocation_lists(const revocation_lists_t& revoke)
 {
     this->revoke = revoke;
 }

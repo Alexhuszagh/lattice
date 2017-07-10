@@ -14,7 +14,7 @@
 int main(int argc, char *argv[])
 {
     // "http://räksmörgås.josefsson.org/"
-    lattice::Url url = {
+    lattice::url_t url = {
         104, 116, 116, 112, 58, 47, 47, 114, -61, -92,
         107, 115, 109, -61, -74, 114, 103, -61, -91,
         115, 46, 106, 111, 115, 101, 102, 115, 115, 111,

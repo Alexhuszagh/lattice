@@ -44,8 +44,8 @@ public:
     // OPTIONS
     void set_reuse_address();
     void set_timeout(const timeout_t& timeout);
-    void set_certificate_file(const CertificateFile& certificate);
-    void set_revocation_lists(const RevocationLists& revoke);
+    void set_certificate_file(const certificate_file_t& certificate);
+    void set_revocation_lists(const revocation_lists_t& revoke);
     void set_ssl_protocol(const ssl_protocol_t ssl);
 
     // DATA

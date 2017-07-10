@@ -123,13 +123,13 @@ void win32_socket_adaptor_t::set_timeout(const timeout_t& timeout)
 }
 
 
-void win32_socket_adaptor_t::set_certificate_file(const CertificateFile& certificate)
+void win32_socket_adaptor_t::set_certificate_file(const certificate_file_t& certificate)
 {
     encryption_warning();
 }
 
 
-void win32_socket_adaptor_t::set_revocation_lists(const RevocationLists& revoke)
+void win32_socket_adaptor_t::set_revocation_lists(const revocation_lists_t& revoke)
 {
     encryption_warning();
 }

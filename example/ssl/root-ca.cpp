@@ -16,9 +16,9 @@ int main(int argc, char *argv[])
         {"param1", "value1"},
         {"param2", "value2"},
     };
-    lattice::Url url = {"https://httpbin.org/get"};
+    lattice::url_t url = {"https://httpbin.org/get"};
     lattice::timeout_t timeout(1000);
-    lattice::CertificateFile certificate("client.crt");
+    lattice::certificate_file_t certificate("client.crt");
     auto response = lattice::Get(url, timeout, certificate);
 
     if (response.status() == 200) {

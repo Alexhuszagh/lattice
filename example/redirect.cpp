@@ -12,7 +12,7 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Url url = {"http://httpbin.org/redirect/1"};
+    lattice::url_t url = {"http://httpbin.org/redirect/1"};
     lattice::timeout_t timeout(1000);
     lattice::redirects_t redirects(5);
     auto response = lattice::Get(url, timeout, redirects);

@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Digest digest = {"user", "pass"};
-    lattice::Url url = {"http://httpbin.org/digest-auth/auth/user/pass"};
+    lattice::digest_t digest = {"user", "pass"};
+    lattice::url_t url = {"http://httpbin.org/digest-auth/auth/user/pass"};
     lattice::timeout_t timeout(1000);
 
     // set cookies

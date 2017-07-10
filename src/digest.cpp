@@ -15,6 +15,7 @@
 #include <pycpp/hashlib.h>
 #include <pycpp/hex.h>
 #include <pycpp/random.h>
+#include <pycpp/stringlib.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
@@ -177,9 +178,9 @@ quality_of_protection_t digest_challenge_t::qop() const
 }
 
 
-std::string digest_challenge_t::header(const Url& url,
+std::string digest_challenge_t::header(const url_t& url,
     const parameters_t& parameters,
-    const Digest& digest,
+    const digest_t& digest,
     const std::string& body,
     const std::string& method)
 {

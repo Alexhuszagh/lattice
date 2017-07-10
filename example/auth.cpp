@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
     lattice::authentication_t auth = {"user", "passwd"};
-    lattice::Url url = {"http://httpbin.org/basic-auth/user/passwd"};
+    lattice::url_t url = {"http://httpbin.org/basic-auth/user/passwd"};
     lattice::timeout_t timeout(1000);
 
     // set cookies

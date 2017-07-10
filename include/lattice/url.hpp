@@ -20,18 +20,18 @@ namespace lattice
 /**
  *  \brief URL class instance.
  */
-struct Url: std::string
+struct url_t: std::string
 {
-    Url() = default;
-    Url(const Url &other) = default;
-    Url & operator=(const Url&) = default;
-    Url(Url&&) = default;
-    Url & operator=(Url&&) = default;
+    url_t() = default;
+    url_t(const url_t &other) = default;
+    url_t & operator=(const url_t&) = default;
+    url_t(url_t&&) = default;
+    url_t & operator=(url_t&&) = default;
 
-    Url(const char *cstring);
-    Url(const char *array, size_t size);
-    Url(const std::string &string);
-    Url(std::initializer_list<char> list);
+    url_t(const char *cstring);
+    url_t(const char *array, size_t size);
+    url_t(const std::string &string);
+    url_t(std::initializer_list<char> list);
 
     // GETTERS
     std::string service() const noexcept;

@@ -14,19 +14,19 @@
 // -----
 
 
-TEST(Url, Constructors)
+TEST(url_t, Constructors)
 {
-    lattice::Url url;
-    url = lattice::Url("http://example.com");
-    url = lattice::Url("http://example.com", 18);
-    url = lattice::Url(std::string("http://example.com"));
-    url = lattice::Url {104, 116, 116, 112, 58, 47, 47, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109};
+    lattice::url_t url;
+    url = lattice::url_t("http://example.com");
+    url = lattice::url_t("http://example.com", 18);
+    url = lattice::url_t(std::string("http://example.com"));
+    url = lattice::url_t {104, 116, 116, 112, 58, 47, 47, 101, 120, 97, 109, 112, 108, 101, 46, 99, 111, 109};
 }
 
 
-TEST(Url, Getters)
+TEST(url_t, Getters)
 {
-    lattice::Url url("http://example.com/path/to/file");
+    lattice::url_t url("http://example.com/path/to/file");
     EXPECT_EQ("http", url.service());
     EXPECT_EQ("example.com", url.host());
     EXPECT_EQ("/path/to/file", url.path());
@@ -35,9 +35,9 @@ TEST(Url, Getters)
 }
 
 
-TEST(Url, Setters)
+TEST(url_t, Setters)
 {
-    lattice::Url url("http://example.com/path/to/file");
+    lattice::url_t url("http://example.com/path/to/file");
 
     // SERVICE
     url.set_service("https");
@@ -61,22 +61,22 @@ TEST(Url, Setters)
 }
 
 
-TEST(Url, Properties)
+TEST(url_t, Properties)
 {
-    lattice::Url url("http://example.com/path/to/file");
+    lattice::url_t url("http://example.com/path/to/file");
     EXPECT_FALSE(url.relative());
     EXPECT_TRUE(url.absolute());
 
-    url = lattice::Url("/path/to/file");
+    url = lattice::url_t("/path/to/file");
     EXPECT_TRUE(url.relative());
     EXPECT_FALSE(url.absolute());
 }
 
 
-TEST(Url, Unicode)
+TEST(url_t, Unicode)
 {
     // "http://räksmörgås.josefsson.org/"
-    lattice::Url url = {
+    lattice::url_t url = {
         104, 116, 116, 112, 58, 47, 47, 114, -61, -92,
         107, 115, 109, -61, -74, 114, 103, -61, -91,
         115, 46, 106, 111, 115, 101, 102, 115, 115, 111,

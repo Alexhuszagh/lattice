@@ -30,7 +30,7 @@ struct lowercase_less
 /**
  *  \brief Custom headers for the request.
  */
-struct Header: std::map<std::string, std::string, lowercase_less>
+struct header_t: std::map<std::string, std::string, lowercase_less>
 {
     typedef std::map<std::string, std::string, lowercase_less> base;
     using base::base;
@@ -46,7 +46,7 @@ struct Header: std::map<std::string, std::string, lowercase_less>
     bool close_connection() const;
     bool content_type() const;
 
-    friend std::ostream & operator<<(std::ostream &os, const Header &header);
+    friend std::ostream & operator<<(std::ostream& os, const header_t& header);
     explicit operator bool() const;
 };
 

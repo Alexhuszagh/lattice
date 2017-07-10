@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
         {"param2", "value2"},
     };
     auto cache = lattice::create_dns_cache();
-    lattice::Url url = {"23.22.14.18/get"};
+    lattice::url_t url = {"23.22.14.18/get"};
     lattice::timeout_t timeout(1000);
     auto response = lattice::Get(url, parameters, timeout, cache);
 

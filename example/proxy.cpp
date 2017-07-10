@@ -23,8 +23,8 @@
 
 int main(int argc, char *argv[])
 {
-    lattice::Proxy proxy = {"http://127.0.0.1:8008/"};
-    lattice::Url url = {"http://httpbin.org/get"};
+    lattice::proxy_t proxy = {"http://127.0.0.1:8008/"};
+    lattice::url_t url = {"http://httpbin.org/get"};
     lattice::timeout_t timeout(1000);
 
     auto response = lattice::Get(url, proxy, timeout);
