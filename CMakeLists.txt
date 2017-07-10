@@ -43,8 +43,8 @@ endif()
 # DEPENDENCIES
 # ------------
 
-add_subdirectory(pycpp)
-include_directories(pycpp)
+add_subdirectory(third_party/pycpp)
+include_directories(third_party/pycpp)
 
 # INCLUDES
 # --------
@@ -189,9 +189,9 @@ list(APPEND LATTICE_TESTS
 
 if(BUILD_TESTS)
     if(NOT TARGET gtest)
-        add_subdirectory(googletest)
+        add_subdirectory(third_party/googletest)
     endif()
-    include_directories(googletest/googletest/include)
+    include_directories(third_party/googletest/googletest/include)
 
     add_executable(lattice_tests ${LATTICE_TESTS})
     target_link_libraries(lattice_tests

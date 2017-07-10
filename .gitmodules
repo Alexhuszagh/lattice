@@ -1,6 +1,6 @@
 [submodule "googletest"]
-	path = googletest
+	path = third_party/googletest
 	url = https://github.com/XLTools/googletest
 [submodule "pycpp"]
-	path = pycpp
+	path = third_party/pycpp
 	url = https://github.com/Alexhuszagh/pycpp.git
