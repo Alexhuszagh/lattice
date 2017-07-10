@@ -13,7 +13,7 @@
 #include <lattice/ssl.hpp>
 #include <lattice/timeout.hpp>
 #include <lattice/url.hpp>
-#include <lattice/util/mutex.hpp>
+#include <lattice/util.hpp>
 
 #include <openssl/asn1.h>
 #include <openssl/err.h>

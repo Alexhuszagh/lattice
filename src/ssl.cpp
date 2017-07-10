@@ -6,7 +6,6 @@
  */
 
 #include <lattice/ssl.hpp>
-#include <lattice/util/string.hpp>
 
 #include <pycpp/casemap.h>
 

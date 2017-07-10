@@ -8,8 +8,7 @@
 #ifdef _WIN32
 
 #include <lattice/adapter/windows.hpp>
-#include <lattice/util/exception.hpp>
-#include <lattice/util/mutex.hpp>
+#include <lattice/util.hpp>
 
 #include <winsock2.h>
 #include <windows.h>

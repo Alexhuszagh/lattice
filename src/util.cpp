@@ -1,18 +1,18 @@
 //  :copyright: (c) 2015-2017 The Regents of the University of California.
 //  :license: MIT, see LICENSE.md for more details.
-/**
- *  \addtogroup Lattice
- *  \brief Socket and connection exceptions.
- */
 
-#include <lattice/util/exception.hpp>
-#include <lattice/util/mutex.hpp>
+#include <lattice/util.hpp>
 
 #include <iostream>
 
 
 namespace lattice
 {
+// CONSTANTS
+// ---------
+
+std::mutex MUTEX;
+
 // OBJECTS
 // -------
 

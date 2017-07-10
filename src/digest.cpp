@@ -9,7 +9,6 @@
 #include <lattice/digest.hpp>
 #include <lattice/parameter.hpp>
 #include <lattice/url.hpp>
-#include <lattice/util/string.hpp>
 
 #include <pycpp/casemap.h>
 #include <pycpp/hashlib.h>
@@ -95,7 +94,7 @@ quality_of_protection_t::operator bool() const
 
 digest_challenge_t::digest_challenge_t(const std::string& string)
 {
-    auto data = safesplit(string.substr(7), ',', '"', '\\');
+    auto data = quoted_split(string.substr(7), ',', '"', '\\');
     for (auto &value: data) {
         value = trim(value);
         const char *begin = value.data();

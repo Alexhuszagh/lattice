@@ -6,7 +6,6 @@
  */
 
 #include <lattice/response.hpp>
-#include <lattice/util/string.hpp>
 
 #include <pycpp/casemap.h>
 #include <pycpp/getline.h>
