@@ -5,7 +5,7 @@
  *  \brief Public lattice header.
  */
 
-#include <lattice/adapter.hpp>
+#include <lattice/adaptor.hpp>
 #include <lattice/async.hpp>
 #include <lattice/auth.hpp>
 #include <lattice/connection.hpp>

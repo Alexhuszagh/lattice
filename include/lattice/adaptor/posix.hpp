@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief POSIX socket adapter.
+ *  \brief POSIX socket adaptor.
  */
 
 #ifndef _WIN32

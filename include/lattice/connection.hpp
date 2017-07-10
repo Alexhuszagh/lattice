@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <lattice/adapter.hpp>
+#include <lattice/adaptor.hpp>
 #include <lattice/dns.hpp>
 #include <lattice/method.hpp>
 #include <lattice/ssl.hpp>
@@ -38,11 +38,11 @@ static constexpr size_t BUFFER_SIZE = 8092;
  *  \brief Open connection without a cache.
  */
 template <typename Adapter>
-void open_connection(Adapter& adapter, const std::string& host, const std::string& service)
+void open_connection(Adapter& adaptor, const std::string& host, const std::string& service)
 {
     // perform DNS lookup
     for (auto &&info: dns_lookup_t(host, service)) {
-        if (adapter.open(info, host)) {
+        if (adaptor.open(info, host)) {
             return;
         }
     }
@@ -56,7 +56,7 @@ void open_connection(Adapter& adapter, const std::string& host, const std::strin
  *  \brief Open connection with DNS cache.
  */
 template <typename Adapter>
-void open_connection(Adapter& adapter,
+void open_connection(Adapter& adaptor,
     const std::string& host,
     const std::string& service,
     address_cache_t& cache)
@@ -64,14 +64,14 @@ void open_connection(Adapter& adapter,
     // try cached results
     typename address_cache_t::iterator it;
     if ((it = cache.find(host)) != cache.end()) {
-        if (adapter.open(addrinfo(it->second), host)) {
+        if (adaptor.open(addrinfo(it->second), host)) {
             return;
         }
     }
 
     // perform DNS lookup
     for (auto &&info: dns_lookup_t(host, service)) {
-        if (adapter.open(info, host)) {
+        if (adaptor.open(info, host)) {
             cache.emplace(host, info);
             return;
         }
@@ -94,7 +94,7 @@ template <typename Adapter>
 class connection_t
 {
 protected:
-    Adapter adapter;
+    Adapter adaptor;
     dns_cache_t cache = nullptr;
 
     long readn(char *dst, long bytes);
@@ -176,7 +176,7 @@ long connection_t<Adapter>::readn(char *dst, long bytes)
 {
     long count = 0;
     while (bytes) {
-        long read = adapter.read(dst, bytes);
+        long read = adaptor.read(dst, bytes);
         if (!read) {
             return count;
         }
@@ -205,9 +205,9 @@ template <typename Adapter>
 void connection_t<Adapter>::open(const url_t& url)
 {
     if (cache) {
-        open_connection(adapter, url.host(), url.service(), *cache);
+        open_connection(adaptor, url.host(), url.service(), *cache);
     } else {
-        open_connection(adapter, url.host(), url.service());
+        open_connection(adaptor, url.host(), url.service());
     }
 }
 
@@ -215,7 +215,7 @@ void connection_t<Adapter>::open(const url_t& url)
 template <typename Adapter>
 void connection_t<Adapter>::close()
 {
-    adapter.close();
+    adaptor.close();
 }
 
 
@@ -224,7 +224,7 @@ template <typename T>
 typename std::enable_if<(has_set_timeout<T>::value), void>::type
 connection_t<Adapter>::set_timeout(const timeout_t& timeout)
 {
-    adapter.set_timeout(timeout);
+    adaptor.set_timeout(timeout);
 }
 
 
@@ -240,7 +240,7 @@ template <typename T>
 typename std::enable_if<(has_set_certificate_file<T>::value), void>::type
 connection_t<Adapter>::set_certificate_file(const certificate_file_t& certificate)
 {
-    adapter.set_certificate_file(certificate);
+    adaptor.set_certificate_file(certificate);
 }
 
 
@@ -256,7 +256,7 @@ template <typename T>
 typename std::enable_if<(has_set_revocation_lists<T>::value), void>::type
 connection_t<Adapter>::set_revocation_lists(const revocation_lists_t& revoke)
 {
-    adapter.set_revocation_lists(revoke);
+    adaptor.set_revocation_lists(revoke);
 }
 
 
@@ -278,7 +278,7 @@ template <typename T>
 typename std::enable_if<(has_set_ssl_protocol<T>::value), void>::type
 connection_t<Adapter>::set_ssl_protocol(ssl_protocol_t ssl)
 {
-    adapter.set_ssl_protocol(ssl);
+    adaptor.set_ssl_protocol(ssl);
 }
 
 
@@ -300,7 +300,7 @@ template <typename T>
 typename std::enable_if<(has_set_verify_peer<T>::value), void>::type
 connection_t<Adapter>::set_verify_peer(const verify_peer_t& peer)
 {
-    adapter.set_verify_peer(peer);
+    adaptor.set_verify_peer(peer);
 }
 
 
@@ -330,7 +330,7 @@ void connection_t<Adapter>::set_cache(const dns_cache_t& cache)
 template <typename Adapter>
 void connection_t<Adapter>::write(const std::string& data)
 {
-    int sent = adapter.write(data.data(), data.size());
+    int sent = adaptor.write(data.data(), data.size());
     if (sent != static_cast<int>(data.size())) {
         throw std::runtime_error("Unable to make request, sent " + std::to_string(sent) + " bytes.");
     }
@@ -348,7 +348,7 @@ std::string connection_t<Adapter>::headers()
     std::string string;
     int result;
     char src;
-    while ((result = adapter.read(&src, 1))) {
+    while ((result = adaptor.read(&src, 1))) {
         string += src;
         size_t size = string.size() - 4;
         if (size > 0 && src == '\n' && string.substr(size) == "\r\n\r\n") {
@@ -375,7 +375,7 @@ std::string connection_t<Adapter>::chunked()
     char *buffer = static_cast<char*>(malloc(offset));
     char byte, *src = buffer + offset;
 
-    while ((result = adapter.read(&byte, 1))) {
+    while ((result = adaptor.read(&byte, 1))) {
         if (!(byte == '\r' || byte == '\n')) {
             hex += byte;
         } else if (hex == "0") {
@@ -383,7 +383,7 @@ std::string connection_t<Adapter>::chunked()
             break;
         } else if (hex.size()) {
             // get carriage return
-            result = adapter.read(&byte, 1);
+            result = adaptor.read(&byte, 1);
 
             // read bytes
             long bytes = std::strtoul(hex.data(), nullptr, 16);
@@ -416,7 +416,7 @@ std::string connection_t<Adapter>::body(const long length)
     std::string string;
     if (length > 0) {
         string.resize(length);
-        adapter.read(const_cast<char*>(&string[0]), length);
+        adaptor.read(const_cast<char*>(&string[0]), length);
     } else if (length) {
         throw std::runtime_error("Asked to read negative bytes.");
     }
@@ -435,7 +435,7 @@ std::string connection_t<Adapter>::read()
     int result, offset = 0;
     char *buffer = static_cast<char*>(malloc(BUFFER_SIZE));
     char *src = buffer + offset;
-    while ((result = adapter.read(src, BUFFER_SIZE))) {
+    while ((result = adaptor.read(src, BUFFER_SIZE))) {
         offset += result;
         buffer = static_cast<char*>(realloc(buffer, BUFFER_SIZE + offset));
         src = buffer + offset;

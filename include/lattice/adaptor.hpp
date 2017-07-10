@@ -2,15 +2,15 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Socket adapters.
+ *  \brief Socket adaptors.
  */
 
 #pragma once
 
-#include <lattice/adapter/openssl.hpp>
-#include <lattice/adapter/nossl.hpp>
-#include <lattice/adapter/posix.hpp>
-#include <lattice/adapter/windows.hpp>
+#include <lattice/adaptor/openssl.hpp>
+#include <lattice/adaptor/nossl.hpp>
+#include <lattice/adaptor/posix.hpp>
+#include <lattice/adaptor/windows.hpp>
 
 
 namespace lattice

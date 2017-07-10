@@ -2,12 +2,12 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief POSIX socket adapter.
+ *  \brief POSIX socket adaptor.
  */
 
 #ifndef _WIN32
 
-#include <lattice/adapter/posix.hpp>
+#include <lattice/adaptor/posix.hpp>
 #include <lattice/util.hpp>
 
 #include <sys/time.h>

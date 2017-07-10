@@ -115,9 +115,9 @@ list(APPEND LATTICE_SOURCES
 )
 
 if(UNIX)
-    list(APPEND LATTICE_SOURCES src/adapter/posix.cpp)
+    list(APPEND LATTICE_SOURCES src/adaptor/posix.cpp)
 elseif(WIN32)
-    list(APPEND LATTICE_SOURCES src/adapter/windows.cpp)
+    list(APPEND LATTICE_SOURCES src/adaptor/windows.cpp)
 endif()
 
 set(LATTICE_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")

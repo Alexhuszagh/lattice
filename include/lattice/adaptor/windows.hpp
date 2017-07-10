@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Windows socket adapter.
+ *  \brief Windows socket adaptor.
  */
 
 #pragma once

@@ -3,7 +3,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief OpenSSL socket adapter.
+ *  \brief OpenSSL socket adaptor.
  */
 
 #ifdef LATTICE_HAVE_OPENSSL
@@ -43,13 +43,13 @@ static X509_STORE *STORE = nullptr;
 
 
 /**
- *  \brief Socket adapter for OpenSSL.
+ *  \brief Socket adaptor for OpenSSL.
  */
-template <typename HttpAdapter>
+template <typename HttpAdaptor>
 class open_ssl_adaptor_t
 {
 public:
-    typedef open_ssl_adaptor_t<HttpAdapter> self;
+    typedef open_ssl_adaptor_t<HttpAdaptor> self;
 
     open_ssl_adaptor_t();
     open_ssl_adaptor_t(const self&) = delete;
@@ -71,7 +71,7 @@ public:
     void set_verify_peer(const verify_peer_t& peer);
 
 protected:
-    HttpAdapter adapter;
+    HttpAdaptor adaptor;
     certificate_file_t certificate;
     revocation_lists_t revoke;
     ssl_protocol_t protocol = TLS;
@@ -97,8 +97,8 @@ protected:
 /**
  *  \brief Initialize OpenSSL.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::initialize()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::initialize()
 {
     SSL_load_error_strings();
     SSL_library_init();
@@ -109,16 +109,16 @@ void open_ssl_adaptor_t<HttpAdapter>::initialize()
 /**
  *  \brief Cleanup OpenSSL (noop).
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::cleanup()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::cleanup()
 {}
 
 
 /**
  *  \brief Set the SSL connection context.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_context()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_context()
 {
     // initialize SSL methods
     switch (protocol) {
@@ -153,8 +153,8 @@ void open_ssl_adaptor_t<HttpAdapter>::set_context()
 /**
  *  \brief Set certificate file for the store.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_certificate()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_certificate()
 {
     int ok = 1;
     const char *data = certificate.data();
@@ -185,8 +185,8 @@ void open_ssl_adaptor_t<HttpAdapter>::set_certificate()
 /**
  *  \brief Set revocation lists for the store.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_revoke()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_revoke()
 {
     if (revoke.empty()) {
         return;
@@ -208,8 +208,8 @@ void open_ssl_adaptor_t<HttpAdapter>::set_revoke()
 /**
  *  \brief Verify untrusted certificate with certificate bundle.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_verify(const std::string& host)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_verify(const std::string& host)
 {
     // set verification context
     int mode = verifypeer ? SSL_VERIFY_PEER : SSL_VERIFY_NONE;
@@ -250,13 +250,13 @@ void open_ssl_adaptor_t<HttpAdapter>::set_verify(const std::string& host)
  *  errors, including system errors without an error log, and throw
  *  handshake errors otherwise.
  */
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::ssl_connect()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::ssl_connect()
 {
     while (SSL_connect(ssl) == -1) {
         fd_set desriptors;
         FD_ZERO(&desriptors);
-        FD_SET(adapter.fd(), &desriptors);
+        FD_SET(adaptor.fd(), &desriptors);
 
         switch (SSL_get_error(ssl, -1)) {
             case SSL_ERROR_NONE:
@@ -265,10 +265,10 @@ void open_ssl_adaptor_t<HttpAdapter>::ssl_connect()
                 /* no error */
                 return;
             case SSL_ERROR_WANT_READ:
-                select(adapter.fd() + 1, &desriptors, NULL, NULL, NULL);
+                select(adaptor.fd() + 1, &desriptors, NULL, NULL, NULL);
                 break;
             case SSL_ERROR_WANT_WRITE:
-                select(adapter.fd() + 1, NULL, &desriptors, NULL, NULL);
+                select(adaptor.fd() + 1, NULL, &desriptors, NULL, NULL);
                 break;
             case SSL_ERROR_SYSCALL:
                 /* unknown error */
@@ -283,8 +283,8 @@ void open_ssl_adaptor_t<HttpAdapter>::ssl_connect()
 }
 
 
-template <typename HttpAdapter>
-open_ssl_adaptor_t<HttpAdapter>::~open_ssl_adaptor_t()
+template <typename HttpAdaptor>
+open_ssl_adaptor_t<HttpAdaptor>::~open_ssl_adaptor_t()
 {
     close();
 }
@@ -293,8 +293,8 @@ open_ssl_adaptor_t<HttpAdapter>::~open_ssl_adaptor_t()
 /**
  *  If not initialized, initialize SSL.
  */
-template <typename HttpAdapter>
-open_ssl_adaptor_t<HttpAdapter>::open_ssl_adaptor_t()
+template <typename HttpAdaptor>
+open_ssl_adaptor_t<HttpAdaptor>::open_ssl_adaptor_t()
 {
     std::lock_guard<std::mutex> lock(MUTEX);
     if (!SSL_INITIALIZED) {
@@ -305,8 +305,8 @@ open_ssl_adaptor_t<HttpAdapter>::open_ssl_adaptor_t()
 }
 
 
-template <typename HttpAdapter>
-bool open_ssl_adaptor_t<HttpAdapter>::open(const addrinfo& info, const std::string& host)
+template <typename HttpAdaptor>
+bool open_ssl_adaptor_t<HttpAdaptor>::open(const addrinfo& info, const std::string& host)
 {
     set_context();
     ssl = SSL_new(ctx);
@@ -320,20 +320,20 @@ bool open_ssl_adaptor_t<HttpAdapter>::open(const addrinfo& info, const std::stri
 
     // open socket and create SSL
     SSL_set_connect_state(ssl);
-    adapter.open(info, host);
-    SSL_set_fd(ssl, adapter.fd());
+    adaptor.open(info, host);
+    SSL_set_fd(ssl, adaptor.fd());
     ssl_connect();
 
     return true;
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::close()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::close()
 {
     if (ssl) {
         SSL_shutdown(ssl);
-        adapter.close();
+        adaptor.close();
         SSL_free(ssl);
         ssl = nullptr;
     }
@@ -344,57 +344,57 @@ void open_ssl_adaptor_t<HttpAdapter>::close()
 }
 
 
-template <typename HttpAdapter>
-size_t open_ssl_adaptor_t<HttpAdapter>::write(const char *buf, size_t len)
+template <typename HttpAdaptor>
+size_t open_ssl_adaptor_t<HttpAdaptor>::write(const char *buf, size_t len)
 {
     return SSL_write(ssl, buf, len);
 }
 
 
-template <typename HttpAdapter>
-size_t open_ssl_adaptor_t<HttpAdapter>::read(char *buf, size_t count)
+template <typename HttpAdaptor>
+size_t open_ssl_adaptor_t<HttpAdaptor>::read(char *buf, size_t count)
 {
     return SSL_read(ssl, buf, count);
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_reuse_address()
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_reuse_address()
 {
-    adapter.set_reuse_address();
+    adaptor.set_reuse_address();
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_timeout(const timeout_t& timeout)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_timeout(const timeout_t& timeout)
 {
-    adapter.set_timeout(timeout);
+    adaptor.set_timeout(timeout);
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_certificate_file(const certificate_file_t& certificate)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_certificate_file(const certificate_file_t& certificate)
 {
     this->certificate = certificate;
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_revocation_lists(const revocation_lists_t& revoke)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_revocation_lists(const revocation_lists_t& revoke)
 {
     this->revoke = revoke;
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_ssl_protocol(ssl_protocol_t protocol)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_ssl_protocol(ssl_protocol_t protocol)
 {
     this->protocol = protocol;
 }
 
 
-template <typename HttpAdapter>
-void open_ssl_adaptor_t<HttpAdapter>::set_verify_peer(const verify_peer_t& peer)
+template <typename HttpAdaptor>
+void open_ssl_adaptor_t<HttpAdaptor>::set_verify_peer(const verify_peer_t& peer)
 {
     this->verifypeer = verifypeer;
 }

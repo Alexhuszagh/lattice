@@ -2,12 +2,12 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Windows socket adapter.
+ *  \brief Windows socket adaptor.
  */
 
 #ifdef _WIN32
 
-#include <lattice/adapter/windows.hpp>
+#include <lattice/adaptor/windows.hpp>
 #include <lattice/util.hpp>
 
 #include <winsock2.h>

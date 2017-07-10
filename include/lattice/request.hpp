@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <lattice/adapter.hpp>
+#include <lattice/adaptor.hpp>
 #include <lattice/auth.hpp>
 #include <lattice/connection.hpp>
 #include <lattice/cookie.hpp>

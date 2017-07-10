@@ -2,7 +2,7 @@
 //  :license: MIT, see LICENSE.md for more details.
 /**
  *  \addtogroup Lattice
- *  \brief Create no-opt adapter.
+ *  \brief Create no-opt adaptor.
  */
 
 #include <lattice/dns.hpp>
@@ -23,12 +23,12 @@ namespace lattice
 
 
 /**
- *  \brief No-opt SSL socket adapter.
+ *  \brief No-opt SSL socket adaptor.
  */
-template <typename HttpAdapter>
+template <typename HttpAdaptor>
 struct no_ssl_adaptor_t
 {
-    typedef no_ssl_adaptor_t<HttpAdapter> self;
+    typedef no_ssl_adaptor_t<HttpAdaptor> self;
 
     no_ssl_adaptor_t();
     no_ssl_adaptor_t(const self&) = delete;
@@ -47,18 +47,18 @@ struct no_ssl_adaptor_t
 // --------------
 
 
-template <typename HttpAdapter>
-no_ssl_adaptor_t<HttpAdapter>::no_ssl_adaptor_t()
+template <typename HttpAdaptor>
+no_ssl_adaptor_t<HttpAdaptor>::no_ssl_adaptor_t()
 {}
 
 
-template <typename HttpAdapter>
-no_ssl_adaptor_t<HttpAdapter>::~no_ssl_adaptor_t()
+template <typename HttpAdaptor>
+no_ssl_adaptor_t<HttpAdaptor>::~no_ssl_adaptor_t()
 {}
 
 
-template <typename HttpAdapter>
-bool no_ssl_adaptor_t<HttpAdapter>::open(const addrinfo &info,
+template <typename HttpAdaptor>
+bool no_ssl_adaptor_t<HttpAdaptor>::open(const addrinfo &info,
     const std::string &host)
 {
     assert(false);
@@ -66,15 +66,15 @@ bool no_ssl_adaptor_t<HttpAdapter>::open(const addrinfo &info,
 }
 
 
-template <typename HttpAdapter>
-void no_ssl_adaptor_t<HttpAdapter>::close()
+template <typename HttpAdaptor>
+void no_ssl_adaptor_t<HttpAdaptor>::close()
 {
     assert(false);
 }
 
 
-template <typename HttpAdapter>
-size_t no_ssl_adaptor_t<HttpAdapter>::write(const char *buf,
+template <typename HttpAdaptor>
+size_t no_ssl_adaptor_t<HttpAdaptor>::write(const char *buf,
     size_t len)
 {
     assert(false);
@@ -82,8 +82,8 @@ size_t no_ssl_adaptor_t<HttpAdapter>::write(const char *buf,
 }
 
 
-template <typename HttpAdapter>
-size_t no_ssl_adaptor_t<HttpAdapter>::read(char *buf, size_t count)
+template <typename HttpAdaptor>
+size_t no_ssl_adaptor_t<HttpAdaptor>::read(char *buf, size_t count)
 {
     assert(false);
     return 0;
