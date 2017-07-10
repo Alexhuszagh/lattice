@@ -66,7 +66,7 @@ quality_of_protection_t::quality_of_protection_t(const std::string& qop)
     auto data = split(qop, ",");
     insert(begin(), data.begin(), data.end());
     for (auto &item: *this) {
-        trim(item);
+        item = trim(item);
     }
 }
 
@@ -97,7 +97,7 @@ digest_challenge_t::digest_challenge_t(const std::string& string)
 {
     auto data = safesplit(string.substr(7), ',', '"', '\\');
     for (auto &value: data) {
-        trim(value);
+        value = trim(value);
         const char *begin = value.data();
         const char *ptr = strchr(begin, '=');
         if (ptr) {

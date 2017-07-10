@@ -17,34 +17,6 @@ namespace lattice
 // ---------
 
 
-/** \brief Trim characters from left-end of string.
- */
-void ltrim(std::string &string,
-    const std::string &characters)
-{
-    string.erase(0, string.find_first_not_of(characters));
-}
-
-
-/** \brief Trim characters from right-end of string.
- */
-void rtrim(std::string &string,
-    const std::string &characters)
-{
-    string.erase(string.find_last_not_of(characters) + 1);
-}
-
-
-/** \brief Trim characters from both ends of string.
- */
-void trim(std::string &string,
-    const std::string &characters)
-{
-    ltrim(string, characters);
-    rtrim(string, characters);
-}
-
-
 /** \brief Split string by delimiter(s).
  *
  *  \param string           String to split

@@ -18,30 +18,6 @@ namespace lattice
 // FUNCTIONS
 // ---------
 
-/** \brief Trim characters from left-end of string.
- *
- *  \param string               String to trim
- *  \param characters           Characters to trim string by
- */
-void ltrim(std::string &string,
-    const std::string &characters = " \n\r\t");
-
-/** \brief Trim characters from right-end of string.
- *
- *  \param string               String to trim
- *  \param characters           Characters to trim string by
- */
-void rtrim(std::string &string,
-    const std::string &characters = " \n\r\t");
-
-/** \brief Trim characters from both ends of string.
- *
- *  \param string               String to trim
- *  \param characters           Characters to trim string by
- */
-void trim(std::string &string,
-    const std::string &characters = " \n\r\t");
-
 /** \brief Split string by delimiter.
  *
  *  Split string by delimiter, but allow escaped or quoted characters

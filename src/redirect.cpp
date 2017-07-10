@@ -20,15 +20,11 @@ namespace lattice
 // -------
 
 
-/** \brief Initializer list constructor.
- */
 redirects_t::redirects_t(const long count):
     count(count)
 {}
 
 
-/** Pre-increment operator.
- */
 redirects_t & redirects_t::operator++()
 {
     ++count;
@@ -37,8 +33,6 @@ redirects_t & redirects_t::operator++()
 }
 
 
-/** Post-increment operator.
- */
 redirects_t redirects_t::operator++(int)
 {
     redirects_t copy(*this);
@@ -48,8 +42,6 @@ redirects_t redirects_t::operator++(int)
 }
 
 
-/** Pre-decrement operator.
- */
 redirects_t & redirects_t::operator--()
 {
     --count;
@@ -58,8 +50,6 @@ redirects_t & redirects_t::operator--()
 }
 
 
-/** Post-decrement operator.
- */
 redirects_t redirects_t::operator--(int)
 {
     redirects_t copy(*this);
@@ -69,8 +59,6 @@ redirects_t redirects_t::operator--(int)
 }
 
 
-/** \brief Explicit conversion to bool.
- */
 redirects_t::operator bool() const
 {
     return bool(count);

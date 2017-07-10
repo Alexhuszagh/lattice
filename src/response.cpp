@@ -57,7 +57,7 @@ void response_t::parse_transfer_encoding(std::string &string)
     string = ascii_tolower(string);
     auto encodings = split(string, ",");
     for (auto &encoding: encodings) {
-        trim(encoding);
+        encoding = trim(encoding);
         if (encoding == "chunked") {
             transfer |= CHUNKED;
         } else if (encoding == "compress") {
@@ -144,7 +144,7 @@ void response_t::parse_header_line(const std::string &line)
         size_t colon = line.find_first_of(":");
         std::string key = ascii_tolower(line.substr(0, colon));
         std::string value = line.substr(colon+1);
-        trim(value);
+        value = trim(value);
 
         if (key == "set-cookie") {
             parse_cookie(value);
