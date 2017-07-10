@@ -6,8 +6,8 @@
  *  \brief Authentification for requests.
  */
 
-#include "lattice/auth.hpp"
-#include "lattice/util/define.hpp"
+#include <lattice/auth.hpp>
+#include <lattice/util/define.hpp>
 
 
 namespace lattice

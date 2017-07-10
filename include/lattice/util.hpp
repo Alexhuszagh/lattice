@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "util/define.hpp"
-#include "util/enum.hpp"
-#include "util/exception.hpp"
-#include "util/mutex.hpp"
-#include "util/sfinae.hpp"
-#include "util/string.hpp"
+#include <lattice/util/define.hpp>
+#include <lattice/util/enum.hpp>
+#include <lattice/util/exception.hpp>
+#include <lattice/util/mutex.hpp>
+#include <lattice/util/sfinae.hpp>
+#include <lattice/util/string.hpp>

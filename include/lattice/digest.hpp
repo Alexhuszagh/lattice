@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "auth.hpp"
-#include "crypto.hpp"
+#include <lattice/auth.hpp>
+#include <lattice/crypto.hpp>
 
 #include <unordered_map>
 #include <vector>

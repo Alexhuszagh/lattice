@@ -6,11 +6,12 @@
  *  \brief Network request parameters.
  */
 
-#include "lattice/parameter.hpp"
-#include "lattice/util/define.hpp"
+#include <lattice/parameter.hpp>
+#include <lattice/util/define.hpp>
 
-#include <url.h>
+#include <pycpp/url.h>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

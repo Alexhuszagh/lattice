@@ -5,7 +5,7 @@
  *  \brief Asynchronous requests.
  */
 
-#include "lattice/async.hpp"
+#include <lattice/async.hpp>
 
 
 namespace lattice
@@ -16,18 +16,16 @@ namespace lattice
 
 /** \brief Block and return all queries.
  */
-std::vector<Response> Pool::perform()
+ResponseList Pool::perform()
 {
-    std::vector<Response> responses;
-    responses.reserve(futures.size());
-
+    ResponseList list;
     for (auto &&future: futures) {
         if (future.valid()) {
-            responses.emplace_back(future.get());
+            list.emplace_back(future.get());
         }
     }
 
-    return responses;
+    return list;
 }
 
 

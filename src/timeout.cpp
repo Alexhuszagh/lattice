@@ -6,7 +6,7 @@
  *  \brief Timeout for requests.
  */
 
-#include "lattice/timeout.hpp"
+#include <lattice/timeout.hpp>
 
 #ifdef _MSC_VER
 #   pragma warning(push)

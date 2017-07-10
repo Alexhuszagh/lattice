@@ -8,12 +8,12 @@
 
 #pragma once
 
-#include "cookie.hpp"
-#include "header.hpp"
-#include "method.hpp"
-#include "redirect.hpp"
-#include "transfer.hpp"
-#include "url.hpp"
+#include <lattice/cookie.hpp>
+#include <lattice/header.hpp>
+#include <lattice/method.hpp>
+#include <lattice/redirect.hpp>
+#include <lattice/transfer.hpp>
+#include <lattice/url.hpp>
 
 #include <tuple>
 

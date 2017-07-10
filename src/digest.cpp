@@ -6,19 +6,20 @@
  *  \brief Weakly encrypted authentication for requests.
  */
 
-#include "lattice/digest.hpp"
-#include "lattice/parameter.hpp"
-#include "lattice/url.hpp"
-#include "lattice/util/exception.hpp"
-#include "lattice/util/string.hpp"
+#include <lattice/digest.hpp>
+#include <lattice/parameter.hpp>
+#include <lattice/url.hpp>
+#include <lattice/util/exception.hpp>
+#include <lattice/util/string.hpp>
 
-#include <hashlib.h>
-#include <hex.h>
-#include <random.h>
+#include <pycpp/hashlib.h>
+#include <pycpp/hex.h>
+#include <pycpp/random.h>
 #include <algorithm>
 #include <cstring>
 #include <iomanip>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {
@@ -27,13 +28,17 @@ namespace lattice
 
 static std::string sha1_hex(const std::string& str)
 {
-    return std::string(sha1_hash(str).hexdigest().view());
+    secure_string_view view(str.data(), str.size());
+    auto hex = sha1_hash(view).hexdigest();
+    return std::string(hex.data(), hex.size());
 }
 
 
 static std::string md5_hex(const std::string& str)
 {
-    return std::string(md5_hash(str).hexdigest().view());
+    secure_string_view view(str.data(), str.size());
+    auto hex = md5_hash(view).hexdigest();
+    return std::string(hex.data(), hex.size());
 }
 
 // OBJECTS

@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "adapter.hpp"
-#include "dns.hpp"
-#include "method.hpp"
-#include "ssl.hpp"
-#include "timeout.hpp"
-#include "util.hpp"
+#include <lattice/adapter.hpp>
+#include <lattice/dns.hpp>
+#include <lattice/method.hpp>
+#include <lattice/ssl.hpp>
+#include <lattice/timeout.hpp>
+#include <lattice/util.hpp>
 
 #include <cstdlib>
 #include <cstring>

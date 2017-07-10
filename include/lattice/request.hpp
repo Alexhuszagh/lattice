@@ -8,23 +8,23 @@
 
 #pragma once
 
-#include "adapter.hpp"
-#include "auth.hpp"
-#include "connection.hpp"
-#include "cookie.hpp"
-#include "digest.hpp"
-#include "dns.hpp"
-#include "header.hpp"
-#include "method.hpp"
-#include "multipart.hpp"
-#include "parameter.hpp"
-#include "proxy.hpp"
-#include "redirect.hpp"
-#include "response.hpp"
-#include "ssl.hpp"
-#include "timeout.hpp"
-#include "url.hpp"
-#include "util/define.hpp"
+#include <lattice/adapter.hpp>
+#include <lattice/auth.hpp>
+#include <lattice/connection.hpp>
+#include <lattice/cookie.hpp>
+#include <lattice/digest.hpp>
+#include <lattice/dns.hpp>
+#include <lattice/header.hpp>
+#include <lattice/method.hpp>
+#include <lattice/multipart.hpp>
+#include <lattice/parameter.hpp>
+#include <lattice/proxy.hpp>
+#include <lattice/redirect.hpp>
+#include <lattice/response.hpp>
+#include <lattice/ssl.hpp>
+#include <lattice/timeout.hpp>
+#include <lattice/url.hpp>
+#include <lattice/util/define.hpp>
 
 
 namespace lattice

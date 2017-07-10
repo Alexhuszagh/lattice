@@ -5,7 +5,7 @@
  *  \brief String utilities.
  */
 
-#include "lattice/util/string.hpp"
+#include <lattice/util/string.hpp>
 
 #include <cstring>
 #include <istream>

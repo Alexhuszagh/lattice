@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include "request.hpp"
-#include "response.hpp"
-#include "util.hpp"
+#include <lattice/request.hpp>
+#include <lattice/response.hpp>
+#include <lattice/util.hpp>
 
 #include <chrono>
+#include <deque>
 #include <future>
 #include <thread>
 #include <type_traits>
-#include <vector>
 
 
 namespace lattice
@@ -23,7 +23,7 @@ namespace lattice
 // OBJECTS
 // -------
 
-typedef std::vector<Response> Responses;
+typedef std::deque<Response> ResponseList;
 
 
 /** \brief Thread pool for asynchronous requests.
@@ -35,7 +35,7 @@ typedef std::vector<Response> Responses;
 class Pool
 {
 protected:
-    std::vector<std::future<Response>> futures;
+    std::deque<std::future<Response>> futures;
 
 public:
     Pool() = default;
@@ -65,7 +65,7 @@ public:
     template <typename... Ts>
     void trace(Ts&&... ts);
 
-    Responses perform();
+    ResponseList perform();
 
     template <typename Duration>
     typename std::enable_if<std::is_integral<Duration>::value, Response>::type

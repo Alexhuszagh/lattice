@@ -6,15 +6,16 @@
  *  \brief Multipart requests (file uploads).
  */
 
-#include "lattice/multipart.hpp"
-#include "lattice/util/define.hpp"
+#include <lattice/multipart.hpp>
+#include <lattice/util/define.hpp>
 
-#include <filesystem.h>
-#include <unicode.h>
+#include <pycpp/filesystem.h>
+#include <pycpp/unicode.h>
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

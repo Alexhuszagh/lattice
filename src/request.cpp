@@ -6,12 +6,12 @@
  *  \brief HTTP/HTTPS request.
  */
 
-#include "lattice/request.hpp"
-#include "lattice/version.hpp"
+#include <lattice/request.hpp>
+#include <lattice/version.hpp>
 
-#include <base64.h>
-#include <codec.h>
-#include <unicode.h>
+#include <pycpp/base64.h>
+#include <pycpp/codec.h>
+#include <pycpp/unicode.h>
 #include <cstdio>
 #include <fstream>
 #include <sstream>
@@ -20,6 +20,7 @@
 #   include "wincrypt.h"
 #endif
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

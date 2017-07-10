@@ -9,10 +9,10 @@
 
 #pragma once
 
-#include "lattice/dns.hpp"
-#include "lattice/ssl.hpp"
-#include "lattice/timeout.hpp"
-#include "lattice/url.hpp"
+#include <lattice/dns.hpp>
+#include <lattice/ssl.hpp>
+#include <lattice/timeout.hpp>
+#include <lattice/url.hpp>
 
 #include <netdb.h>
 

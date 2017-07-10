@@ -43,8 +43,8 @@ endif()
 # DEPENDENCIES
 # ------------
 
-add_subdirectory(funxx)
-include_directories(funxx/src)
+add_subdirectory(pycpp)
+include_directories(pycpp)
 
 # INCLUDES
 # --------
@@ -97,7 +97,7 @@ find_package(Threads REQUIRED)
 # ---
 
 if(OPENSSL_FOUND)
-    add_definitions(-DHAVE_OPENSSL)
+    add_definitions(-DLATTICE_HAVE_OPENSSL)
 endif()
 set(HAVE_SSL ${OPENSSL_FOUND})
 
@@ -130,7 +130,7 @@ else()
     add_library(lattice SHARED ${LATTICE_SOURCES})
 endif()
 
-set(LATTICE_LIBRARIES lattice funxx ${OPENSSL_LIBRARIES})
+set(LATTICE_LIBRARIES lattice pycpp ${OPENSSL_LIBRARIES})
 if(CMAKE_VERSION VERSION_GREATER 3.1)
     list(APPEND LATTICE_LIBRARIES Threads::Threads)
 else()

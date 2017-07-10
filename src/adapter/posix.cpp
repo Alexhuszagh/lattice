@@ -7,8 +7,8 @@
 
 #ifndef _WIN32
 
-#include "lattice/adapter/posix.hpp"
-#include "lattice/util/exception.hpp"
+#include <lattice/adapter/posix.hpp>
+#include <lattice/util/exception.hpp>
 
 #include <sys/time.h>
 #include <sys/types.h>

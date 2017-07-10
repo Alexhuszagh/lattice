@@ -8,12 +8,13 @@
 
 #pragma once
 
-#include <hashlib.h>
-#include <random.h>
+#include <pycpp/hashlib.h>
+#include <pycpp/random.h>
 #include <memory>
 #include <string>
 #include <vector>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {
@@ -128,7 +129,7 @@ class Multipart: public std::vector<detail::PartPtr>
 {
 protected:
     typedef std::vector<detail::PartPtr> Base;
-    std::string boundary_ = std::string(sha1_hash(pseudorandom(8)).hexdigest().view());
+    std::string boundary_ = std::string(sha1_hash(secure_string_view(pseudorandom(8).data(), 8)).hexdigest().view().data());
 
 public:
     using Base::Base;

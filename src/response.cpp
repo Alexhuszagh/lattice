@@ -5,15 +5,16 @@
  *  \brief Parese request response.
  */
 
-#include "lattice/response.hpp"
-#include "lattice/util/string.hpp"
+#include <lattice/response.hpp>
+#include <lattice/util/string.hpp>
 
-#include <getline.h>
+#include <pycpp/getline.h>
 #include <cctype>
 #include <cstring>
 #include <sstream>
 #include <string>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

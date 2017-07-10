@@ -9,11 +9,11 @@
 
 #ifdef _WIN32
 
-#include "lattice/dns.hpp"
-#include "lattice/method.hpp"
-#include "lattice/ssl.hpp"
-#include "lattice/timeout.hpp"
-#include "lattice/url.hpp"
+#include <lattice/dns.hpp>
+#include <lattice/method.hpp>
+#include <lattice/ssl.hpp>
+#include <lattice/timeout.hpp>
+#include <lattice/url.hpp>
 
 
 namespace lattice

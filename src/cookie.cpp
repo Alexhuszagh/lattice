@@ -6,11 +6,12 @@
  *  \brief Cookie support for persistent sessions.
  */
 
-#include "lattice/cookie.hpp"
+#include <lattice/cookie.hpp>
 
-#include <url.h>
+#include <pycpp/url.h>
 #include <sstream>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

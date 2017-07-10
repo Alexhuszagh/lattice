@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "adapter/openssl.hpp"
-#include "adapter/nossl.hpp"
-#include "adapter/posix.hpp"
-#include "adapter/windows.hpp"
+#include <lattice/adapter/openssl.hpp>
+#include <lattice/adapter/nossl.hpp>
+#include <lattice/adapter/posix.hpp>
+#include <lattice/adapter/windows.hpp>
 
 
 namespace lattice
@@ -19,7 +19,7 @@ namespace lattice
 // ------
 
 
-#if defined(HAVE_OPENSSL)
+#if defined(LATTICE_HAVE_OPENSSL)
 #   define HAVE_SSL
 #endif
 
@@ -34,7 +34,7 @@ namespace lattice
 #endif
 
 // HTTPS ADAPTERS
-#if defined(HAVE_SSL) && defined(HAVE_OPENSSL)
+#if defined(HAVE_SSL) && defined(LATTICE_HAVE_OPENSSL)
     typedef OpenSslAdapter<HttpAdapter> SslAdapter;
 #else
     typedef NoSslAdapter<HttpAdapter> SslAdapter;

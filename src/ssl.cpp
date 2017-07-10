@@ -5,8 +5,8 @@
  *  \brief HTTPS options and validation.
  */
 
-#include "lattice/ssl.hpp"
-#include "lattice/util/string.hpp"
+#include <lattice/ssl.hpp>
+#include <lattice/util/string.hpp>
 
 #ifdef _MSC_VER
 #   pragma warning(push)

@@ -5,14 +5,15 @@
  *  \brief URL object.
  */
 
-#include "lattice/url.hpp"
-#include "lattice/util/define.hpp"
-#include "lattice/util/string.hpp"
+#include <lattice/url.hpp>
+#include <lattice/util/define.hpp>
+#include <lattice/util/string.hpp>
 
-#include <punycode.h>
-#include <unicode.h>
+#include <pycpp/punycode.h>
+#include <pycpp/unicode.h>
 #include <cassert>
 
+PYCPP_USING_NAMESPACE
 
 namespace lattice
 {

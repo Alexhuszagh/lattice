@@ -6,15 +6,15 @@
  *  \brief OpenSSL socket adapter.
  */
 
-#ifdef HAVE_OPENSSL
+#ifdef LATTICE_HAVE_OPENSSL
 
-#include "lattice/dns.hpp"
-#include "lattice/method.hpp"
-#include "lattice/ssl.hpp"
-#include "lattice/timeout.hpp"
-#include "lattice/url.hpp"
-#include "lattice/util/exception.hpp"
-#include "lattice/util/mutex.hpp"
+#include <lattice/dns.hpp>
+#include <lattice/method.hpp>
+#include <lattice/ssl.hpp>
+#include <lattice/timeout.hpp>
+#include <lattice/url.hpp>
+#include <lattice/util/exception.hpp>
+#include <lattice/util/mutex.hpp>
 
 #include <openssl/asn1.h>
 #include <openssl/err.h>

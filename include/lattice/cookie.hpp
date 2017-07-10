@@ -32,5 +32,4 @@ public:
     explicit operator bool() const;
 };
 
-
 }   /* lattice */

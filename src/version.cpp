@@ -5,7 +5,7 @@
  *  \brief Lattice versioning.
  */
 
-#include "lattice/version.hpp"
+#include <lattice/version.hpp>
 
 
 namespace lattice

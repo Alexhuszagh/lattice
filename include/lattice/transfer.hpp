@@ -8,7 +8,8 @@
 
 #pragma once
 
-#include "util/enum.hpp"
+// TODO: replace with PyCPP
+#include <lattice/util/enum.hpp>
 
 #ifdef _MSC_VER
 #   pragma warning(push)
@@ -34,7 +35,6 @@ enum TransferEncoding: unsigned int
 };
 
 LATTICE_FLAGS(TransferEncoding);
-
 
 }   /* lattice */
 
