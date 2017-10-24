@@ -27,19 +27,21 @@ Lattice is a C++11, cross-platform HTTP library, inspired by Python's [Requests]
 
 ## Motivation
 
-Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded URL parameters or international domain names. No more manual authentication. 
+Lattice is a modern, thread-safe, HTTP library for C++11. No more hand-encoded URL parameters or international domain names. No more manual authentication.
 
 **1. Code**
 ```cpp
-#include <lattice.hpp>
+#include <lattice.h>
 #include <iostream>
+
+LATTICE_USING_NAMESPACE
 
 
 int main(int argc, char *argv[])
 {
-    lattice::url_t url = {"http://httpbin.org/basic-auth/user/pass"};
-    lattice::authentication_t auth = {"user", "pass"};
-    auto response = lattice::Get(url, auth);
+    url_t url = {"http://httpbin.org/basic-auth/user/pass"};
+    authentication_t auth = {"user", "pass"};
+    auto response = Get(url, auth);
 
     std::cout << response.body() << std::endl;
 }
@@ -51,7 +53,7 @@ int main(int argc, char *argv[])
 $ g++ get.cpp -o get -std=c++11 liblattice.a
 $ ./get
 {
-  "authenticated": true, 
+  "authenticated": true,
   "user": "user"
 }
 ```
@@ -80,10 +82,10 @@ Compare this to the same code using [cURL](https://gist.github.com/Alexhuszagh/e
 
 ## Design
 
-Lattice has four main components: adapters, connections, requests and responses. 
+Lattice has four main components: adapters, connections, requests and responses.
 
-1. Adapters wrap native sockets or SSL connections into an interface with 4 core methods: `open`, `close`, `write`, and `read`. 
-2. Connections wrap specific adapters, and add shared methods like DNS lookup. 
+1. Adapters wrap native sockets or SSL connections into an interface with 4 core methods: `open`, `close`, `write`, and `read`.
+2. Connections wrap specific adapters, and add shared methods like DNS lookup.
 3. Requests format data for HTTP requests, with user-friendly methods like `setAuth` or `setMultiPart`.
 4. Responses parse data sent from the server.
 
@@ -114,7 +116,7 @@ Lattice has been tested with the following compilers and operating systems:
 
 - 64-bit Linux with Clang 3.8.2
 - 64-bit Linux with GCC 5.4.0
-- 32/64-bit Windows with MinGW 5.3.0 (MXE, MinGW, and MSYS2) 
+- 32/64-bit Windows with MinGW 5.3.0 (MXE, MinGW, and MSYS2)
 - 32/64-bit Windows with Visual Studio 14 2015
 
 ## Documentation
@@ -130,7 +132,7 @@ Coming soon, for now, see the the [examples](/example) for how to use lattice.
 
 - Alex Huszagh
 
-Lattice is a fork of [C++ Requests](https://github.com/whoshuu/cpr) with a different backend, and credits those contributors in [authors](AUTHORS). 
+Lattice is a fork of [C++ Requests](https://github.com/whoshuu/cpr) with a different backend, and credits those contributors in [authors](AUTHORS).
 
 ## Contributor Guidelines
 
